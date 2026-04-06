@@ -1,15 +1,7 @@
 [build]
-  command   = "npm run build"
-  publish   = "_site"
+  command = "npm run build"
+  publish = "_site"
 
-# Redirect Netlify Identity confirmation links to the admin panel
-[[redirects]]
-  from = "/"
-  to   = "/index.html"
-  status = 200
-  conditions = {Role = ["admin", "editor"]}
-
-# Required for Netlify Identity deep-link callback
 [[headers]]
   for = "/*"
   [headers.values]
