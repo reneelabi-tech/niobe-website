@@ -1,0 +1,59 @@
+meta_title: "Contact & Book — Niobe Beauty"
+meta_desc: "Book a treatment or get in touch with Niobe Beauty. Five locations across Accra and Tema, Ghana."
+
+hero:
+  eyebrow: "Contact & Book"
+  title: "Get in touch"
+  title_em: "or book now"
+  desc: "Contact us via WhatsApp, phone or the form below. We respond to all enquiries promptly and can confirm availability across any of our five locations."
+
+contact:
+  whatsapp_label: "WhatsApp"
+  whatsapp_number: "+233 (0) 561 11 00 00"
+  whatsapp_url: "https://wa.me/233561110000"
+
+  locations_label: "Locations"
+  locations:
+    - "East Legon, Accra"
+    - "Cantonments, Accra"
+    - "Community 18, Tema"
+    - "Alisa Hotel, Tema"
+
+  payment_label: "Payment accepted"
+  payment_methods: "Cash · Bank transfer · Visa / Mobile money (MTN & Telecel)"
+
+  deposit_note: "A 100% non-refundable deposit is required for all bookings. 5% discount when two or more guests book together."
+
+  bank_details:
+    bank: "Zenith Bank"
+    branch: "East Legon"
+    account_name: "Niobe Salon and Spa Ltd"
+    account_number: "6011304206"
+    sort_code: "12-01-09"
+    swift: "ZEBLGHAC"
+
+  mobile_money:
+    mtn: "+233 (0) 242 62 62 00"
+    telecel: "+233 (0) 204 62 62 00"
+    name: "Niobe Spa / Kofi Labi"
+
+locations_section:
+  eyebrow: "Our locations"
+  heading: "Five locations across"
+  heading_em: "Accra and Tema"
+  locations:
+    - city: "Accra"
+      name: "East Legon"
+      detail: "Facials · Body Massage · Wraps & Scrubs · Steam · Sauna · Jacuzzi · Nails · Beauty · Hair Removal · Spa Packages · Hammam"
+    - city: "Accra"
+      name: "Cantonments"
+      detail: "Facials · Body Massage · Wraps & Scrubs · Steam · Sauna · Jacuzzi · Nails · Beauty · Hair Removal · Spa Packages"
+    - city: "Tema"
+      name: "Community 18"
+      detail: "Facials · Body Massage · Wraps & Scrubs · Steam · Sauna · Nails · Beauty · Hair Removal · Spa Packages"
+    - city: "Tema"
+      name: "Alisa Hotel"
+      detail: "Facials · Body Massage · Wraps & Scrubs · Steam · Sauna · Nails · Beauty · Hair Removal · Spa Packages"
+
+form:
+  heading: "Make an enquiry"

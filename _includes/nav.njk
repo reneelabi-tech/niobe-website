@@ -1,0 +1,22 @@
+<nav class="nav" role="navigation" aria-label="Main navigation">
+  <div class="nav__inner">
+    <a href="/index.html" class="nav__logo">{{ site.name }}</a>
+    <ul class="nav__links" role="list">
+      <li><a href="/treatments.html" class="nav__link{% if page_id == 'treatments' %} active{% endif %}">Treatments</a></li>
+      <li><a href="/packages.html"   class="nav__link{% if page_id == 'packages' %} active{% endif %}">Spa Packages</a></li>
+      <li><a href="/about.html"      class="nav__link{% if page_id == 'about' %} active{% endif %}">About</a></li>
+      <li><a href="/contact.html"    class="nav__link{% if page_id == 'contact' %} active{% endif %}">Contact</a></li>
+    </ul>
+    <a href="/booking.html" class="nav__book">Book Now</a>
+    <button class="nav__toggle" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="nav__mobile" role="dialog" aria-label="Mobile navigation">
+  <a href="/treatments.html" class="nav__mobile-link">Treatments</a>
+  <a href="/packages.html"   class="nav__mobile-link">Spa Packages</a>
+  <a href="/about.html"      class="nav__mobile-link">About</a>
+  <a href="/contact.html"    class="nav__mobile-link">Contact</a>
+  <a href="/booking.html" class="nav__mobile-cta">Book Now</a>
+</div>

@@ -1,0 +1,32 @@
+meta_title: "Book — Niobe Beauty"
+meta_desc: "Book a spa treatment or package at any of the five Niobe Beauty locations across Accra and Tema."
+
+hero:
+  eyebrow: "Booking"
+  title: "Book Your"
+  title_em: "Appointment"
+  desc: "Choose your preferred location below to continue your booking."
+
+note: "A 100% non-refundable deposit is required to secure all bookings. 5% discount when two or more guests book together."
+
+locations:
+  - city: "Accra"
+    name: "East Legon"
+    detail: "Facials · Massage · Wraps · Steam · Sauna · Jacuzzi · Beauty · Hammam · Spa Packages"
+    url: "https://eastlegon.simplespa.com"
+  - city: "Accra"
+    name: "Cantonments"
+    detail: "Facials · Massage · Wraps · Steam · Sauna · Jacuzzi · Beauty · Spa Packages"
+    url: "https://cantonments.simplespa.com"
+  - city: "Accra"
+    name: "Community 18"
+    detail: "Facials · Massage · Wraps · Steam · Sauna · Beauty · Spa Packages"
+    url: "https://hfcestatec18.simplespa.com"
+  - city: "Accra"
+    name: "African Regent Hotel"
+    detail: "Facials · Massage · Beauty · Spa Packages"
+    url: "https://africanregenthotel.simplespa.com"
+  - city: "Tema"
+    name: "Alisa Hotel"
+    detail: "Facials · Massage · Wraps · Steam · Sauna · Beauty · Spa Packages"
+    url: "https://alisahoteltema.simplespa.com"

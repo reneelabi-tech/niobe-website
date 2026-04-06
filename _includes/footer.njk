@@ -1,0 +1,43 @@
+<footer class="footer" role="contentinfo">
+  <div class="footer__grid">
+    <div>
+      <p class="footer__brand">{{ site.name }}</p>
+      <p class="footer__brand-desc">{{ footer.tagline }}</p>
+    </div>
+    <div>
+      <p class="footer__col-title">Services</p>
+      <ul class="footer__links">
+        {% for link in footer.services_links %}
+        <li><a href="/{{ link.url }}" class="footer__link">{{ link.label }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div>
+      <p class="footer__col-title">Company</p>
+      <ul class="footer__links">
+        {% for link in footer.company_links %}
+        <li><a href="/{{ link.url }}" class="footer__link">{{ link.label }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div>
+      <p class="footer__col-title">Contact</p>
+      <ul class="footer__links">
+        {% for item in footer.contact_lines %}
+        {% if item.url %}
+        <li><a href="{{ item.url }}" class="footer__link">{{ item.label }}</a></li>
+        {% else %}
+        <li class="footer__link">{{ item.label }}</li>
+        {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="footer__bottom">
+    <p class="footer__copy">&copy; {{ site.copyright }}</p>
+    <div class="footer__legal">
+      <a href="#" class="footer__legal-link">Privacy</a>
+      <a href="#" class="footer__legal-link">Terms</a>
+    </div>
+  </div>
+</footer>

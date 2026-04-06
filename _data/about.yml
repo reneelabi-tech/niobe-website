@@ -1,0 +1,67 @@
+meta_title: "About — Niobe Beauty"
+meta_desc: "Over twenty years of expert spa and salon care across Accra and Tema. The story behind Niobe Beauty."
+
+hero:
+  eyebrow: "About Niobe Beauty"
+  title: "Over twenty years"
+  title_em: "of expert care"
+  desc: "Award-winning spa and salon across Accra and Tema. Five locations. One standard."
+
+story:
+  eyebrow: "Our Story"
+  title: "Built over"
+  title_2: "two decades"
+  title_em: "in Ghana"
+  paragraphs:
+    - "Niobe Beauty has been one of Ghana's leading spa and salon destinations for over twenty years. What began as a single location has grown into five — across East Legon, Cantonments, Community 18 and Alisa Hotel Tema — each one maintaining the same level of care and professional standard that built the original reputation."
+    - "We are an award-winning business, and a certified professional partner of Elemis — one of the world's most respected spa and skincare brands. Elemis products used in our treatments are professional-grade formulations not available in general retail, and our therapists are trained to the same standard the brand requires globally."
+    - "We offer a comprehensive menu: Elemis facials and body treatments, full-body massage in multiple formats, a complete hammam and Turkish bath programme, body wraps and scrubs, thermal facilities, beauty services, nails, and hair removal. Across all of it, the approach is consistent: treatments are adapted to the individual, not applied from a fixed template."
+    - "We take pride in the longevity of our client relationships, many of which span years and decades. That kind of trust is built through consistency, through the quality of the team, and through not cutting corners on what matters."
+
+credentials:
+  eyebrow: "By the numbers"
+  heading: "Niobe at a glance"
+  items:
+    - number: "20+"
+      label: "Years of experience"
+      body: "Over two decades as one of Ghana's leading spa and salon destinations."
+    - number: "5"
+      label: "Locations"
+      body: "Across Accra and Tema — East Legon, Cantonments, Community 18 and Alisa Hotel Tema."
+    - number: "Elemis"
+      label: "Certified partner"
+      body: "Certified professional partner of one of the world's most respected spa skincare brands."
+    - number: "★"
+      label: "Award-winning"
+      body: "Recognised for the quality of our treatments, service and professional standards."
+
+approach:
+  eyebrow: "How we work"
+  heading: "What we hold"
+  heading_em: "to, consistently"
+  values:
+    - title: "Adapted, not prescribed"
+      body: "Every session begins with an assessment of what the skin or body needs that day. We do not apply a fixed protocol to every client. Pressure, products and technique are adjusted at each visit."
+    - title: "Professional products throughout"
+      body: "We work exclusively with Elemis professional formulations — not available in general retail. The difference is in the concentration of actives and the clinical backing behind the results."
+    - title: "The same standard, every location"
+      body: "Five locations across Greater Accra, each one maintained to the same operational and treatment standard. The experience at Cantonments is the same quality as the one at Alisa Hotel Tema."
+    - title: "Comprehensive, not fragmented"
+      body: "Facials, body treatments, hammam, thermal facilities, nails, beauty, hair removal and products — all in one place. You should not need to go elsewhere."
+
+before_visit:
+  heading: "Before you visit"
+  items:
+    - title: "Booking & deposit"
+      body: "A 100% non-refundable deposit is required for all bookings. This secures your appointment time and covers preparation by your therapist. We are unable to hold appointment slots without a confirmed deposit."
+    - title: "Group & couple bookings"
+      body: "A 5% discount applies when two or more guests book together. This applies across most treatments and packages. Please let us know when making your enquiry."
+    - title: "Pregnancy treatments"
+      body: "Our Elemis Peaceful Pregnancy Massage is adapted for pregnancy from the second trimester onward. Please inform us when booking. Certain treatments are not suitable during pregnancy — our team will advise."
+    - title: "What to expect"
+      body: "Your therapist will discuss your preferences and any areas of concern at the start of your session. You do not need to prepare anything in advance — just arrive at the agreed time."
+
+cta:
+  eyebrow: "Visit us"
+  title: "Five locations."
+  title_em: "Ready when you are."

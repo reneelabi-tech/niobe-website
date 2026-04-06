@@ -1,0 +1,159 @@
+---
+page_id: gift-cards
+permalink: /gift-cards.html
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gift Cards — {{ site.name }}</title>
+  <meta name="description" content="{{ site.name }} gift cards — redeemable against any service or package across all five locations. From GHS 100." />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+
+  {% include "nav.njk" %}
+
+  <main>
+
+    <div class="page-hero page-hero--sage">
+      <div class="page-hero__inner">
+        <span class="eyebrow">Gift Cards</span>
+        <h1 class="t-display t-lg page-hero__title">
+          The gift of<br><em>expert care</em>
+        </h1>
+        <p class="page-hero__desc">
+          A {{ site.name }} gift card can be redeemed against any service, package or product across all five locations.
+          Available from GHS 100, with no upper limit.
+        </p>
+      </div>
+    </div>
+
+
+    <section class="section">
+      <div class="wrap">
+
+        <div class="gc-intro fade-up">
+          <p class="body-lg" style="opacity: 0.72; margin-bottom: 1rem;">
+            Choose a specific treatment, a spa package, or leave the amount open so the recipient can decide.
+            Gift cards are valid for 90 days from the date of purchase. Please ensure they are redeemed before
+            the expiry date, as extensions are not routinely granted once expired.
+          </p>
+          <p class="body-sm" style="opacity: 0.52; margin-bottom: 2.5rem;">
+            In exceptional circumstances, an extension request may be considered within 30 days of expiry
+            via WhatsApp (0561 11 00 00), subject to an additional fee and valid supporting evidence.
+          </p>
+        </div>
+
+        <div class="divider"></div>
+
+        <h2 class="t-display t-sm fade-up" style="margin-bottom: clamp(1.5rem, 3vw, 2.5rem);">How to purchase</h2>
+
+        <div class="gc-purchase-methods fade-up d1">
+          <div class="gc-method">
+            <h3 class="gc-method__title">In person</h3>
+            <p class="gc-method__body">
+              Visit any Niobe location to purchase a physical gift card over the counter.
+              Payment by cash, bank transfer, Visa or mobile money.
+            </p>
+          </div>
+
+          <div class="gc-method">
+            <h3 class="gc-method__title">Online</h3>
+            <p class="gc-method__body">
+              Choose a service, package or open amount and make payment below. Forward proof of payment to
+              WhatsApp <a href="{{ site.whatsapp_url }}" style="border-bottom: 1px solid currentColor;">{{ site.whatsapp_full }}</a>.
+              Include the payment reference (beginning with PAY_) to link your payment. Upon confirmation,
+              an e-gift card will be emailed directly to the recipient.
+            </p>
+          </div>
+
+          <div class="gc-method">
+            <h3 class="gc-method__title">International purchases</h3>
+            <p class="gc-method__body">
+              We accept payment via mobile money using WorldRemit, Sendwave or similar apps.<br>
+              Telecel: +233 (0) 204 62 62 00 &nbsp;·&nbsp; MTN: +233 (0) 242 62 62 00<br>
+              Name: Niobe Spa / Kofi Labi.<br>
+              Upon receipt of cleared funds, we can arrange local collection or delivery (at additional cost).
+            </p>
+          </div>
+
+          <div class="gc-method">
+            <h3 class="gc-method__title">Bank transfer</h3>
+            <p class="gc-method__body">
+              Account name: Niobe Salon and Spa Ltd<br>
+              Bank: Zenith Bank · Branch: East Legon<br>
+              Account: 6011304206<br>
+              Sort Code: 12-01-09 · SWIFT: ZEBLGHAC
+            </p>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h2 class="t-display t-sm fade-up" style="margin-bottom: clamp(1.5rem, 3vw, 2.5rem);">Purchase online</h2>
+
+        <form class="form fade-up d1" style="max-width: 680px;" novalidate>
+          <div class="form-row">
+            <div class="form-field">
+              <label class="form-label" for="gc-sender">Your name</label>
+              <input class="form-input" type="text" id="gc-sender" name="sender_name" placeholder="Your full name" autocomplete="name" required />
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="gc-sender-phone">Your WhatsApp / phone</label>
+              <input class="form-input" type="tel" id="gc-sender-phone" name="sender_phone" placeholder="+233" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label class="form-label" for="gc-recipient">Recipient's name</label>
+              <input class="form-input" type="text" id="gc-recipient" name="recipient_name" placeholder="Recipient's full name" required />
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="gc-recipient-email">Recipient's email</label>
+              <input class="form-input" type="email" id="gc-recipient-email" name="recipient_email" placeholder="recipient@email.com" />
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="gc-amount">Gift card value</label>
+            <select class="form-select" id="gc-amount" name="amount" required>
+              <option value="" disabled selected>Select an amount</option>
+              <option value="100">GHS 100</option>
+              <option value="200">GHS 200</option>
+              <option value="300">GHS 300</option>
+              <option value="500">GHS 500</option>
+              <option value="1000">GHS 1,000</option>
+              <option value="custom">Custom amount</option>
+            </select>
+          </div>
+
+          <div class="form-field" id="gc-custom-wrap" style="display: none;">
+            <label class="form-label" for="gc-custom-amount">Custom amount (GHS)</label>
+            <input class="form-input" type="number" id="gc-custom-amount" name="custom_amount" placeholder="e.g. 750" min="100" />
+          </div>
+
+          <div class="form-field">
+            <label class="form-label" for="gc-message">Personal message <span style="opacity: 0.45;">(optional)</span></label>
+            <textarea class="form-textarea" id="gc-message" name="message" placeholder="A note to include with the gift card…"></textarea>
+          </div>
+
+          <p class="form-note">
+            After submitting this form, we will send you payment details by WhatsApp. The e-gift card is issued
+            once payment is confirmed.
+          </p>
+
+          <button type="submit" class="btn btn-onyx">Request Gift Card</button>
+        </form>
+
+      </div>
+    </section>
+
+  </main>
+
+  {% include "footer.njk" %}
+  <script src="/js/main.js"></script>
+</body>
+</html>

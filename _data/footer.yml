@@ -1,0 +1,25 @@
+tagline: "Award-winning spa and salon across Accra and Tema. Over twenty years of expert care."
+
+services_links:
+  - label: "Treatments"
+    url: "treatments.html"
+  - label: "Spa Packages"
+    url: "packages.html"
+  - label: "Gift Cards"
+    url: "gift-cards.html"
+  - label: "Steam, Sauna & Jacuzzi"
+    url: "treatments.html#thermal"
+
+company_links:
+  - label: "About Us"
+    url: "about.html"
+  - label: "Contact"
+    url: "contact.html"
+  - label: "Book Now"
+    url: "contact.html#book"
+
+contact_lines:
+  - label: "WhatsApp: 0561 11 00 00"
+    url: "https://wa.me/233561110000"
+  - label: "Accra & Tema, Ghana"
+    url: ""

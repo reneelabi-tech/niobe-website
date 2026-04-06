@@ -1,0 +1,75 @@
+---
+page_id: booking
+permalink: /booking.html
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ booking.meta_title }}</title>
+  <meta name="description" content="{{ booking.meta_desc }}" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+
+  {% include "nav.njk" %}
+
+  <main>
+
+    <div class="page-hero">
+      <div class="page-hero__inner">
+        <span class="eyebrow">{{ booking.hero.eyebrow }}</span>
+        <h1 class="t-display t-lg page-hero__title">
+          {{ booking.hero.title }}<br><em>{{ booking.hero.title_em }}</em>
+        </h1>
+        <p class="page-hero__desc">{{ booking.hero.desc }}</p>
+      </div>
+    </div>
+
+
+    <section class="section">
+      <div class="wrap">
+
+        <div class="booking-note fade-up">
+          {{ booking.note }}
+        </div>
+
+        <div class="booking-grid">
+          {% for loc in booking.locations %}
+          <a href="{{ loc.url }}"
+             target="_blank"
+             rel="noopener noreferrer"
+             class="booking-card fade-up{% if loop.index == 2 %} d1{% elif loop.index == 3 %} d2{% elif loop.index == 4 %} d1{% elif loop.index == 5 %} d2{% endif %}">
+            <span class="booking-card__city">{{ loc.city }}</span>
+            <h2 class="booking-card__name">{{ loc.name }}</h2>
+            <p class="booking-card__detail">{{ loc.detail }}</p>
+            <span class="booking-card__cta">Book at {{ loc.name }} &rarr;</span>
+          </a>
+          {% endfor %}
+        </div>
+
+      </div>
+    </section>
+
+
+    <section class="section section--sage">
+      <div class="wrap">
+        <div class="sec-head fade-up">
+          <div>
+            <span class="eyebrow" style="color: rgba(33,26,18,0.5);">Questions?</span>
+            <h2 class="t-display t-sm" style="margin-top: 0.35rem;">
+              Prefer to book<br><em>by WhatsApp?</em>
+            </h2>
+          </div>
+          <a href="/contact.html" class="btn btn-sage fade-in d2">Contact us</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  {% include "footer.njk" %}
+  <script src="/js/main.js"></script>
+</body>
+</html>

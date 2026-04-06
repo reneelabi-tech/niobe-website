@@ -1,0 +1,220 @@
+---
+page_id: home
+permalink: /index.html
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ home.meta_title }}</title>
+  <meta name="description" content="{{ home.meta_desc }}" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+</head>
+<body>
+
+  <div class="announce" role="banner" aria-label="Seasonal offer">
+    <p>{{ home.announce.announce_text }} <a href="/{{ home.announce.announce_link_url }}">{{ home.announce.announce_link_text }}</a></p>
+    <button class="announce__close" aria-label="Close announcement">&#215;</button>
+  </div>
+
+  {% include "nav.njk" %}
+
+  <main>
+
+    <section class="hero" aria-label="{{ site.name }}">
+      <div class="hero__content">
+        <span class="eyebrow fade-in">{{ home.hero.eyebrow }}</span>
+        <h1 class="t-display t-xl hero__title fade-up d1">
+          {{ home.hero.title_1 }}<br>
+          {{ home.hero.title_2 }}<br>
+          <em>{{ home.hero.title_em }}</em>
+        </h1>
+        <p class="hero__sub fade-up d2">{{ home.hero.subtitle }}</p>
+        <div class="hero__actions fade-up d3">
+          <a href="/booking.html" class="btn btn-onyx">Book a Treatment</a>
+          <a href="/treatments.html"   class="btn btn-outline">Explore Treatments</a>
+        </div>
+      </div>
+      <div class="hero__visual fade-in d2" aria-hidden="true">
+        <div class="hero__visual-mark">
+          <span class="hero__visual-wordmark">{{ site.name }}</span>
+        </div>
+        <div class="hero__visual-inner">
+          <span class="hero__visual-tag">{{ site.locations_summary }}</span>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="section" aria-labelledby="intro-heading">
+      <div class="wrap">
+        <div class="intro">
+          <div class="fade-up">
+            <div class="rule" style="margin-bottom: 2rem;"></div>
+            <h2 id="intro-heading" class="t-display t-md intro__quote">
+              {{ home.intro.quote_1 }}<br>
+              {{ home.intro.quote_2 }}<br>
+              <em>{{ home.intro.quote_em }}</em>
+            </h2>
+          </div>
+          <div class="intro__body fade-up d2">
+            <p>{{ home.intro.para_1 }}</p>
+            <p>{{ home.intro.para_2 }}</p>
+            <a href="/about.html" class="sec-link" style="display: inline-block;">Our story</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="section section--sage" aria-labelledby="treatments-heading">
+      <div class="wrap">
+        <div class="sec-head">
+          <div class="fade-up">
+            <span class="eyebrow" style="color: rgba(33,26,18,0.5);">{{ home.categories_section.eyebrow }}</span>
+            <h2 id="treatments-heading" class="t-display t-md" style="margin-top: 0.5rem;">
+              {{ home.categories_section.heading }}
+            </h2>
+          </div>
+          <a href="/treatments.html" class="sec-link fade-in d2">Full treatment menu</a>
+        </div>
+
+        <div class="category-grid">
+          {% for cat in home.categories_section.categories %}
+          <div class="cat-card fade-up{% if loop.index == 2 %} d2{% elif loop.index == 3 %} d3{% elif loop.index == 4 %} d1{% elif loop.index == 5 %} d2{% elif loop.index == 6 %} d3{% endif %}">
+            <span class="cat-card__num">{{ cat.number }}</span>
+            <h3 class="cat-card__name">{{ cat.name }}</h3>
+            <p class="cat-card__detail">{{ cat.detail }}</p>
+            <a href="/{{ cat.link_url }}" class="cat-card__link">{{ cat.link_text }}</a>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+
+    <section class="section" aria-labelledby="packages-heading">
+      <div class="wrap">
+        <div class="sec-head">
+          <div class="fade-up">
+            <span class="eyebrow">{{ home.packages_section.eyebrow }}</span>
+            <h2 id="packages-heading" class="t-display t-md" style="margin-top: 0.5rem;">
+              {{ home.packages_section.heading }}<br><em>{{ home.packages_section.heading_em }}</em>
+            </h2>
+          </div>
+          <a href="/packages.html" class="sec-link fade-in d2">All packages</a>
+        </div>
+
+        <div class="pkg-featured">
+          {% for pkg in home.packages_section.featured %}
+          <div class="pkg-card fade-up{% if loop.index == 2 %} d2{% elif loop.index == 3 %} d3{% endif %}">
+            <span class="pkg-card__tag">{{ pkg.tag }}</span>
+            <h3 class="pkg-card__name">{{ pkg.name }}</h3>
+            <p class="pkg-card__desc">{{ pkg.desc }}</p>
+            <div class="pkg-card__footer">
+              <span class="pkg-card__duration">{{ pkg.duration }}</span>
+              <a href="/booking.html" class="btn btn-outline" style="padding: 0.55rem 1.2rem; font-size: 0.6rem;">Book Now</a>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+
+    <section class="section section--sage" aria-labelledby="why-heading">
+      <div class="wrap">
+        <div class="why-strip">
+          <div class="why-strip__feature fade-up">
+            <div>
+              <span class="eyebrow" style="color: rgba(33,26,18,0.5);">{{ home.why.eyebrow }}</span>
+              <p class="why-strip__number">{{ home.why.number_display }}</p>
+            </div>
+            <p class="why-strip__feature-text t-display">{{ home.why.feature_text }}</p>
+            <div class="why-strip__awards">
+              {% for tag in home.why.award_tags %}
+              <span class="award-tag">{{ tag }}</span>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="why-strip__items fade-up d2">
+            <h2 id="why-heading" class="t-display t-sm" style="padding: 1.5rem 0; border-bottom: 1px solid rgba(33,26,18,0.12);">
+              {{ home.why.heading }}
+            </h2>
+            {% for item in home.why.items %}
+            <div class="why-item">
+              <span class="why-item__num">{{ item.number }}</span>
+              <div>
+                <p class="why-item__title">{{ item.title }}</p>
+                <p class="why-item__body">{{ item.body }}</p>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="section" aria-labelledby="gc-heading">
+      <div class="wrap">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: clamp(3rem, 6vw, 7rem); align-items: center;">
+          <div class="fade-up">
+            <span class="eyebrow">{{ home.gift_cards.eyebrow }}</span>
+            <h2 id="gc-heading" class="t-display t-md" style="margin-top: 0.5rem; margin-bottom: 1.25rem;">
+              {{ home.gift_cards.heading }}<br><em>{{ home.gift_cards.heading_em }}</em>
+            </h2>
+            <p class="body-lg" style="opacity: 0.65; max-width: 42ch; margin-bottom: 2.5rem;">
+              {{ home.gift_cards.desc }}
+            </p>
+            <a href="/gift-cards.html" class="btn btn-outline">Purchase a Gift Card</a>
+          </div>
+          <div class="fade-in d2" aria-hidden="true" style="aspect-ratio: 3/2; background: var(--dry-sage); position: relative; overflow: hidden;">
+            <div style="position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; padding: clamp(1.5rem, 3vw, 2.5rem);">
+              <div style="position: absolute; top: 50%; right: 2.5rem; transform: translateY(-50%); width: 70px; height: 70px; border-radius: 50%; border: 1px solid rgba(33,26,18,0.12); display: flex; align-items: center; justify-content: center;">
+                <div style="width: 46px; height: 46px; border-radius: 50%; border: 1px solid rgba(33,26,18,0.07);"></div>
+              </div>
+              <p style="font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--pitch-black); font-weight: 400; opacity: 0.5;">{{ site.name }}</p>
+              <p style="font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.35; margin-top: 0.25rem;">Gift Card · {{ site.locations_summary }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="section--onyx" aria-labelledby="cta-heading">
+      <div class="cta-block">
+        <span class="eyebrow fade-in" style="color: rgba(255,255,245,0.4);">{{ home.cta.eyebrow }}</span>
+        <h2 id="cta-heading" class="t-display t-lg fade-up d1" style="max-width: 14ch; color: var(--ivory);">
+          {{ home.cta.title_1 }}<br><em>{{ home.cta.title_em }}</em>
+        </h2>
+        <p class="cta-block__sub fade-up d2">{{ home.cta.sub }}</p>
+        <div class="cta-block__actions fade-up d3">
+          <a href="/booking.html" class="btn btn-outline-light">Book a Treatment</a>
+          <a href="/packages.html"     class="btn btn-outline-light">View All Packages</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  {% include "footer.njk" %}
+
+  <script src="/js/main.js"></script>
+  <script>
+    if (window.netlifyIdentity) {
+      window.netlifyIdentity.on("init", function(user) {
+        if (!user) {
+          window.netlifyIdentity.on("login", function() {
+            document.location.href = "/admin/";
+          });
+        }
+      });
+    }
+  </script>
+</body>
+</html>

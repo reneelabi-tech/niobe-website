@@ -1,0 +1,95 @@
+---
+page_id: treatments
+permalink: /treatments.html
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ treatments.meta_title }}</title>
+  <meta name="description" content="{{ treatments.meta_desc }}" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+
+  {% include "nav.njk" %}
+
+  <main>
+
+    <div class="page-hero">
+      <div class="page-hero__inner">
+        <span class="eyebrow">{{ treatments.hero.eyebrow }}</span>
+        <h1 class="t-display t-lg page-hero__title">
+          {{ treatments.hero.title }}<br><em>{{ treatments.hero.title_em }}</em>
+        </h1>
+        <p class="page-hero__desc">{{ treatments.hero.desc }}</p>
+      </div>
+    </div>
+
+
+    <section class="section">
+      <div class="wrap">
+        <div class="intro-note">{{ treatments.intro_note }}</div>
+
+        {% for category in treatments.categories %}
+
+        <div class="t-category fade-up" id="{{ category.id }}">
+          <div class="t-category__header">
+            <span class="eyebrow" style="margin-bottom: 0; min-width: 2.5rem;">{{ category.number }}</span>
+            <h2 class="t-category__title">{{ category.name }}</h2>
+          </div>
+
+          {% if category.intro %}
+          <p class="body-sm" style="padding: 1.25rem 0; opacity: 0.6; max-width: 64ch;">{{ category.intro }}</p>
+          {% endif %}
+
+          {% for group in category.groups %}
+
+          {% if group.label %}
+          <p class="t-display t-xs" style="padding: 1.25rem 0 0.25rem; opacity: 0.45; font-style: italic;">{{ group.label }}</p>
+          {% endif %}
+
+          <div class="t-list">
+            {% for item in group.items %}
+            <div class="t-item">
+              <h3 class="t-item__name">{{ item.name }}</h3>
+              <span class="t-item__desc">{{ item.desc }}</span>
+              <span class="t-item__dur">{{ item.duration }}</span>
+              <span class="t-item__price">{{ item.price }}</span>
+            </div>
+            {% endfor %}
+          </div>
+
+          {% endfor %}
+        </div>
+
+        {% if not loop.last %}<div class="divider"></div>{% endif %}
+
+        {% endfor %}
+
+      </div>
+    </section>
+
+
+    <section class="section section--sage">
+      <div class="wrap">
+        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 1.75rem;">
+          <span class="eyebrow" style="color: rgba(33,26,18,0.5);">{{ treatments.cta.eyebrow }}</span>
+          <h2 class="t-display t-md fade-up">{{ treatments.cta.heading }}<br><em>{{ treatments.cta.heading_em }}</em></h2>
+          <p class="body-lg fade-up d2" style="opacity: 0.65; max-width: 42ch;">{{ treatments.cta.desc }}</p>
+          <div class="fade-up d3" style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+            <a href="/booking.html" class="btn btn-onyx" data-book>Book Now</a>
+            <a href="/packages.html"     class="btn btn-sage">View Spa Packages</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  {% include "footer.njk" %}
+  {% include "booking-data.njk" %}
+  <script src="/js/main.js"></script>
+</body>
+</html>
