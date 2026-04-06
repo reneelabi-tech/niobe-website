@@ -206,26 +206,27 @@ permalink: /index.html
 
   <script src="/js/main.js"></script>
   <script>
-    if (window.netlifyIdentity) {
-      // After login, redirect to the CMS
-      window.netlifyIdentity.on("init", function(user) {
-        if (!user) {
-          window.netlifyIdentity.on("login", function() {
-            document.location.href = "/admin/";
-          });
-        }
-      });
-      // If an invite, recovery, or confirmation token is present in the URL
-      // hash, open the Identity widget so the user can complete the flow
+    // Redirect Netlify Identity tokens to /admin/ where Decap CMS handles them
+    (function () {
       var hash = window.location.hash;
       if (hash && (
         hash.indexOf("invite_token")       !== -1 ||
         hash.indexOf("recovery_token")     !== -1 ||
         hash.indexOf("confirmation_token") !== -1
       )) {
-        window.netlifyIdentity.open();
+        window.location.replace("/admin/" + hash);
+        return;
       }
-    }
+      if (window.netlifyIdentity) {
+        window.netlifyIdentity.on("init", function(user) {
+          if (!user) {
+            window.netlifyIdentity.on("login", function() {
+              document.location.href = "/admin/";
+            });
+          }
+        });
+      }
+    })();
   </script>
 </body>
 </html>
