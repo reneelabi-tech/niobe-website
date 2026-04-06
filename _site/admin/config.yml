@@ -1,0 +1,500 @@
+backend:
+  name: git-gateway
+  branch: main
+
+# Where uploaded images are stored in the repo
+media_folder: "images/uploads"
+public_folder: "/images/uploads"
+
+# Show a live preview of changes (optional)
+show_preview_links: true
+
+collections:
+
+  # ================================================================
+  # GLOBAL SETTINGS
+  # ================================================================
+  - name: "global"
+    label: "Global Settings"
+    files:
+
+      - file: "_data/site.yml"
+        label: "Site Settings"
+        name: "site"
+        fields:
+          - { label: "Site Name",             name: "name",             widget: "string" }
+          - { label: "Legal Name",            name: "legal_name",       widget: "string" }
+          - { label: "WhatsApp URL",          name: "whatsapp_url",     widget: "string", hint: "Format: https://wa.me/233XXXXXXXXX" }
+          - { label: "WhatsApp (short)",      name: "whatsapp_display", widget: "string", hint: "e.g. 0561 11 00 00" }
+          - { label: "WhatsApp (full)",       name: "whatsapp_full",    widget: "string", hint: "e.g. +233 (0) 561 11 00 00" }
+          - { label: "Locations Summary",     name: "locations_summary",widget: "string", hint: "e.g. Accra & Tema, Ghana" }
+          - { label: "Copyright Text",        name: "copyright",        widget: "string", hint: "Year and legal name, e.g. 2025 Niobe Salon and Spa Ltd. All rights reserved." }
+
+      - file: "_data/footer.yml"
+        label: "Footer"
+        name: "footer"
+        fields:
+          - { label: "Tagline", name: "tagline", widget: "text" }
+          - label: "Services Links"
+            name: "services_links"
+            widget: "list"
+            fields:
+              - { label: "Label", name: "label", widget: "string" }
+              - { label: "URL",   name: "url",   widget: "string", hint: "Relative URL, e.g. treatments.html" }
+          - label: "Company Links"
+            name: "company_links"
+            widget: "list"
+            fields:
+              - { label: "Label", name: "label", widget: "string" }
+              - { label: "URL",   name: "url",   widget: "string" }
+          - label: "Contact Lines"
+            name: "contact_lines"
+            widget: "list"
+            fields:
+              - { label: "Label", name: "label", widget: "string" }
+              - { label: "URL (leave empty for plain text)", name: "url", widget: "string", required: false }
+
+
+  # ================================================================
+  # HOME PAGE
+  # ================================================================
+  - name: "home"
+    label: "Home Page"
+    files:
+
+      - file: "_data/home.yml"
+        label: "Home Page"
+        name: "home"
+        fields:
+          - { label: "Page Title (browser tab)",    name: "meta_title", widget: "string" }
+          - { label: "Meta Description (SEO)",      name: "meta_desc",  widget: "text" }
+
+          - label: "Announcement Bar"
+            name: "announce"
+            widget: "object"
+            collapsed: true
+            hint: "Shown when you add .visible class to .announce element in HTML"
+            fields:
+              - { label: "Text before link", name: "announce_text",     widget: "string" }
+              - { label: "Link text",        name: "announce_link_text",widget: "string" }
+              - { label: "Link URL",         name: "announce_link_url", widget: "string" }
+
+          - label: "Hero Section"
+            name: "hero"
+            widget: "object"
+            fields:
+              - { label: "Eyebrow Label",          name: "eyebrow",   widget: "string" }
+              - { label: "Title — Line 1",          name: "title_1",   widget: "string" }
+              - { label: "Title — Line 2",          name: "title_2",   widget: "string" }
+              - { label: "Title — Line 3 (italic)", name: "title_em",  widget: "string" }
+              - { label: "Subtitle / Strapline",    name: "subtitle",  widget: "text" }
+
+          - label: "Brand Introduction"
+            name: "intro"
+            widget: "object"
+            fields:
+              - { label: "Pull Quote — Line 1",         name: "quote_1",  widget: "string" }
+              - { label: "Pull Quote — Line 2",         name: "quote_2",  widget: "string" }
+              - { label: "Pull Quote — Line 3 (italic)",name: "quote_em", widget: "string" }
+              - { label: "Paragraph 1",                 name: "para_1",   widget: "text" }
+              - { label: "Paragraph 2",                 name: "para_2",   widget: "text" }
+
+          - label: "Treatment Categories Section"
+            name: "categories_section"
+            widget: "object"
+            fields:
+              - { label: "Eyebrow Label",    name: "eyebrow",  widget: "string" }
+              - { label: "Section Heading",  name: "heading",  widget: "string" }
+              - label: "Categories"
+                name: "categories"
+                widget: "list"
+                fields:
+                  - { label: "Number",      name: "number",    widget: "string" }
+                  - { label: "Name",        name: "name",      widget: "string" }
+                  - { label: "Description", name: "detail",    widget: "text" }
+                  - { label: "Link Text",   name: "link_text", widget: "string" }
+                  - { label: "Link URL",    name: "link_url",  widget: "string" }
+
+          - label: "Featured Packages Section"
+            name: "packages_section"
+            widget: "object"
+            fields:
+              - { label: "Eyebrow Label",         name: "eyebrow",    widget: "string" }
+              - { label: "Heading",               name: "heading",    widget: "string" }
+              - { label: "Heading (italic part)", name: "heading_em", widget: "string" }
+              - label: "Featured Packages (3 shown)"
+                name: "featured"
+                widget: "list"
+                fields:
+                  - { label: "Tag Line",     name: "tag",      widget: "string" }
+                  - { label: "Name",         name: "name",     widget: "string" }
+                  - { label: "Description",  name: "desc",     widget: "text" }
+                  - { label: "Duration",     name: "duration", widget: "string" }
+
+          - label: "Why Choose Niobe Section"
+            name: "why"
+            widget: "object"
+            fields:
+              - { label: "Eyebrow Label",        name: "eyebrow",        widget: "string" }
+              - { label: "Large Number Display", name: "number_display", widget: "string", hint: "e.g. 20+" }
+              - { label: "Feature Text",         name: "feature_text",   widget: "string" }
+              - label: "Award / Credential Tags"
+                name: "award_tags"
+                widget: "list"
+                field: { label: "Tag", name: "tag", widget: "string" }
+              - { label: "Section Heading", name: "heading", widget: "string" }
+              - label: "Why Items"
+                name: "items"
+                widget: "list"
+                fields:
+                  - { label: "Number", name: "number", widget: "string" }
+                  - { label: "Title",  name: "title",  widget: "string" }
+                  - { label: "Body",   name: "body",   widget: "text" }
+
+          - label: "Gift Cards Section"
+            name: "gift_cards"
+            widget: "object"
+            fields:
+              - { label: "Eyebrow Label",         name: "eyebrow",    widget: "string" }
+              - { label: "Heading",               name: "heading",    widget: "string" }
+              - { label: "Heading (italic part)", name: "heading_em", widget: "string" }
+              - { label: "Description",           name: "desc",       widget: "text" }
+
+          - label: "Final CTA Section"
+            name: "cta"
+            widget: "object"
+            fields:
+              - { label: "Eyebrow Label",         name: "eyebrow",  widget: "string" }
+              - { label: "Title",                 name: "title_1",  widget: "string" }
+              - { label: "Title (italic part)",   name: "title_em", widget: "string" }
+              - { label: "Sub Text",              name: "sub",      widget: "text" }
+
+
+  # ================================================================
+  # TREATMENTS PAGE
+  # ================================================================
+  - name: "treatments"
+    label: "Treatments Page"
+    files:
+
+      - file: "_data/treatments.yml"
+        label: "Treatments"
+        name: "treatments"
+        fields:
+          - { label: "Page Title (browser tab)", name: "meta_title", widget: "string" }
+          - { label: "Meta Description (SEO)",   name: "meta_desc",  widget: "text" }
+
+          - label: "Hero Section"
+            name: "hero"
+            widget: "object"
+            fields:
+              - { label: "Eyebrow Label",          name: "eyebrow",   widget: "string" }
+              - { label: "Title",                  name: "title",     widget: "string" }
+              - { label: "Title (italic part)",    name: "title_em",  widget: "string" }
+              - { label: "Description",            name: "desc",      widget: "text" }
+
+          - { label: "Booking Note (shown at top of list)", name: "intro_note", widget: "text" }
+
+          - label: "CTA Section"
+            name: "cta"
+            widget: "object"
+            collapsed: true
+            fields:
+              - { label: "Eyebrow",           name: "eyebrow",    widget: "string" }
+              - { label: "Heading",           name: "heading",    widget: "string" }
+              - { label: "Heading (italic)",  name: "heading_em", widget: "string" }
+              - { label: "Description",       name: "desc",       widget: "text" }
+
+          - label: "Treatment Categories"
+            name: "categories"
+            widget: "list"
+            hint: "Each category is a section (Facials, Body Massage, etc.). Add groups within for sub-sections like Brows / Lashes."
+            fields:
+              - { label: "ID (for anchor links, no spaces)",  name: "id",     widget: "string", hint: "e.g. facials, massage, wraps" }
+              - { label: "Section Number",                    name: "number", widget: "string", hint: "e.g. 01, 02, 03" }
+              - { label: "Category Name",                     name: "name",   widget: "string" }
+              - { label: "Introduction (optional)",           name: "intro",  widget: "text", required: false }
+              - label: "Treatment Groups"
+                name: "groups"
+                widget: "list"
+                hint: "Most categories have one group with a blank label. Beauty uses Brows / Lashes / Threading."
+                fields:
+                  - { label: "Group Label (leave blank for no sub-heading)", name: "label", widget: "string", required: false }
+                  - label: "Treatments"
+                    name: "items"
+                    widget: "list"
+                    fields:
+                      - { label: "Name",        name: "name",     widget: "string" }
+                      - { label: "Description", name: "desc",     widget: "text" }
+                      - { label: "Duration",    name: "duration", widget: "string", hint: "e.g. 60 min, 60 / 90 min" }
+                      - { label: "Price",       name: "price",    widget: "string", hint: "e.g. GHS 370, GHS 370 / 480" }
+
+
+  # ================================================================
+  # SPA PACKAGES PAGE
+  # ================================================================
+  - name: "packages"
+    label: "Spa Packages Page"
+    files:
+
+      - file: "_data/packages.yml"
+        label: "Spa Packages"
+        name: "packages"
+        fields:
+          - { label: "Page Title (browser tab)", name: "meta_title",   widget: "string" }
+          - { label: "Meta Description (SEO)",   name: "meta_desc",    widget: "text" }
+          - { label: "Sticky Deposit Bar Text",  name: "deposit_bar",  widget: "string", hint: "Shown fixed at top of page on scroll" }
+          - { label: "Booking Note",             name: "intro_note",   widget: "text" }
+
+          - label: "Hero Section"
+            name: "hero"
+            widget: "object"
+            fields:
+              - { label: "Eyebrow Label",       name: "eyebrow",  widget: "string" }
+              - { label: "Title",               name: "title",    widget: "string" }
+              - { label: "Title (italic part)", name: "title_em", widget: "string" }
+              - { label: "Description",         name: "desc",     widget: "text" }
+
+          - label: "CTA Section"
+            name: "cta"
+            widget: "object"
+            collapsed: true
+            fields:
+              - { label: "Eyebrow",           name: "eyebrow",    widget: "string" }
+              - { label: "Heading",           name: "heading",    widget: "string" }
+              - { label: "Heading (italic)",  name: "heading_em", widget: "string" }
+              - { label: "Description",       name: "desc",       widget: "text" }
+
+          - label: "Package Sections"
+            name: "sections"
+            widget: "list"
+            hint: "The three sections: Elemis Packages, Niobe Signature, Full Day Rituals"
+            fields:
+              - { label: "ID (anchor link)",   name: "id",     widget: "string" }
+              - { label: "Section Number",     name: "number", widget: "string" }
+              - { label: "Section Title",      name: "title",  widget: "string" }
+              - { label: "Introduction",       name: "intro",  widget: "text", required: false }
+              - label: "Sub-sections (Elemis only — leave empty for a flat list)"
+                name: "subsections"
+                widget: "list"
+                required: false
+                fields:
+                  - { label: "Sub-section Label", name: "label", widget: "string" }
+                  - label: "Packages"
+                    name: "packages"
+                    widget: "list"
+                    fields:
+                      - { label: "Name",         name: "name",         widget: "string" }
+                      - { label: "Duration",     name: "duration",     widget: "string" }
+                      - { label: "Price",        name: "price",        widget: "string" }
+                      - { label: "Description",  name: "desc",         widget: "text" }
+                      - { label: "Availability", name: "availability", widget: "string", hint: "e.g. East Legon · Cantonments" }
+              - label: "Packages (for sections without sub-sections)"
+                name: "packages"
+                widget: "list"
+                required: false
+                fields:
+                  - { label: "Name",         name: "name",         widget: "string" }
+                  - { label: "Duration",     name: "duration",     widget: "string" }
+                  - { label: "Price",        name: "price",        widget: "string" }
+                  - { label: "Description",  name: "desc",         widget: "text" }
+                  - { label: "Availability", name: "availability", widget: "string" }
+
+
+  # ================================================================
+  # ABOUT PAGE
+  # ================================================================
+  - name: "about"
+    label: "About Page"
+    files:
+
+      - file: "_data/about.yml"
+        label: "About"
+        name: "about"
+        fields:
+          - { label: "Page Title (browser tab)", name: "meta_title", widget: "string" }
+          - { label: "Meta Description (SEO)",   name: "meta_desc",  widget: "text" }
+
+          - label: "Hero Section"
+            name: "hero"
+            widget: "object"
+            fields:
+              - { label: "Eyebrow Label",       name: "eyebrow",  widget: "string" }
+              - { label: "Title",               name: "title",    widget: "string" }
+              - { label: "Title (italic part)", name: "title_em", widget: "string" }
+              - { label: "Description",         name: "desc",     widget: "text" }
+
+          - label: "Brand Story Section"
+            name: "story"
+            widget: "object"
+            fields:
+              - { label: "Eyebrow Label",        name: "eyebrow",  widget: "string" }
+              - { label: "Title — Line 1",        name: "title",    widget: "string" }
+              - { label: "Title — Line 2",        name: "title_2",  widget: "string" }
+              - { label: "Title — Line 3 (italic)", name: "title_em", widget: "string" }
+              - label: "Story Paragraphs"
+                name: "paragraphs"
+                widget: "list"
+                field: { label: "Paragraph", name: "paragraph", widget: "text" }
+
+          - label: "Credentials / At a Glance Section"
+            name: "credentials"
+            widget: "object"
+            fields:
+              - { label: "Eyebrow Label",    name: "eyebrow", widget: "string" }
+              - { label: "Section Heading",  name: "heading", widget: "string" }
+              - label: "Credential Cards"
+                name: "items"
+                widget: "list"
+                fields:
+                  - { label: "Large Number or Symbol", name: "number", widget: "string" }
+                  - { label: "Label",                  name: "label",  widget: "string" }
+                  - { label: "Description",            name: "body",   widget: "text" }
+
+          - label: "Approach / Values Section"
+            name: "approach"
+            widget: "object"
+            fields:
+              - { label: "Eyebrow Label",         name: "eyebrow",    widget: "string" }
+              - { label: "Heading",               name: "heading",    widget: "string" }
+              - { label: "Heading (italic part)", name: "heading_em", widget: "string" }
+              - label: "Values"
+                name: "values"
+                widget: "list"
+                fields:
+                  - { label: "Title", name: "title", widget: "string" }
+                  - { label: "Body",  name: "body",  widget: "text" }
+
+          - label: "Before You Visit Section"
+            name: "before_visit"
+            widget: "object"
+            fields:
+              - { label: "Section Heading", name: "heading", widget: "string" }
+              - label: "Items"
+                name: "items"
+                widget: "list"
+                fields:
+                  - { label: "Title", name: "title", widget: "string" }
+                  - { label: "Body",  name: "body",  widget: "text" }
+
+          - label: "CTA Section"
+            name: "cta"
+            widget: "object"
+            collapsed: true
+            fields:
+              - { label: "Eyebrow",           name: "eyebrow",  widget: "string" }
+              - { label: "Title",             name: "title",    widget: "string" }
+              - { label: "Title (italic)",    name: "title_em", widget: "string" }
+
+
+  # ================================================================
+  # CONTACT PAGE
+  # ================================================================
+  - name: "contact"
+    label: "Contact Page"
+    files:
+
+      - file: "_data/contact.yml"
+        label: "Contact"
+        name: "contact"
+        fields:
+          - { label: "Page Title (browser tab)", name: "meta_title", widget: "string" }
+          - { label: "Meta Description (SEO)",   name: "meta_desc",  widget: "text" }
+
+          - label: "Hero Section"
+            name: "hero"
+            widget: "object"
+            fields:
+              - { label: "Eyebrow Label",       name: "eyebrow",  widget: "string" }
+              - { label: "Title",               name: "title",    widget: "string" }
+              - { label: "Title (italic part)", name: "title_em", widget: "string" }
+              - { label: "Description",         name: "desc",     widget: "text" }
+
+          - label: "Contact Information"
+            name: "contact"
+            widget: "object"
+            fields:
+              - { label: "WhatsApp Label",    name: "whatsapp_label",  widget: "string" }
+              - { label: "WhatsApp Number",   name: "whatsapp_number", widget: "string" }
+              - { label: "WhatsApp URL",      name: "whatsapp_url",    widget: "string" }
+              - { label: "Locations Label",   name: "locations_label", widget: "string" }
+              - label: "Location List"
+                name: "locations"
+                widget: "list"
+                field: { label: "Location", name: "location", widget: "string" }
+              - { label: "Payment Label",    name: "payment_label",  widget: "string" }
+              - { label: "Payment Methods",  name: "payment_methods",widget: "text" }
+              - { label: "Deposit Note",     name: "deposit_note",   widget: "text" }
+              - label: "Bank Details"
+                name: "bank_details"
+                widget: "object"
+                fields:
+                  - { label: "Bank",           name: "bank",           widget: "string" }
+                  - { label: "Branch",         name: "branch",         widget: "string" }
+                  - { label: "Account Name",   name: "account_name",   widget: "string" }
+                  - { label: "Account Number", name: "account_number", widget: "string" }
+                  - { label: "Sort Code",      name: "sort_code",      widget: "string" }
+                  - { label: "SWIFT",          name: "swift",          widget: "string" }
+              - label: "Mobile Money"
+                name: "mobile_money"
+                widget: "object"
+                fields:
+                  - { label: "MTN Number",    name: "mtn",     widget: "string" }
+                  - { label: "Telecel Number",name: "telecel", widget: "string" }
+                  - { label: "Account Name",  name: "name",    widget: "string" }
+
+          - label: "Locations Section"
+            name: "locations_section"
+            widget: "object"
+            fields:
+              - { label: "Eyebrow Label",         name: "eyebrow",    widget: "string" }
+              - { label: "Heading",               name: "heading",    widget: "string" }
+              - { label: "Heading (italic part)", name: "heading_em", widget: "string" }
+              - label: "Location Cards"
+                name: "locations"
+                widget: "list"
+                fields:
+                  - { label: "City",   name: "city",   widget: "string" }
+                  - { label: "Name",   name: "name",   widget: "string" }
+                  - { label: "Services Available (one per line)", name: "detail", widget: "text" }
+
+          - label: "Booking Form"
+            name: "form"
+            widget: "object"
+            collapsed: true
+            fields:
+              - { label: "Form Heading", name: "heading", widget: "string" }
+
+
+  # ================================================================
+  # BOOKING PAGE
+  # ================================================================
+  - name: "booking"
+    label: "Booking Page"
+    files:
+      - label: "Booking Page"
+        name: "booking"
+        file: "_data/booking.yml"
+        fields:
+          - { label: "Page Title (browser tab)", name: "meta_title", widget: "string" }
+          - { label: "Meta Description",         name: "meta_desc",  widget: "text" }
+
+          - label: "Hero"
+            name: "hero"
+            widget: "object"
+            fields:
+              - { label: "Eyebrow",    name: "eyebrow",   widget: "string" }
+              - { label: "Title",      name: "title",     widget: "string" }
+              - { label: "Title (italic part)", name: "title_em", widget: "string" }
+              - { label: "Description", name: "desc",     widget: "text" }
+
+          - { label: "Deposit/Note Bar Text", name: "note", widget: "text" }
+
+          - label: "Locations"
+            name: "locations"
+            widget: "list"
+            fields:
+              - { label: "City",    name: "city",   widget: "string" }
+              - { label: "Name",    name: "name",   widget: "string" }
+              - { label: "Services (e.g. Facials · Massage · ...)", name: "detail", widget: "string" }
+              - { label: "Booking URL (SimpleSpa)", name: "url", widget: "string" }

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title></title>
+  <meta name="description" content="" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <style>
+    .deposit-notice {
+      position: fixed;
+      top: var(--nav-h);
+      left: 0; right: 0;
+      z-index: 90;
+      background: #2F241D;
+      color: rgba(247, 243, 236, 0.78);
+      text-align: center;
+      padding: 0.55rem var(--side);
+      font-family: var(--font-sans);
+      font-size: 0.5625rem;
+      font-weight: 400;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      pointer-events: none;
+      user-select: none;
+    }
+    .pkg-page-hero { padding-top: calc(clamp(4rem, 8vw, 7rem) + 2.125rem); }
+    .t-category__title {
+      font-family: var(--font-sans);
+      font-size: clamp(0.75rem, 1vw, 0.875rem);
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      line-height: 1.4;
+    }
+    .pkg-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto auto;
+      column-gap: 2rem;
+      row-gap: 0;
+      padding: 1.75rem 0;
+      border-bottom: 1px solid rgba(121, 138, 132, 0.15);
+      align-items: baseline;
+      transition: padding-left var(--t);
+    }
+    .pkg-row:hover { padding-left: 0.5rem; }
+    .pkg-row__name {
+      font-family: var(--font-serif);
+      font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+      font-weight: 300;
+      line-height: 1.25;
+      padding-bottom: 0.65rem;
+    }
+    .pkg-row__desc {
+      grid-column: 1 / -1;
+      font-size: 0.875rem;
+      opacity: 0.55;
+      line-height: 1.8;
+      max-width: 72ch;
+      padding-bottom: 0.9rem;
+    }
+    .pkg-row__dur {
+      font-size: 0.625rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      opacity: 0.38;
+      white-space: nowrap;
+      padding-bottom: 0.65rem;
+    }
+    .pkg-row__price {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 1.05rem;
+      white-space: nowrap;
+      padding-bottom: 0.65rem;
+    }
+    .pkg-row__book {
+      display: inline-block;
+      font-family: var(--font-sans);
+      font-size: 0.5625rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--pitch-black);
+      border-bottom: 1px solid rgba(33, 26, 18, 0.28);
+      padding-bottom: 1px;
+      white-space: nowrap;
+      transition: opacity var(--tf);
+      margin-bottom: 0.65rem;
+    }
+    .pkg-row__book:hover { opacity: 0.45; }
+    .pkg-row__avail {
+      grid-column: 1 / -1;
+      font-size: 0.6875rem;
+      opacity: 0.3;
+      letter-spacing: 0.02em;
+      padding-bottom: 0.1rem;
+    }
+    .pkg-sub-label {
+      display: block;
+      font-family: var(--font-serif);
+      font-size: clamp(0.9rem, 1.3vw, 1.1rem);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--pitch-black);
+      opacity: 0.38;
+      padding-top: clamp(1.75rem, 3.5vw, 2.75rem);
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid rgba(121, 138, 132, 0.12);
+      margin-bottom: 0;
+    }
+    @media (max-width: 700px) {
+      .pkg-row { grid-template-columns: 1fr auto; column-gap: 1.25rem; }
+      .pkg-row__dur { display: none; }
+      .pkg-row__price { grid-column: 2; grid-row: 1; }
+      .pkg-row__book  { grid-column: 1 / -1; grid-row: 3; margin-top: 0.1rem; margin-bottom: 0.5rem; }
+      .pkg-row__desc  { grid-row: 2; }
+      .pkg-row__avail { grid-row: 4; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="deposit-notice" role="note" aria-label="Booking information">
+    
+  </div>
+
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+  <div class="nav__inner">
+    <a href="/index.html" class="nav__logo"></a>
+    <ul class="nav__links" role="list">
+      <li><a href="/treatments.html" class="nav__link">Treatments</a></li>
+      <li><a href="/packages.html"   class="nav__link active">Spa Packages</a></li>
+      <li><a href="/about.html"      class="nav__link">About</a></li>
+      <li><a href="/contact.html"    class="nav__link">Contact</a></li>
+    </ul>
+    <a href="/booking.html" class="nav__book">Book Now</a>
+    <button class="nav__toggle" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="nav__mobile" role="dialog" aria-label="Mobile navigation">
+  <a href="/treatments.html" class="nav__mobile-link">Treatments</a>
+  <a href="/packages.html"   class="nav__mobile-link">Spa Packages</a>
+  <a href="/about.html"      class="nav__mobile-link">About</a>
+  <a href="/contact.html"    class="nav__mobile-link">Contact</a>
+  <a href="/booking.html" class="nav__mobile-cta">Book Now</a>
+</div>
+
+
+  <main>
+
+    <div class="page-hero pkg-page-hero">
+      <div class="page-hero__inner">
+        <span class="eyebrow"></span>
+        <h1 class="t-display t-lg page-hero__title">
+          <br><em></em>
+        </h1>
+        <p class="page-hero__desc"></p>
+      </div>
+    </div>
+
+
+    <section class="section">
+      <div class="wrap">
+        <div class="intro-note"></div>
+
+        
+
+      </div>
+    </section>
+
+
+    <section class="section section--sage">
+      <div class="wrap">
+        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 1.75rem;">
+          <span class="eyebrow" style="color: rgba(33,26,18,0.5);"></span>
+          <h2 class="t-display t-md fade-up"><br><em></em></h2>
+          <p class="body-lg fade-up d2" style="opacity: 0.65; max-width: 42ch;"></p>
+          <div class="fade-up d3" style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+            <a href="/booking.html" class="btn btn-onyx" data-book>Book a Package</a>
+            <a href="/treatments.html"   class="btn btn-sage">Individual Treatments</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer" role="contentinfo">
+  <div class="footer__grid">
+    <div>
+      <p class="footer__brand"></p>
+      <p class="footer__brand-desc"></p>
+    </div>
+    <div>
+      <p class="footer__col-title">Services</p>
+      <ul class="footer__links">
+        
+      </ul>
+    </div>
+    <div>
+      <p class="footer__col-title">Company</p>
+      <ul class="footer__links">
+        
+      </ul>
+    </div>
+    <div>
+      <p class="footer__col-title">Contact</p>
+      <ul class="footer__links">
+        
+      </ul>
+    </div>
+  </div>
+  <div class="footer__bottom">
+    <p class="footer__copy">&copy; </p>
+    <div class="footer__legal">
+      <a href="#" class="footer__legal-link">Privacy</a>
+      <a href="#" class="footer__legal-link">Terms</a>
+    </div>
+  </div>
+</footer>
+
+  <script type="application/json" id="booking-locations"></script>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

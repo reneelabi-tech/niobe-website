@@ -1,0 +1,543 @@
+/* ============================================================
+   NIOBE SPA — packages.css
+   Page-specific stylesheet for the Spa Packages page.
+   Links AFTER styles.css to override base custom properties.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap');
+
+/* ============================================================
+   PALETTE OVERRIDE
+   ============================================================ */
+
+:root {
+  --bg:          #F7F3EC;
+  --bg-alt:      #E8DED1;
+  --card-bg:     #FDFBF7;
+  --text:        #2F241D;
+  --text-sec:    #6D5B4E;
+  --border:      #D9CFC3;
+  --btn-fill:    #5A4638;
+  --btn-hover:   #3E3027;
+  --accent:      #B8B09D;
+  --espresso:    #2F241D;
+  --ivory:       #F7F3EC;
+
+  /* Override base tokens */
+  --pitch-black: #2F241D;
+  --onyx:        #2F241D;
+  --dry-sage:    #E8DED1;
+  --grey-olive:  #B8B09D;
+}
+
+/* ============================================================
+   BASE RESET FOR THIS PAGE
+   ============================================================ */
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ============================================================
+   NAVIGATION — warm palette override
+   ============================================================ */
+
+.nav {
+  background: var(--bg);
+  border-bottom-color: var(--border);
+}
+
+.nav__logo {
+  color: var(--text);
+  letter-spacing: 0.22em;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  text-transform: uppercase;
+}
+
+.nav__link {
+  color: var(--text);
+}
+
+.nav__book {
+  background: var(--btn-fill);
+  color: var(--bg);
+  border: none;
+}
+.nav__book:hover {
+  background: var(--btn-hover);
+}
+
+.nav__mobile {
+  background: var(--bg);
+  border-top-color: var(--border);
+}
+.nav__mobile-link { color: var(--text); }
+.nav__mobile-cta  { background: var(--btn-fill); color: var(--bg); }
+
+.nav__toggle span { background: var(--text); }
+
+/* ============================================================
+   HERO — ivory, refined
+   ============================================================ */
+
+.pkg-hero {
+  background: var(--bg);
+  padding: clamp(5rem, 10vw, 8rem) clamp(1.25rem, 5vw, 4rem) clamp(3.5rem, 6vw, 5.5rem);
+  border-bottom: 1px solid var(--border);
+}
+
+.pkg-hero__inner {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.pkg-hero__label {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1.5rem;
+}
+
+.pkg-hero__title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 300;
+  font-size: clamp(3rem, 7vw, 6rem);
+  line-height: 1.06;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  margin-bottom: 1.25rem;
+}
+
+.pkg-hero__desc {
+  font-size: 0.9375rem;
+  line-height: 1.85;
+  color: var(--text-sec);
+  max-width: 52ch;
+}
+
+
+/* ============================================================
+   STICKY DEPOSIT BAR
+   ============================================================ */
+
+.deposit-bar {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  background: var(--espresso);
+  color: var(--bg);
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.75rem 2rem;
+  border-radius: 100px;
+  box-shadow: 0 4px 28px rgba(47, 36, 29, 0.22), 0 1px 4px rgba(47, 36, 29, 0.15);
+  white-space: nowrap;
+  font-family: var(--font-sans);
+  font-size: 0.625rem;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.deposit-bar.hidden {
+  opacity: 0;
+  transform: translateX(-50%) translateY(8px);
+  pointer-events: none;
+}
+
+.deposit-bar__sep {
+  opacity: 0.3;
+  font-size: 0.5rem;
+}
+
+/* Mobile: full-width slim bar at bottom */
+@media (max-width: 640px) {
+  .deposit-bar {
+    left: 1rem; right: 1rem;
+    transform: none;
+    border-radius: 8px;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    justify-content: center;
+    bottom: 1rem;
+    padding: 0.8rem 1.25rem;
+  }
+  .deposit-bar.hidden {
+    transform: translateY(8px);
+  }
+  .deposit-bar__sep { display: none; }
+}
+
+
+/* ============================================================
+   PACKAGE SECTIONS — alternating backgrounds
+   ============================================================ */
+
+.pkg-section {
+  padding: clamp(4rem, 8vw, 7rem) clamp(1.25rem, 5vw, 4rem);
+}
+
+.pkg-section--ivory  { background: var(--bg); }
+.pkg-section--stone  { background: var(--bg-alt); }
+
+.pkg-section__inner {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.pkg-section__header {
+  margin-bottom: clamp(2.5rem, 5vw, 4rem);
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.pkg-section__label {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.6rem;
+}
+
+.pkg-section__title {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+
+/* ============================================================
+   PACKAGE CARD GRID
+   ============================================================ */
+
+.pkg-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(1.25rem, 2vw, 2rem);
+}
+
+@media (max-width: 780px) {
+  .pkg-grid { grid-template-columns: 1fr; }
+}
+
+
+/* ============================================================
+   PACKAGE CARD
+   ============================================================ */
+
+.pkg-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: clamp(1.75rem, 3vw, 2.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  box-shadow: 0 2px 10px rgba(47, 36, 29, 0.05);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.pkg-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(47, 36, 29, 0.10);
+}
+
+/* On stone background, cards need a more distinct separation */
+.pkg-section--stone .pkg-card {
+  box-shadow: 0 2px 12px rgba(47, 36, 29, 0.07);
+}
+.pkg-section--stone .pkg-card:hover {
+  box-shadow: 0 8px 30px rgba(47, 36, 29, 0.12);
+}
+
+.pkg-card__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.pkg-card__name {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(1.15rem, 1.8vw, 1.5rem);
+  line-height: 1.2;
+  color: var(--text);
+}
+
+.pkg-card__meta {
+  font-family: var(--font-sans);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-sec);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pkg-card__meta-sep {
+  opacity: 0.4;
+}
+
+.pkg-card__price {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.pkg-card__divider {
+  width: 32px;
+  height: 1px;
+  background: var(--border);
+}
+
+.pkg-card__desc {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.82;
+  color: var(--text-sec);
+  flex: 1;
+}
+
+.pkg-card__footer {
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--border);
+  margin-top: auto;
+}
+
+.pkg-btn {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  background: var(--btn-fill);
+  color: var(--bg);
+  padding: 0.75rem 1.75rem;
+  border-radius: 2px;
+  border: 1px solid var(--btn-fill);
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease;
+  text-decoration: none;
+}
+
+.pkg-btn:hover {
+  background: var(--btn-hover);
+  border-color: var(--btn-hover);
+}
+
+
+/* ============================================================
+   CTA SECTION — espresso brown
+   ============================================================ */
+
+.pkg-cta {
+  background: var(--espresso);
+  padding: clamp(5rem, 10vw, 8rem) clamp(1.25rem, 5vw, 4rem);
+  text-align: center;
+}
+
+.pkg-cta__inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.pkg-cta__label {
+  font-family: var(--font-sans);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(247, 243, 236, 0.35);
+}
+
+.pkg-cta__title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 300;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  line-height: 1.1;
+  color: var(--bg);
+  max-width: 15ch;
+}
+
+.pkg-cta__sub {
+  font-size: 0.9375rem;
+  line-height: 1.8;
+  color: rgba(247, 243, 236, 0.5);
+  max-width: 44ch;
+}
+
+.pkg-cta__actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding-top: 0.5rem;
+}
+
+.pkg-cta-btn {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 0.9rem 2.25rem;
+  border: 1px solid;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.pkg-cta-btn--fill {
+  background: var(--bg);
+  color: var(--espresso);
+  border-color: var(--bg);
+}
+.pkg-cta-btn--fill:hover {
+  background: transparent;
+  color: var(--bg);
+}
+
+.pkg-cta-btn--outline {
+  background: transparent;
+  color: rgba(247, 243, 236, 0.7);
+  border-color: rgba(247, 243, 236, 0.25);
+}
+.pkg-cta-btn--outline:hover {
+  color: var(--bg);
+  border-color: rgba(247, 243, 236, 0.6);
+}
+
+
+/* ============================================================
+   FOOTER — warm, simplified
+   ============================================================ */
+
+.pkg-footer {
+  background: var(--espresso);
+  color: var(--bg);
+  padding: clamp(3rem, 6vw, 4.5rem) clamp(1.25rem, 5vw, 4rem) clamp(1.5rem, 2.5vw, 2rem);
+  border-top: 1px solid rgba(247, 243, 236, 0.07);
+}
+
+.pkg-footer__grid {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  gap: clamp(2rem, 4vw, 4rem);
+  padding-bottom: clamp(2rem, 3.5vw, 3rem);
+  border-bottom: 1px solid rgba(247, 243, 236, 0.07);
+  margin-bottom: clamp(1.5rem, 2vw, 2rem);
+}
+
+.pkg-footer__brand {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--bg);
+  margin-bottom: 0.75rem;
+}
+
+.pkg-footer__tagline {
+  font-size: 0.875rem;
+  line-height: 1.75;
+  color: rgba(247, 243, 236, 0.35);
+  max-width: 26ch;
+}
+
+.pkg-footer__col-title {
+  font-size: 0.55rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(247, 243, 236, 0.3);
+  margin-bottom: 1rem;
+}
+
+.pkg-footer__links { display: flex; flex-direction: column; gap: 0.5rem; }
+.pkg-footer__link  {
+  font-size: 0.875rem;
+  color: rgba(247, 243, 236, 0.5);
+  text-decoration: none;
+  transition: color 0.18s ease;
+}
+.pkg-footer__link:hover { color: var(--bg); }
+
+.pkg-footer__bottom {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.pkg-footer__copy {
+  font-size: 0.75rem;
+  color: rgba(247, 243, 236, 0.18);
+}
+
+.pkg-footer__legal {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.pkg-footer__legal-link {
+  font-size: 0.75rem;
+  color: rgba(247, 243, 236, 0.18);
+  text-decoration: none;
+  transition: color 0.18s ease;
+}
+.pkg-footer__legal-link:hover { color: rgba(247, 243, 236, 0.5); }
+
+@media (max-width: 900px) {
+  .pkg-footer__grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 540px) {
+  .pkg-footer__grid { grid-template-columns: 1fr; }
+}
+
+
+/* ============================================================
+   FADE ANIMATIONS (matches base styles.css)
+   ============================================================ */
+
+.fade-up {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+.fade-up.in-view { opacity: 1; transform: none; }
+.fade-in { opacity: 0; transition: opacity 0.65s ease; }
+.fade-in.in-view { opacity: 1; }
+
+.d1 { transition-delay: 0.07s; }
+.d2 { transition-delay: 0.14s; }
+.d3 { transition-delay: 0.21s; }

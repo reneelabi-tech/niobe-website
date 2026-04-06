@@ -9,10 +9,10 @@ module.exports = function (eleventyConfig) {
 
   // Configure Nunjucks with autoescape enabled so plain text values
   // are safe, and use | safe filter only for fields containing HTML.
-  let nunjucksEnv = nunjucks.configure(".", {
-    autoescape: true,
-    throwOnUndefined: false,
-  });
+  let nunjucksEnv = new nunjucks.Environment(
+    new nunjucks.FileSystemLoader([".", "_includes"]),
+    { autoescape: true, throwOnUndefined: false }
+  );
   eleventyConfig.setLibrary("njk", nunjucksEnv);
 
   // JSON serialisation filter for embedding data in <script> tags
