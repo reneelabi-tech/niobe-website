@@ -16,6 +16,7 @@ contact:
   locations:
     - "East Legon, Accra"
     - "Cantonments, Accra"
+    - "African Regent Hotel, Accra"
     - "Community 18, Tema"
     - "Alisa Hotel, Tema"
 
@@ -48,6 +49,9 @@ locations_section:
     - city: "Accra"
       name: "Cantonments"
       detail: "Facials · Body Massage · Wraps & Scrubs · Steam · Sauna · Jacuzzi · Nails · Beauty · Hair Removal · Spa Packages"
+    - city: "Accra"
+      name: "African Regent Hotel"
+      detail: "Facials · Body Massage · Nails · Beauty · Hair Removal · Spa Packages"
     - city: "Tema"
       name: "Community 18"
       detail: "Facials · Body Massage · Wraps & Scrubs · Steam · Sauna · Nails · Beauty · Hair Removal · Spa Packages"

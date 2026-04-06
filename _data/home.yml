@@ -8,17 +8,17 @@ announce:
 
 hero:
   eyebrow: "Award-winning spa & salon"
-  title_1: "Niobe Beauty."
-  title_2: "Five Locations."
-  title_em: "One Standard."
-  subtitle: "Award-winning spa and salon across Accra and Tema. Over twenty years of expert care."
+  title_1: "The Standard in"
+  title_2: "Skin, Body"
+  title_em: "and Beauty."
+  subtitle: "Award-winning spa and salon. Five locations across Accra and Tema."
 
 intro:
   quote_1: "Not just a spa."
   quote_2: "A standard of care"
   quote_em: "you can rely on."
-  para_1: "Niobe Beauty has been one of Ghana's leading spa and salon destinations for over two decades. Across five locations in Accra and Tema, we offer a consistently high standard of treatment, technique and attention."
-  para_2: "We work with Elemis — one of the world's most respected professional skincare brands — alongside a full menu of body treatments, hammam ceremonies, beauty services and thermal facilities. Every session is tailored to the individual."
+  para_1: "Niobe Beauty is an upscale salon and spa with five locations across Greater Accra and Tema. Since opening, we have built a reputation for precise, attentive treatments delivered by trained therapists using Elemis, Murad and other professional-grade products. Whether you are here for a thirty-minute facial or a full day of care, the experience is the same: considered service, clean spaces and results you can see and feel."
+  para_2: "Winner of the World Luxury Spa Award, Niobe is where beauty, wellness and personal care are taken seriously."
 
 categories_section:
   eyebrow: "Treatments"
@@ -74,13 +74,13 @@ packages_section:
       duration: "Full ceremony"
 
 why:
-  eyebrow: "Over twenty years"
-  number_display: "20+"
-  feature_text: "Years of expertise across Accra and Tema."
+  eyebrow: "World Luxury Spa Award winner"
+  number_display: "5"
+  feature_text: "Locations across Accra and Tema."
   award_tags:
-    - "Award-winning spa and salon"
+    - "World Luxury Spa Award winner"
     - "Certified Elemis partner"
-    - "Five locations across Greater Accra"
+    - "Five locations across Greater Accra and Tema"
     - "5% group discount for two or more guests"
   heading: "Why choose Niobe"
   items:
@@ -107,4 +107,4 @@ cta:
   eyebrow: "Ready to visit"
   title_1: "Five locations."
   title_em: "Book any of them."
-  sub: "East Legon · Cantonments · Community 18 · Alisa Hotel Tema. A 100% non-refundable deposit is required to secure your appointment."
+  sub: "East Legon · Cantonments · Community 18 · African Regent Hotel · Alisa Hotel Tema. A 100% non-refundable deposit is required to secure your appointment."

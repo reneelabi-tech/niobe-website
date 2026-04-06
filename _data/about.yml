@@ -9,30 +9,30 @@ hero:
 
 story:
   eyebrow: "Our Story"
-  title: "Built over"
-  title_2: "two decades"
-  title_em: "in Ghana"
+  title: "Founded on a"
+  title_2: "straightforward"
+  title_em: "idea"
   paragraphs:
-    - "Niobe Beauty has been one of Ghana's leading spa and salon destinations for over twenty years. What began as a single location has grown into five — across East Legon, Cantonments, Community 18 and Alisa Hotel Tema — each one maintaining the same level of care and professional standard that built the original reputation."
-    - "We are an award-winning business, and a certified professional partner of Elemis — one of the world's most respected spa and skincare brands. Elemis products used in our treatments are professional-grade formulations not available in general retail, and our therapists are trained to the same standard the brand requires globally."
-    - "We offer a comprehensive menu: Elemis facials and body treatments, full-body massage in multiple formats, a complete hammam and Turkish bath programme, body wraps and scrubs, thermal facilities, beauty services, nails, and hair removal. Across all of it, the approach is consistent: treatments are adapted to the individual, not applied from a fixed template."
-    - "We take pride in the longevity of our client relationships, many of which span years and decades. That kind of trust is built through consistency, through the quality of the team, and through not cutting corners on what matters."
+    - "Niobe Beauty was founded on a straightforward idea: that personal care, done well, should be one of the most reliable parts of your routine. Not rushed, not impersonal, not left to chance."
+    - "From a single salon, we have grown to five locations across Accra and Tema — East Legon, Cantonments, Community 18, African Regent Hotel and Alisa Hotel Tema — each staffed by trained therapists and aestheticians who understand skin, muscle and the importance of getting the details right. Our treatments are built around professional-grade products from Elemis, Murad and other respected brands, and every service follows a consistent standard regardless of which branch you visit."
+    - "We invest continuously in training and technique. Our therapists are educated in the latest Elemis and BIOTEC protocols, CACI technology, advanced peels and specialist bodywork. That ongoing commitment to skill is what allows us to offer a menu that ranges from a thirty-minute booster facial to a five-hour spa journey, and to deliver each one with the same level of care."
+    - "Niobe is a World Luxury Spa Award winner, but what matters more to us is that you leave feeling genuinely better than when you arrived. That is the standard we hold ourselves to, every day, at every location."
 
 credentials:
   eyebrow: "By the numbers"
   heading: "Niobe at a glance"
   items:
-    - number: "20+"
-      label: "Years of experience"
-      body: "Over two decades as one of Ghana's leading spa and salon destinations."
     - number: "5"
       label: "Locations"
-      body: "Across Accra and Tema — East Legon, Cantonments, Community 18 and Alisa Hotel Tema."
+      body: "East Legon, Cantonments, Community 18, African Regent Hotel and Alisa Hotel Tema."
     - number: "Elemis"
       label: "Certified partner"
       body: "Certified professional partner of one of the world's most respected spa skincare brands."
+    - number: "Murad"
+      label: "Professional stockist"
+      body: "Dermatologist-developed clinical skincare used across our facial treatments."
     - number: "★"
-      label: "Award-winning"
+      label: "World Luxury Spa Award"
       body: "Recognised for the quality of our treatments, service and professional standards."
 
 approach:
@@ -52,14 +52,16 @@ approach:
 before_visit:
   heading: "Before you visit"
   items:
-    - title: "Booking & deposit"
-      body: "A 100% non-refundable deposit is required for all bookings. This secures your appointment time and covers preparation by your therapist. We are unable to hold appointment slots without a confirmed deposit."
-    - title: "Group & couple bookings"
-      body: "A 5% discount applies when two or more guests book together. This applies across most treatments and packages. Please let us know when making your enquiry."
-    - title: "Pregnancy treatments"
-      body: "Our Elemis Peaceful Pregnancy Massage is adapted for pregnancy from the second trimester onward. Please inform us when booking. Certain treatments are not suitable during pregnancy — our team will advise."
-    - title: "What to expect"
-      body: "Your therapist will discuss your preferences and any areas of concern at the start of your session. You do not need to prepare anything in advance — just arrive at the agreed time."
+    - title: "Booking in advance"
+      body: "We recommend booking in advance to secure your preferred time and treatment. While extras can often be added on the day, the best way to ensure everything is available is to call ahead and book your full appointment."
+    - title: "Arrival"
+      body: "Please arrive at reception at least fifteen minutes before your appointment. This allows time for a brief consultation and for you to be shown to your locker, where a bathrobe, slippers and towels will be provided. Late arrivals may result in a shortened treatment time."
+    - title: "Spa etiquette"
+      body: "Our spa is a shared space. Please switch mobile phones to silent before entering and store them in your locker. Smoking is not permitted on the premises, and outside food and drinks may not be brought in. Louder conversation should be kept to the lounge areas so that other guests can rest undisturbed."
+    - title: "What to bring"
+      body: "Bring any gift vouchers or booking confirmation for check-in. Robes, disposable underwear, head coverings and towels are provided. You are welcome to bring your own swimwear or flip-flops if you prefer. All personal belongings can be stored securely in your locker."
+    - title: "Deposit & group bookings"
+      body: "A 100% non-refundable deposit is required for all bookings. A 5% discount applies when two or more guests book together — please let us know when making your enquiry."
 
 cta:
   eyebrow: "Visit us"
