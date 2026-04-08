@@ -286,7 +286,7 @@ exports.handler = async function (event) {
       'Branch':                  formData.branch || '',
       'Booking Type':            formData.booking_type || '',
       'Health Flags':            healthFlags.length > 0 ? healthFlags.join('\n') : 'None declared',
-      'Full Form Data':          buildReadableSummary(formData),
+      'Full Form Data':          JSON.stringify(formData),
       'Submission Date':         today,
       'Photo Consent':           formData.photo_consent || '',
       'How Did You Hear':        formData.how_did_you_hear || '',
