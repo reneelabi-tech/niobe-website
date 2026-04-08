@@ -2544,46 +2544,36 @@
       var svcSelect = document.getElementById('select-treatment');
       var pkgSelect = document.getElementById('select-package');
 
-      // Group services by their first section
-      var groups = {};
+      // Services — categories only
       Object.keys(NIOBE_CONSULTATION.services).forEach(function (key) {
         var svc = NIOBE_CONSULTATION.services[key];
-        var grp = svc.sections[0];
-        if (!groups[grp]) groups[grp] = [];
-        groups[grp].push({ key: key, label: svc.label });
+        var opt = document.createElement('option');
+        opt.value = key;
+        opt.textContent = svc.label;
+        svcSelect.appendChild(opt);
       });
 
-      var groupLabels = {
-        'facial':       'Facials',
-        'massage':      'Massage',
-        'waxing':       'Waxing',
-        'brows-lashes': 'Brows & Lashes',
-        'steam-sauna':  'Steam & Sauna',
-        'body':         'Body Treatments',
-      };
-
-      NIOBE_CONSULTATION.sectionOrder.forEach(function (section) {
-        if (!groups[section]) return;
-        var optgroup = document.createElement('optgroup');
-        optgroup.label = groupLabels[section] || section;
-        groups[section].forEach(function (item) {
-          var opt = document.createElement('option');
-          opt.value = item.key;
-          opt.textContent = item.label;
-          optgroup.appendChild(opt);
-        });
-        svcSelect.appendChild(optgroup);
-      });
-
-      // Also add hammam under body if grouped separately
-      // (already covered since hammam's first section is steam-sauna)
-
-      // Packages
+      // Packages — grouped
       var pkgGroups = {
-        'Elemis Packages':    ['elemis-bliss', 'elemis-indulgence', 'elemis-refresh'],
-        'Niobe Signature':    ['spa-escape-journey', 'pure-indulgence', 'sublime', 'twos-company'],
-        'Hammam Ceremonies':  ['hammam-1001', 'hammam-foundation'],
-        'Easter 2026':        ['easter-first-light', 'easter-soft-reawakening', 'easter-in-full-bloom', 'easter-gentle-return'],
+        'Elemis Packages': [
+          'elemis-couture-touch', 'elemis-couture-biotec', 'elemis-recharge',
+          'elemis-renew', 'elemis-bliss', 'elemis-body-detox',
+          'elemis-beautiful-bride', 'elemis-peaceful-pregnancy',
+          'elemis-love-solo', 'elemis-love-two',
+        ],
+        'Niobe Signature': [
+          'time-out', 'indulge', 'relax', 'spa-alone-treat', 'spa-together',
+        ],
+        'Hammam Ceremonies': [
+          'hammam-ritual', 'hammam-turkish-bath', 'hammam-1001',
+        ],
+        'Full Day Rituals': [
+          'ultimate-spa-escape', 'serenity', 'spa-escape-journey',
+        ],
+        'Easter 2026': [
+          'easter-first-light', 'easter-soft-reawakening',
+          'easter-in-full-bloom', 'easter-gentle-return',
+        ],
       };
 
       Object.keys(pkgGroups).forEach(function (grpLabel) {
