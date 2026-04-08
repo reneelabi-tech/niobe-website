@@ -3,6 +3,13 @@
   publish = "."
   functions = "netlify/functions"
 
+[template.environment]
+  NETLIFY_EMAILS_DIRECTORY = "netlify/email-templates"
+
+[identity]
+  [identity.emails]
+    confirmation_redirect_url = "/client-hub.html"
+
 [[headers]]
   for = "/*"
   [headers.values]
