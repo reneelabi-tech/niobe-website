@@ -217,11 +217,13 @@ button, input, textarea, select { font-family: inherit; font-size: inherit; }
 .nav__mobile.open { opacity: 1; pointer-events: all; }
 
 .nav__mobile-link {
-  font-family: var(--font-serif);
-  font-size: 1.9rem;
-  font-weight: 300;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
   color: var(--espresso);
-  padding: 0.8rem 0;
+  padding: 0.9rem 0;
   border-bottom: 1px solid rgba(47,36,29,0.08);
   display: block;
   opacity: 0.7;
