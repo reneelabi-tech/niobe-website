@@ -551,30 +551,33 @@
       opacity: 1 !important;
       color: var(--espresso) !important;
       font-weight: 700 !important;
-      font-size: 0.75rem !important;
+      font-size: 0.85rem !important;
     }
     .cf-yn-question {
-      font-size: 0.95rem !important;
+      font-size: 1.05rem !important;
       font-weight: 600 !important;
       color: var(--espresso) !important;
     }
     .cf-section-block__title {
       font-weight: 700 !important;
       color: var(--espresso) !important;
+      font-size: clamp(1.25rem, 2.5vw, 1.55rem) !important;
     }
     .cf-sub-label {
       opacity: 1 !important;
       color: var(--espresso) !important;
       font-weight: 700 !important;
-      font-size: 0.65rem !important;
+      font-size: 0.75rem !important;
     }
     .cf-consent-item label {
       font-weight: 500 !important;
       color: var(--espresso) !important;
+      font-size: 1rem !important;
     }
     .form-input, .form-textarea, .form-select {
       color: var(--espresso) !important;
       font-weight: 500 !important;
+      font-size: 1.05rem !important;
     }
 
     /* ── Phone prefix wrapper ────────────────────────────────── */
@@ -585,13 +588,17 @@
       transition: border-color 0.2s;
     }
     .cf-phone-wrap:focus-within { border-color: var(--espresso); }
-    .cf-phone-prefix {
-      font-size: 0.9375rem;
+    .cf-phone-country {
+      border: none;
+      background: none;
+      font-size: 0.9rem;
       font-weight: 600;
       color: var(--espresso);
-      padding: 0.7rem 0.5rem 0.7rem 0;
-      white-space: nowrap;
-      user-select: none;
+      padding: 0.7rem 0.25rem 0.7rem 0;
+      cursor: pointer;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
     }
     .cf-phone-wrap .form-input {
       border-bottom: none !important;
@@ -800,7 +807,22 @@
             <div class="cf-field-group">
               <label class="form-label" for="f-phone">Phone number <span aria-hidden="true">*</span></label>
               <div class="cf-phone-wrap">
-                <span class="cf-phone-prefix">+233</span>
+                <select class="cf-phone-country" id="f-phone-code" aria-label="Country code">
+                  <option value="+233" selected>+233 🇬🇭</option>
+                  <option value="+234">+234 🇳🇬</option>
+                  <option value="+225">+225 🇨🇮</option>
+                  <option value="+221">+221 🇸🇳</option>
+                  <option value="+237">+237 🇨🇲</option>
+                  <option value="+27">+27 🇿🇦</option>
+                  <option value="+254">+254 🇰🇪</option>
+                  <option value="+44">+44 🇬🇧</option>
+                  <option value="+1">+1 🇺🇸</option>
+                  <option value="+33">+33 🇫🇷</option>
+                  <option value="+49">+49 🇩🇪</option>
+                  <option value="+31">+31 🇳🇱</option>
+                  <option value="+61">+61 🇦🇺</option>
+                  <option value="+971">+971 🇦🇪</option>
+                </select>
                 <input class="form-input" type="tel" id="f-phone" name="phone_number" required placeholder="XX XXX XXXX" autocomplete="tel" />
               </div>
             </div>
@@ -810,7 +832,22 @@
             <div class="cf-field-group">
               <label class="form-label" for="f-whatsapp">WhatsApp number</label>
               <div class="cf-phone-wrap">
-                <span class="cf-phone-prefix">+233</span>
+                <select class="cf-phone-country" id="f-whatsapp-code" aria-label="Country code">
+                  <option value="+233" selected>+233 🇬🇭</option>
+                  <option value="+234">+234 🇳🇬</option>
+                  <option value="+225">+225 🇨🇮</option>
+                  <option value="+221">+221 🇸🇳</option>
+                  <option value="+237">+237 🇨🇲</option>
+                  <option value="+27">+27 🇿🇦</option>
+                  <option value="+254">+254 🇰🇪</option>
+                  <option value="+44">+44 🇬🇧</option>
+                  <option value="+1">+1 🇺🇸</option>
+                  <option value="+33">+33 🇫🇷</option>
+                  <option value="+49">+49 🇩🇪</option>
+                  <option value="+31">+31 🇳🇱</option>
+                  <option value="+61">+61 🇦🇺</option>
+                  <option value="+971">+971 🇦🇪</option>
+                </select>
                 <input class="form-input" type="tel" id="f-whatsapp" name="whatsapp_number" placeholder="If different from above" />
               </div>
             </div>
@@ -2819,8 +2856,10 @@
       formData.full_name                      = document.getElementById('f-full-name').value.trim();
       formData.date_of_birth                  = document.getElementById('f-dob').value;
       formData.gender                         = document.getElementById('f-gender').value;
-      formData.phone_number                   = document.getElementById('f-phone').value.trim();
-      formData.whatsapp_number                = document.getElementById('f-whatsapp').value.trim();
+      var phoneCode    = document.getElementById('f-phone-code').value;
+      var whatsappCode = document.getElementById('f-whatsapp-code').value;
+      formData.phone_number    = document.getElementById('f-phone').value.trim()    ? phoneCode    + ' ' + document.getElementById('f-phone').value.trim()    : '';
+      formData.whatsapp_number = document.getElementById('f-whatsapp').value.trim() ? whatsappCode + ' ' + document.getElementById('f-whatsapp').value.trim() : '';
       formData.email_address                  = document.getElementById('f-email').value.trim();
       formData.home_address                   = document.getElementById('f-address').value.trim();
       formData.wellness_goal                  = document.getElementById('f-wellness-goal').value.trim();

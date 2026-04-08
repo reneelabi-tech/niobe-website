@@ -13,7 +13,6 @@ const NIOBE_CONSULTATION = {
     'waxing':     { label: 'Hair Removal / Waxing', sections: ['waxing'] },
     'nails':      { label: 'Nails',                 sections: [] },
     'thermal':    { label: 'Thermal Facilities',    sections: ['steam-sauna'] },
-    'hammam':     { label: 'Hammam',                sections: ['steam-sauna', 'body'] },
   },
 
   packages: {
