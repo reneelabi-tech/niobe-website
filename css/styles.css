@@ -446,6 +446,8 @@ button, input, textarea, select { font-family: inherit; font-size: inherit; }
   object-fit: cover;
   object-position: center center;
   z-index: 0;
+  transform: scale(2.2);
+  transform-origin: center center;
 }
 
 /* All hero content must sit above the video */
