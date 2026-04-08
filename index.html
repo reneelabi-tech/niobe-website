@@ -659,9 +659,12 @@
       function closeModal() {
         modal.hidden = true;
         document.body.style.overflow = '';
+        sessionStorage.setItem('niobe_easter_shown', '1');
       }
 
-      setTimeout(openModal, 1200);
+      if (!sessionStorage.getItem('niobe_easter_shown')) {
+        setTimeout(openModal, 1200);
+      }
 
       closeBtn.addEventListener('click', closeModal);
       backdrop.addEventListener('click', closeModal);

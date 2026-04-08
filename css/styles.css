@@ -205,6 +205,7 @@ button, input, textarea, select { font-family: inherit; font-size: inherit; }
   position: fixed;
   top: var(--nav-h);
   left: 0; right: 0;
+  bottom: 0;
   background: var(--parchment);
   border-top: 1px solid rgba(47,36,29,0.08);
   padding: 2rem var(--side) 3rem;
@@ -213,6 +214,8 @@ button, input, textarea, select { font-family: inherit; font-size: inherit; }
   opacity: 0;
   pointer-events: none;
   transition: opacity var(--t);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .nav__mobile.open { opacity: 1; pointer-events: all; }
 
@@ -431,14 +434,6 @@ button, input, textarea, select { font-family: inherit; font-size: inherit; }
   background-position: center 35%;
   background-attachment: fixed;
   position: relative;
-}
-/* iOS/mobile: background-attachment:fixed is broken on Safari — disable it */
-@media (max-width: 1024px) {
-  .hero-sequence {
-    background-attachment: scroll;
-    background-size: cover;
-    background-position: center center;
-  }
 }
 
 /* Stage 1: Logo + nav — visible on load, scrolls off top naturally */
