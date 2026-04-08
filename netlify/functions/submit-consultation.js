@@ -315,6 +315,25 @@ exports.handler = async function (event) {
       return { statusCode: 502, body: 'Failed to save record' };
     }
 
+    const result  = await response.json();
+    const recordId = result.records && result.records[0] && result.records[0].id;
+
+    // Patch the record with its own view link
+    if (recordId) {
+      const viewUrl = `https://niobebeauty.netlify.app/.netlify/functions/view-consultation?id=${recordId}`;
+      await fetch(
+        `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(table)}/${recordId}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ fields: { 'Form Summary Link': viewUrl } }),
+        }
+      );
+    }
+
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
