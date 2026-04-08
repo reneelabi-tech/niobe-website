@@ -98,9 +98,7 @@ exports.handler = async function (event) {
       'Skin Type':                SKIN_TYPE_LABELS[formData.facial_skin_type] || formData.facial_skin_type || '',
       'Allergies/Conditions':     formData.health_allergies_notes || (formData.health_allergies === 'yes' ? 'Yes — see Health Flags' : 'None'),
       'Medication Details':       formData.health_medications_notes || (formData.health_medications === 'yes' ? 'Yes — see Health Flags' : 'None'),
-      'Pregnancy/Breastfeeding':  formData.health_pregnant === 'yes'
-                                    ? ('Yes' + (formData.health_pregnant_notes ? ': ' + formData.health_pregnant_notes : ''))
-                                    : 'No',
+      'Pregnancy/Breastfeeding':  formData.health_pregnant === 'yes',
       'Medical Conditions':       formData.general_health_notes || 'None',
       'Consultation Completed':   true,
       'Signature Completed':      formData.signature_name ? true : false,
