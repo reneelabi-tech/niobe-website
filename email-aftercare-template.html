@@ -7,6 +7,10 @@
 <meta name="format-detection" content="telephone=no,date=no,address=no,email=no" />
 <meta name="x-apple-disable-message-reformatting" />
 <title>Thank you for visiting Niobe Spa</title>
+<!-- Black Mango — supported in Apple Mail and some modern clients -->
+<style>
+  @import url('https://db.onlinewebfonts.com/c/1be24cb794e05db5c90a6b24da7ed1c2?family=Black+Mango');
+</style>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet" />
 <style>
   /* Reset */
@@ -18,24 +22,54 @@
 
   /* Typography */
   .email-body { font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif; }
-  h1 { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 32px; font-weight: 300; line-height: 1.2; color: #2F241D; letter-spacing: -0.01em; }
+  h1 {
+    font-family: 'Black Mango', 'Cormorant Garamond', Georgia, serif;
+    font-size: 42px;
+    font-weight: 400;
+    line-height: 1.15;
+    color: #2F241D;
+    letter-spacing: -0.01em;
+  }
   h1 em { font-style: italic; }
-  h2 { font-family: Arial, Helvetica, sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: #7A795D; margin-bottom: 12px; }
+  h2 {
+    font-family: 'Black Mango', Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #2F241D;
+    margin-bottom: 12px;
+  }
   p { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 17px; line-height: 1.8; color: #2F241D; }
   a { color: #2F241D; text-decoration: underline; }
 
   /* Layout */
   .wrapper { background-color: #F5F3EE; padding: 32px 16px; }
   .container { max-width: 600px; margin: 0 auto; background-color: #FFFEF6; }
-  .header { background-color: #2F241D; padding: 32px 48px; text-align: center; }
-  .header img { height: 36px; width: auto; }
+  .header { background-color: #7A795D; padding: 36px 48px; text-align: center; }
+  .header img { height: 52px; width: auto; }
   .hero { padding: 48px 48px 32px; border-bottom: 1px solid rgba(47,36,29,0.08); }
   .section { padding: 32px 48px; border-bottom: 1px solid rgba(47,36,29,0.08); }
   .section:last-of-type { border-bottom: none; }
   .aftercare-list { margin: 16px 0 0 0; padding: 0; list-style: none; }
-  .aftercare-list li { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 16px; line-height: 1.75; color: #2F241D; padding: 8px 0 8px 20px; border-bottom: 1px solid rgba(47,36,29,0.06); position: relative; }
+  .aftercare-list li {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 16px;
+    line-height: 1.75;
+    color: #2F241D;
+    padding: 8px 0 8px 24px;
+    border-bottom: 1px solid rgba(47,36,29,0.06);
+    position: relative;
+  }
   .aftercare-list li:last-child { border-bottom: none; }
-  .aftercare-list li::before { content: '—'; position: absolute; left: 0; color: #7A795D; font-size: 14px; top: 9px; }
+  .aftercare-list li::before {
+    content: '✦';
+    position: absolute;
+    left: 0;
+    color: #7A795D;
+    font-size: 10px;
+    top: 11px;
+  }
   .cta-block { background-color: #2F241D; padding: 36px 48px; text-align: center; }
   .cta-block p { color: rgba(255,254,246,0.7); font-size: 15px; margin-bottom: 20px; }
   .btn { display: inline-block; background-color: #FFFEF6; color: #2F241D !important; text-decoration: none !important; font-family: Arial, Helvetica, sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; padding: 14px 32px; }
@@ -50,7 +84,8 @@
   @media only screen and (max-width: 600px) {
     .hero, .section, .cta-block, .footer { padding-left: 28px !important; padding-right: 28px !important; }
     .header { padding: 24px 28px !important; }
-    h1 { font-size: 26px !important; }
+    h1 { font-size: 32px !important; }
+    h2 { font-size: 11px !important; }
   }
 </style>
 </head>
@@ -62,7 +97,7 @@
 
   <!-- HEADER -->
   <tr><td class="header">
-    <img src="https://niobebeauty.netlify.app/images/niobe-spa-logo.png" alt="Niobe Spa" height="36" />
+    <img src="https://niobebeauty.netlify.app/images/niobe-logo-dark.png" alt="Niobe Spa" height="52" />
   </td></tr>
 
   <!-- HERO -->
@@ -207,7 +242,7 @@
   <!-- PRODUCT RECOMMENDATION -->
   <tr><td class="section">
     <h2>Continue the Care at Home</h2>
-    <p>Your therapist may have recommended products during your visit. Our full range of Elemis, Murad and Outback Organics products is available at the spa — ask at reception or speak to your therapist at your next visit.</p>
+    <p>Your therapist may have recommended products during your visit. Our full range of Elemis, Murad and Million Dollar Beauty products is available at the spa — ask at reception or speak to your therapist at your next visit.</p>
   </td></tr>
 
   <!-- REBOOK CTA -->
