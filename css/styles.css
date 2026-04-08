@@ -528,8 +528,8 @@ button, input, textarea, select { font-family: inherit; font-size: inherit; }
 }
 
 .hero__slogan {
-  font-family: 'Snell Roundhand', 'Snell Roundhand Script', cursive;
-  font-size: 1.35rem;
+  font-family: 'Pinyon Script', 'Snell Roundhand', cursive;
+  font-size: 1.6rem;
   font-weight: 400;
   font-style: normal;
   color: rgba(255,254,246,0.9);
