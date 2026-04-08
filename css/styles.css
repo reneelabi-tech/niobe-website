@@ -431,7 +431,7 @@ button, input, textarea, select { font-family: inherit; font-size: inherit; }
       rgba(8,3,1,0.28) 100%),
     url('../images/hero-oil.jpg');
   background-size: cover;
-  background-position: center 35%;
+  background-position: center 50%;
   background-attachment: fixed;
   position: relative;
 }
