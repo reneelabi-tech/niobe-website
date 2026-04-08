@@ -3,40 +3,53 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>About — Niobe Beauty</title>
-  <meta name="description" content="Over twenty years of expert spa and salon care across Accra and Tema. The story behind Niobe Beauty." />
+  <title>About — Niobe Spa</title>
+  <meta name="description" content="Over twenty years of expert spa and salon care across Accra and Tema. The story behind Niobe Spa." />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
 
   <nav class="nav" role="navigation" aria-label="Main navigation">
     <div class="nav__inner">
-      <a href="index.html"  class="nav__logo">Niobe Beauty</a>
+      <a href="index.html" class="nav__logo"><img src="images/niobe-logo-dark.png" class="nav__logo-img" alt="Niobe Spa"></a>
+      <div class="nav__sep" aria-hidden="true"></div>
       <ul class="nav__links" role="list">
+        <li><a href="index.html"      class="nav__link">Home</a></li>
         <li><a href="treatments.html" class="nav__link">Treatments</a></li>
         <li><a href="packages.html"   class="nav__link">Spa Packages</a></li>
-        <li><a href="about.html"      class="nav__link">About</a></li>
+        <li><a href="easter.html"     class="nav__link">Easter</a></li>
+        <li><a href="about.html"      class="nav__link active">About</a></li>
+        <li><a href="locations.html"  class="nav__link">Locations</a></li>
+        <li><a href="gift-cards.html" class="nav__link">Gift Cards</a></li>
+        <li><a href="faqs.html"       class="nav__link">FAQs</a></li>
+        <li><a href="vacancies.html"  class="nav__link">Vacancies</a></li>
         <li><a href="contact.html"    class="nav__link">Contact</a></li>
       </ul>
-      <a href="contact.html#book" class="nav__book">Book Now</a>
+      <a href="booking.html" class="nav__book">Book Now</a>
       <button class="nav__toggle" aria-label="Open menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
     </div>
   </nav>
   <div class="nav__mobile" role="dialog" aria-label="Mobile navigation">
+    <a href="index.html"      class="nav__mobile-link">Home</a>
     <a href="treatments.html" class="nav__mobile-link">Treatments</a>
     <a href="packages.html"   class="nav__mobile-link">Spa Packages</a>
+    <a href="easter.html"     class="nav__mobile-link">Easter</a>
     <a href="about.html"      class="nav__mobile-link">About</a>
+    <a href="locations.html"  class="nav__mobile-link">Locations</a>
+    <a href="gift-cards.html" class="nav__mobile-link">Gift Cards</a>
+    <a href="faqs.html"       class="nav__mobile-link">FAQs</a>
+    <a href="vacancies.html"  class="nav__mobile-link">Vacancies</a>
     <a href="contact.html"    class="nav__mobile-link">Contact</a>
-    <a href="contact.html#book" class="nav__mobile-cta">Book Now</a>
+    <a href="booking.html"    class="nav__mobile-cta">Book Now</a>
   </div>
 
   <main>
 
     <div class="page-hero">
       <div class="page-hero__inner">
-        <span class="eyebrow">About Niobe Beauty</span>
+        <span class="eyebrow">About Niobe Spa</span>
         <h1 class="t-display t-lg page-hero__title">
           Over twenty years<br><em>of expert care</em>
         </h1>
@@ -58,23 +71,23 @@
             </h2>
           </div>
           <div class="about-split__body fade-up d2">
-            <p>
-              Niobe Beauty has been one of Ghana's leading spa and salon destinations for over twenty years. What began
+            <p class="about-body-text">
+              Niobe Spa has been Ghana's leading spa and salon destination for over 20 years. What began
               as a single location has grown into five — across East Legon, Cantonments, Community 18 and Alisa Hotel
               Tema — each one maintaining the same level of care and professional standard that built the original reputation.
             </p>
-            <p>
+            <p class="about-body-text">
               We are an award-winning business, and a certified professional partner of Elemis — one of the world's most
               respected spa and skincare brands. Elemis products used in our treatments are professional-grade formulations
               not available in general retail, and our therapists are trained to the same standard the brand requires globally.
             </p>
-            <p>
+            <p class="about-body-text">
               We offer a comprehensive menu: Elemis facials and body treatments, full-body massage in multiple formats,
               a complete hammam and Turkish bath programme, body wraps and scrubs, thermal facilities, beauty services,
               nails, and hair removal. Across all of it, the approach is consistent: treatments are adapted to the individual,
               not applied from a fixed template.
             </p>
-            <p>
+            <p class="about-body-text">
               We take pride in the longevity of our client relationships, many of which span years and decades. That kind
               of trust is built through consistency, through the quality of the team, and through not cutting corners on
               what matters.
@@ -89,7 +102,7 @@
     <section class="section section--sage" aria-labelledby="credentials-heading">
       <div class="wrap">
         <div class="sec-head--center" style="margin-bottom: clamp(2.5rem, 5vw, 4rem);">
-          <span class="eyebrow fade-in" style="color: rgba(33,26,18,0.5);">By the numbers</span>
+          <span class="eyebrow fade-in" style="color: rgba(255,254,246,0.55);">By the numbers</span>
           <h2 id="credentials-heading" class="t-display t-md fade-up d1" style="margin-top: 0.5rem;">
             Niobe at a glance
           </h2>
@@ -135,7 +148,7 @@
         <div class="brand-values fade-up d2">
           <div class="bv-item">
             <div class="rule"></div>
-            <h3 class="bv-item__title">Adapted, not prescribed</h3>
+            <h3 class="bv-item__title">Every session is adapted to you</h3>
             <p class="bv-item__body">
               Every session begins with an assessment of what the skin or body needs that day. We do not apply a fixed
               protocol to every client. Pressure, products and technique are adjusted at each visit.
@@ -144,16 +157,15 @@
 
           <div class="bv-item">
             <div class="rule"></div>
-            <h3 class="bv-item__title">Professional products throughout</h3>
+            <h3 class="bv-item__title">Professional-grade products, every time</h3>
             <p class="bv-item__body">
-              We work exclusively with Elemis professional formulations — not available in general retail. The difference
-              is in the concentration of actives and the clinical backing behind the results.
+              We work exclusively with Elemis professional formulations, which are not available in general retail. The difference is in the concentration of actives and the clinical backing behind the results.
             </p>
           </div>
 
           <div class="bv-item">
             <div class="rule"></div>
-            <h3 class="bv-item__title">The same standard, every location</h3>
+            <h3 class="bv-item__title">The same standard across all five locations</h3>
             <p class="bv-item__body">
               Five locations across Greater Accra, each one maintained to the same operational and treatment standard.
               The experience at Cantonments is the same quality as the one at Alisa Hotel Tema.
@@ -162,10 +174,9 @@
 
           <div class="bv-item">
             <div class="rule"></div>
-            <h3 class="bv-item__title">Comprehensive, not fragmented</h3>
+            <h3 class="bv-item__title">Everything you need in one place</h3>
             <p class="bv-item__body">
-              Facials, body treatments, hammam, thermal facilities, nails, beauty, hair removal and products — all in one
-              place. You should not need to go elsewhere.
+              Facials, body treatments, hammam, thermal facilities, nails, beauty, hair removal and products are all available under one roof across our five locations.
             </p>
           </div>
         </div>
@@ -185,7 +196,7 @@
             <div class="rule" style="margin-bottom: 1.25rem;"></div>
             <h3 class="t-display t-xs" style="margin-bottom: 0.75rem;">Booking &amp; deposit</h3>
             <p class="body-sm" style="opacity: 0.68;">
-              A 100% non-refundable deposit is required for all bookings. This secures your appointment time and covers
+               This secures your appointment time and covers
               preparation by your therapist. We are unable to hold appointment slots without a confirmed deposit.
             </p>
           </div>
@@ -239,39 +250,70 @@
   </main>
 
   <footer class="footer" role="contentinfo">
-    <div class="footer__grid">
-      <div>
-        <p class="footer__brand">Niobe Beauty</p>
-        <p class="footer__brand-desc">Award-winning spa and salon across Accra and Tema. Over twenty years of expert care.</p>
+    <div class="footer__inner">
+      <div class="footer__grid">
+
+        <div>
+          <img src="images/niobe-spa-logo.png" class="footer__logo-img" alt="Niobe Spa" />
+          <p class="footer__brand-desc">Five locations. One standard. Award-winning care for skin, body and beauty.</p>
+          <div class="footer__social">
+            <a href="https://www.facebook.com/niobesalonspa" class="footer__social-link" aria-label="Facebook" target="_blank" rel="noopener noreferrer">f</a>
+            <a href="https://www.instagram.com/niobesalonspa/" class="footer__social-link" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+            </a>
+            <a href="https://www.tiktok.com/@niobesalonspa" class="footer__social-link" aria-label="TikTok" target="_blank" rel="noopener noreferrer">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V9.09a8.16 8.16 0 004.77 1.52V7.17a4.85 4.85 0 01-1-.48z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <p class="footer__col-title">Locations</p>
+          <ul class="footer__links">
+            <li><span class="footer__link">Community 18, Tema</span></li>
+            <li><span class="footer__link">Cantonments, Accra</span></li>
+            <li><span class="footer__link">East Legon, Accra</span></li>
+            <li><span class="footer__link">Alisa Hotel, Tema</span></li>
+            <li><span class="footer__link">African Regent, Accra</span></li>
+            <li><a href="locations.html" class="footer__link" style="opacity:0.7;border-bottom:1px solid rgba(47,36,29,0.15);">View all locations &rarr;</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="footer__col-title">Quick Links</p>
+          <ul class="footer__links">
+            <li><a href="treatments.html" class="footer__link">Treatments</a></li>
+            <li><a href="packages.html"   class="footer__link">Spa Packages</a></li>
+            <li><a href="gift-cards.html" class="footer__link">Gift Cards</a></li>
+            <li><a href="vacancies.html"  class="footer__link">Vacancies</a></li>
+            <li><a href="faqs.html"       class="footer__link">FAQs</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="footer__col-title">Contact</p>
+          <ul class="footer__links">
+            <li><a href="mailto:info@niobebeauty.com" class="footer__link">info@niobebeauty.com</a></li>
+            <li><a href="tel:+233302777222" class="footer__link">+233 30 277 7222</a></li>
+            <li><a href="tel:+233244334323" class="footer__link">+233 24 433 4323</a></li>
+            <li><a href="locations.html" class="footer__link">Opening hours &rarr;</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="footer__col-title">Stay Connected</p>
+          <p class="footer__connect-desc">Be the first to know about offers and new treatments.</p>
+          <form class="footer__email-form" onsubmit="return false;">
+            <input type="email" class="footer__email-input" placeholder="Your email address" aria-label="Email address" />
+            <button type="submit" class="footer__email-btn" aria-label="Subscribe">&rarr;</button>
+          </form>
+        </div>
+
       </div>
-      <div>
-        <p class="footer__col-title">Services</p>
-        <ul class="footer__links">
-          <li><a href="treatments.html" class="footer__link">Treatments</a></li>
-          <li><a href="packages.html"   class="footer__link">Spa Packages</a></li>
-          <li><a href="gift-cards.html" class="footer__link">Gift Cards</a></li>
-        </ul>
-      </div>
-      <div>
-        <p class="footer__col-title">Company</p>
-        <ul class="footer__links">
-          <li><a href="about.html"   class="footer__link">About Us</a></li>
-          <li><a href="contact.html" class="footer__link">Contact</a></li>
-        </ul>
-      </div>
-      <div>
-        <p class="footer__col-title">Contact</p>
-        <ul class="footer__links">
-          <li><a href="https://wa.me/233561110000" class="footer__link">WhatsApp: 0561 11 00 00</a></li>
-          <li class="footer__link">Accra &amp; Tema, Ghana</li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer__bottom">
-      <p class="footer__copy">&copy; 2025 Niobe Salon and Spa Ltd. All rights reserved.</p>
-      <div class="footer__legal">
-        <a href="#" class="footer__legal-link">Privacy</a>
-        <a href="#" class="footer__legal-link">Terms</a>
+
+      <div class="footer__bottom">
+        <p class="footer__copy">&copy; 2025 Niobe Spa. All rights reserved.</p>
+        <p class="footer__payment">Payment methods: Visa &middot; Mastercard &middot; Mobile Money &middot; Cash</p>
       </div>
     </div>
   </footer>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 52">
+  <!-- L'ORÉAL top line -->
+  <text x="110" y="20" font-family="'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="17" font-weight="600" letter-spacing="3" text-anchor="middle" fill="white">L&#x2019;OR&#xC9;AL</text>
+  <!-- thin separator -->
+  <line x1="20" y1="27" x2="200" y2="27" stroke="white" stroke-width="0.5"/>
+  <!-- PROFESSIONNEL bottom line -->
+  <text x="110" y="41" font-family="'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="8.5" font-weight="400" letter-spacing="4" text-anchor="middle" fill="white">PROFESSIONNEL</text>
+</svg>

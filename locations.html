@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Locations &amp; Hours — Niobe Spa</title>
+  <meta name="description" content="Five Niobe Spa locations across Accra and Tema. Addresses, opening hours and directions for East Legon, Cantonments, African Regent, Community 18 and Alisa Hotel." />
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    .loc-listing {
+      display: grid;
+      gap: 0;
+    }
+
+    .loc-entry {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: clamp(2rem, 5vw, 5rem);
+      padding: clamp(2.5rem, 4vw, 3.5rem) 0;
+      border-bottom: 1px solid rgba(47, 36, 29, 0.08);
+      align-items: start;
+    }
+    .loc-entry:last-child { border-bottom: none; }
+
+    .loc-entry__num {
+      font-family: var(--font-sans);
+      font-size: 0.625rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      opacity: 0.35;
+      margin-bottom: 0.5rem;
+    }
+
+    .loc-entry__city {
+      font-family: var(--font-sans);
+      font-size: 0.625rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      opacity: 0.45;
+      margin-bottom: 0.35rem;
+    }
+
+    .loc-entry__name {
+      font-family: var(--font-serif);
+      font-size: clamp(1.3rem, 2.5vw, 1.75rem);
+      font-weight: 300;
+      line-height: 1.15;
+      margin-bottom: 1.25rem;
+    }
+
+    .loc-entry__address {
+      font-family: var(--font-sans);
+      font-size: 0.875rem;
+      font-weight: 300;
+      line-height: 1.7;
+      opacity: 0.7;
+      margin-bottom: 1rem;
+    }
+
+    .loc-entry__map {
+      display: inline-block;
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #6b6b42;
+      font-weight: 600;
+      border-bottom: 1px solid rgba(107,107,66,0.4);
+      transition: opacity 0.2s;
+    }
+    .loc-entry__map:hover { opacity: 0.75; }
+
+    .loc-entry__right {
+      padding-top: 0.25rem;
+    }
+
+    .loc-hours {
+      margin-bottom: 1.5rem;
+    }
+
+    .loc-hours__title {
+      font-family: var(--font-sans);
+      font-size: 0.625rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      opacity: 0.4;
+      margin-bottom: 0.75rem;
+    }
+
+    .loc-hours__row {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-sans);
+      font-size: 0.875rem;
+      font-weight: 300;
+      line-height: 1.9;
+      opacity: 0.75;
+      border-bottom: 1px solid rgba(47, 36, 29, 0.06);
+      padding-bottom: 0.1rem;
+    }
+
+    .loc-services {
+      margin-top: 1.5rem;
+    }
+
+    .loc-services__title {
+      font-family: var(--font-sans);
+      font-size: 0.625rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      opacity: 0.4;
+      margin-bottom: 0.6rem;
+    }
+
+    .loc-services__list {
+      font-family: var(--font-sans);
+      font-size: 0.8125rem;
+      font-weight: 300;
+      line-height: 1.8;
+      opacity: 0.65;
+    }
+
+    .loc-entry__book {
+      display: inline-block;
+      font-family: var(--font-sans);
+      font-size: 0.5625rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      background: var(--espresso);
+      color: var(--parchment);
+      padding: 0.65rem 1.25rem;
+      margin-top: 1.5rem;
+      transition: opacity 0.2s;
+    }
+    .loc-entry__book:hover { opacity: 0.75; }
+
+    @media (max-width: 700px) {
+      .loc-entry {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav__inner">
+      <a href="index.html" class="nav__logo"><img src="images/niobe-logo-dark.png" class="nav__logo-img" alt="Niobe Spa"></a>
+      <div class="nav__sep" aria-hidden="true"></div>
+      <ul class="nav__links" role="list">
+        <li><a href="index.html"      class="nav__link">Home</a></li>
+        <li><a href="treatments.html" class="nav__link">Treatments</a></li>
+        <li><a href="packages.html"   class="nav__link">Spa Packages</a></li>
+        <li><a href="easter.html"     class="nav__link">Easter</a></li>
+        <li><a href="about.html"      class="nav__link">About</a></li>
+        <li><a href="locations.html"  class="nav__link active">Locations</a></li>
+        <li><a href="gift-cards.html" class="nav__link">Gift Cards</a></li>
+        <li><a href="faqs.html"       class="nav__link">FAQs</a></li>
+        <li><a href="vacancies.html"  class="nav__link">Vacancies</a></li>
+        <li><a href="contact.html"    class="nav__link">Contact</a></li>
+      </ul>
+      <a href="booking.html" class="nav__book">Book Now</a>
+      <button class="nav__toggle" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="nav__mobile" role="dialog" aria-label="Mobile navigation">
+    <a href="index.html"      class="nav__mobile-link">Home</a>
+    <a href="treatments.html" class="nav__mobile-link">Treatments</a>
+    <a href="packages.html"   class="nav__mobile-link">Spa Packages</a>
+    <a href="easter.html"     class="nav__mobile-link">Easter</a>
+    <a href="about.html"      class="nav__mobile-link">About</a>
+    <a href="locations.html"  class="nav__mobile-link">Locations</a>
+    <a href="gift-cards.html" class="nav__mobile-link">Gift Cards</a>
+    <a href="faqs.html"       class="nav__mobile-link">FAQs</a>
+    <a href="vacancies.html"  class="nav__mobile-link">Vacancies</a>
+    <a href="contact.html"    class="nav__mobile-link">Contact</a>
+    <a href="booking.html"    class="nav__mobile-cta">Book Now</a>
+  </div>
+
+  <main>
+
+    <div class="page-hero">
+      <div class="page-hero__inner">
+        <span class="eyebrow">Locations &amp; Hours</span>
+        <h1 class="t-display t-lg page-hero__title">
+          Five locations<br><em>across Accra &amp; Tema</em>
+        </h1>
+        <p class="page-hero__desc">
+          The same standard of care across every branch. Walk in or book ahead — bookings are recommended to secure your preferred time.
+        </p>
+      </div>
+    </div>
+
+
+    <section class="section">
+      <div class="wrap">
+        <div class="loc-listing">
+
+          <!-- EAST LEGON -->
+          <div class="loc-entry fade-up" id="east-legon">
+            <div>
+              <p class="loc-entry__num">01</p>
+              <p class="loc-entry__city">Accra</p>
+              <h2 class="loc-entry__name">East Legon</h2>
+              <p class="loc-entry__address">
+                6 Justice Fred Apaloo Avenue<br>
+                East Legon, Accra<br>
+                Greater Accra Region, Ghana
+              </p>
+              <a href="https://maps.google.com/?q=6+Justice+Fred+Apaloo+Avenue+East+Legon+Accra" class="loc-entry__map" target="_blank" rel="noopener noreferrer">View on Google Maps &rarr;</a>
+            </div>
+            <div class="loc-entry__right">
+              <div class="loc-hours">
+                <p class="loc-hours__title">Opening hours</p>
+                <div class="loc-hours__row"><span>Monday – Friday</span><span>9:00am – 6:00pm</span></div>
+                <div class="loc-hours__row"><span>Saturday</span><span>8:30am – 6:00pm</span></div>
+                <div class="loc-hours__row"><span>Sunday</span><span>12:30pm – 6:00pm</span></div>
+              </div>
+              <div class="loc-services">
+                <p class="loc-services__title">Available services</p>
+                <p class="loc-services__list">Facials · Body Massage · Wraps &amp; Scrubs · Steam · Sauna · Jacuzzi · Nails · Beauty · Hair Removal · Spa Packages · Hammam</p>
+              </div>
+              <a href="https://eastlegon.simplespa.com" class="loc-entry__book" target="_blank" rel="noopener noreferrer">Book at East Legon</a>
+            </div>
+          </div>
+
+          <!-- CANTONMENTS -->
+          <div class="loc-entry fade-up" id="cantonments">
+            <div>
+              <p class="loc-entry__num">02</p>
+              <p class="loc-entry__city">Accra</p>
+              <h2 class="loc-entry__name">Cantonments</h2>
+              <p class="loc-entry__address">
+                39 La Tebu Crescent<br>
+                Cantonments, Accra<br>
+                Greater Accra Region, Ghana
+              </p>
+              <a href="https://maps.google.com/?q=39+La+Tebu+Crescent+Cantonments+Accra" class="loc-entry__map" target="_blank" rel="noopener noreferrer">View on Google Maps &rarr;</a>
+            </div>
+            <div class="loc-entry__right">
+              <div class="loc-hours">
+                <p class="loc-hours__title">Opening hours</p>
+                <div class="loc-hours__row"><span>Monday – Friday</span><span>9:00am – 6:00pm</span></div>
+                <div class="loc-hours__row"><span>Saturday</span><span>8:30am – 6:00pm</span></div>
+                <div class="loc-hours__row"><span>Sunday</span><span>12:30pm – 6:00pm</span></div>
+              </div>
+              <div class="loc-services">
+                <p class="loc-services__title">Available services</p>
+                <p class="loc-services__list">Facials · Body Massage · Wraps &amp; Scrubs · Steam · Sauna · Jacuzzi · Nails · Beauty · Hair Removal · Spa Packages</p>
+              </div>
+              <a href="https://cantonments.simplespa.com" class="loc-entry__book" target="_blank" rel="noopener noreferrer">Book at Cantonments</a>
+            </div>
+          </div>
+
+          <!-- AFRICAN REGENT -->
+          <div class="loc-entry fade-up" id="african-regent">
+            <div>
+              <p class="loc-entry__num">03</p>
+              <p class="loc-entry__city">Accra</p>
+              <h2 class="loc-entry__name">African Regent</h2>
+              <p class="loc-entry__address">
+                237–238 Airport West<br>
+                Accra<br>
+                Greater Accra Region, Ghana
+              </p>
+              <a href="https://maps.google.com/?q=African+Regent+Hotel+237+Airport+West+Accra" class="loc-entry__map" target="_blank" rel="noopener noreferrer">View on Google Maps &rarr;</a>
+            </div>
+            <div class="loc-entry__right">
+              <div class="loc-hours">
+                <p class="loc-hours__title">Opening hours</p>
+                <div class="loc-hours__row"><span>Monday – Friday</span><span>9:00am – 6:00pm</span></div>
+                <div class="loc-hours__row"><span>Saturday</span><span>8:30am – 6:00pm</span></div>
+              </div>
+              <div class="loc-services">
+                <p class="loc-services__title">Available services</p>
+                <p class="loc-services__list">Facials · Body Massage · Nails · Beauty · Hair Removal · Spa Packages</p>
+              </div>
+              <a href="booking.html" data-book class="loc-entry__book">Book at African Regent</a>
+            </div>
+          </div>
+
+          <!-- COMMUNITY 18 -->
+          <div class="loc-entry fade-up" id="community-18">
+            <div>
+              <p class="loc-entry__num">04</p>
+              <p class="loc-entry__city">Tema</p>
+              <h2 class="loc-entry__name">Community 18</h2>
+              <p class="loc-entry__address">
+                HFC Estate, off Odum Road<br>
+                Community 18, Tema<br>
+                Greater Accra Region, Ghana
+              </p>
+              <a href="https://maps.google.com/?q=HFC+Estate+Community+18+Tema+Ghana" class="loc-entry__map" target="_blank" rel="noopener noreferrer">View on Google Maps &rarr;</a>
+            </div>
+            <div class="loc-entry__right">
+              <div class="loc-hours">
+                <p class="loc-hours__title">Opening hours</p>
+                <div class="loc-hours__row"><span>Monday – Friday</span><span>9:00am – 6:00pm</span></div>
+                <div class="loc-hours__row"><span>Saturday</span><span>8:30am – 6:00pm</span></div>
+              </div>
+              <div class="loc-services">
+                <p class="loc-services__title">Available services</p>
+                <p class="loc-services__list">Facials · Body Massage · Wraps &amp; Scrubs · Steam · Sauna · Nails · Beauty · Hair Removal · Spa Packages</p>
+              </div>
+              <a href="https://hfcestatec18.simplespa.com" class="loc-entry__book" target="_blank" rel="noopener noreferrer">Book at Community 18</a>
+            </div>
+          </div>
+
+          <!-- ALISA HOTEL -->
+          <div class="loc-entry fade-up" id="alisa-hotel">
+            <div>
+              <p class="loc-entry__num">05</p>
+              <p class="loc-entry__city">Tema</p>
+              <h2 class="loc-entry__name">Alisa Hotel</h2>
+              <p class="loc-entry__address">
+                Community 12<br>
+                Tema<br>
+                Greater Accra Region, Ghana
+              </p>
+              <a href="https://maps.google.com/?q=Alisa+Hotel+Community+12+Tema+Ghana" class="loc-entry__map" target="_blank" rel="noopener noreferrer">View on Google Maps &rarr;</a>
+            </div>
+            <div class="loc-entry__right">
+              <div class="loc-hours">
+                <p class="loc-hours__title">Opening hours</p>
+                <div class="loc-hours__row"><span>Monday – Friday</span><span>9:00am – 6:00pm</span></div>
+                <div class="loc-hours__row"><span>Saturday</span><span>8:30am – 6:00pm</span></div>
+              </div>
+              <div class="loc-services">
+                <p class="loc-services__title">Available services</p>
+                <p class="loc-services__list">Facials · Body Massage · Wraps &amp; Scrubs · Steam · Sauna · Nails · Beauty · Hair Removal · Spa Packages</p>
+              </div>
+              <a href="https://alisahoteltema.simplespa.com" class="loc-entry__book" target="_blank" rel="noopener noreferrer">Book at Alisa Hotel</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+
+    <section class="section section--sage">
+      <div class="wrap">
+        <div class="sec-head fade-up">
+          <div>
+            <span class="eyebrow" style="color: rgba(255,254,246,0.55);">Contact</span>
+            <h2 class="t-display t-sm" style="margin-top: 0.35rem;">
+              Questions about<br><em>a location?</em>
+            </h2>
+            <p style="margin-top: 0.75rem; font-size: 0.875rem; opacity: 0.6; max-width: 42ch;">Call us on <a href="tel:+233302777222" style="border-bottom: 1px solid rgba(33,26,18,0.3);">+233 30 277 7222</a> or <a href="tel:+233244334323" style="border-bottom: 1px solid rgba(33,26,18,0.3);">+233 24 433 4323</a>, or send us an enquiry.</p>
+          </div>
+          <a href="contact.html" class="btn btn-ivory fade-in d2">Send an Enquiry</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="footer__inner">
+      <div class="footer__grid">
+
+        <div>
+          <img src="images/niobe-spa-logo.png" class="footer__logo-img" alt="Niobe Spa" />
+          <p class="footer__brand-desc">Five locations. One standard. Award-winning care for skin, body and beauty.</p>
+          <div class="footer__social">
+            <a href="https://www.facebook.com/niobesalonspa" class="footer__social-link" aria-label="Facebook" target="_blank" rel="noopener noreferrer">f</a>
+            <a href="https://www.instagram.com/niobesalonspa/" class="footer__social-link" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+            </a>
+            <a href="https://www.tiktok.com/@niobesalonspa" class="footer__social-link" aria-label="TikTok" target="_blank" rel="noopener noreferrer">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V9.09a8.16 8.16 0 004.77 1.52V7.17a4.85 4.85 0 01-1-.48z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <p class="footer__col-title">Locations</p>
+          <ul class="footer__links">
+            <li><span class="footer__link">Community 18, Tema</span></li>
+            <li><span class="footer__link">Cantonments, Accra</span></li>
+            <li><span class="footer__link">East Legon, Accra</span></li>
+            <li><span class="footer__link">Alisa Hotel, Tema</span></li>
+            <li><span class="footer__link">African Regent, Accra</span></li>
+            <li><a href="locations.html" class="footer__link" style="opacity:0.7;border-bottom:1px solid rgba(47,36,29,0.15);">View all locations &rarr;</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="footer__col-title">Quick Links</p>
+          <ul class="footer__links">
+            <li><a href="treatments.html" class="footer__link">Treatments</a></li>
+            <li><a href="packages.html"   class="footer__link">Spa Packages</a></li>
+            <li><a href="gift-cards.html" class="footer__link">Gift Cards</a></li>
+            <li><a href="vacancies.html"  class="footer__link">Vacancies</a></li>
+            <li><a href="faqs.html"       class="footer__link">FAQs</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="footer__col-title">Contact</p>
+          <ul class="footer__links">
+            <li><a href="mailto:info@niobebeauty.com" class="footer__link">info@niobebeauty.com</a></li>
+            <li><a href="tel:+233302777222" class="footer__link">+233 30 277 7222</a></li>
+            <li><a href="tel:+233244334323" class="footer__link">+233 24 433 4323</a></li>
+            <li><a href="locations.html" class="footer__link">Opening hours &rarr;</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="footer__col-title">Stay Connected</p>
+          <p class="footer__connect-desc">Be the first to know about offers and new treatments.</p>
+          <form class="footer__email-form" onsubmit="return false;">
+            <input type="email" class="footer__email-input" placeholder="Your email address" aria-label="Email address" />
+            <button type="submit" class="footer__email-btn" aria-label="Subscribe">&rarr;</button>
+          </form>
+        </div>
+
+      </div>
+
+      <div class="footer__bottom">
+        <p class="footer__copy">&copy; 2025 Niobe Spa. All rights reserved.</p>
+        <p class="footer__payment">Payment methods: Visa &middot; Mastercard &middot; Mobile Money &middot; Cash</p>
+      </div>
+    </div>
+  </footer>
+
+  <script type="application/json" id="booking-locations">
+  [
+    {"city":"Accra","name":"East Legon","url":"https://eastlegon.simplespa.com"},
+    {"city":"Accra","name":"Cantonments","url":"https://cantonments.simplespa.com"},
+    {"city":"Accra","name":"African Regent","url":"https://africanregent.simplespa.com"},
+    {"city":"Tema","name":"Community 18","url":"https://hfcestatec18.simplespa.com"},
+    {"city":"Tema","name":"Alisa Hotel","url":"https://alisahoteltema.simplespa.com"}
+  ]
+  </script>
+  <script src="js/main.js"></script>
+
+</body>
+</html>

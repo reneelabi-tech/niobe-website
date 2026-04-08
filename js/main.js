@@ -6,6 +6,69 @@
   'use strict';
 
   /* ----------------------------------------------------------
+     Homepage: show standard nav as soon as the hero logo+nav
+     (stage1) scrolls out of view — not waiting for the full
+     hero section to end.
+  ---------------------------------------------------------- */
+  const heroSeq = document.querySelector('.hero-sequence');
+  if (heroSeq) {
+    const siteNav  = document.querySelector('.nav--hp');
+    const stage1   = heroSeq.querySelector('.hero__stage1');
+    if (siteNav && stage1) {
+      new IntersectionObserver(function(entries) {
+        var e = entries[0];
+        // Stage1 has scrolled above viewport → show nav
+        siteNav.classList.toggle('nav--visible',
+          !e.isIntersecting && e.boundingClientRect.top < 0);
+      }, { threshold: 0 }).observe(stage1);
+    }
+  }
+
+  /* ----------------------------------------------------------
+     Slogan: scroll-driven fade in / fade out
+     Fades in as it rises from below centre, fades out as it
+     approaches the top edge of the viewport.
+  ---------------------------------------------------------- */
+  const slogan = document.querySelector('.hero__slogan');
+  if (slogan) {
+    function updateSloganOpacity() {
+      const rect = slogan.getBoundingClientRect();
+      const vh   = window.innerHeight;
+      const mid  = rect.top + rect.height / 2; // centre of slogan in viewport
+
+      // Fade in: slogan centre travels from vh (below screen) → vh*0.65
+      // Fade out: slogan centre travels from vh*0.35 → 0 (top edge)
+      var opacity;
+      if (mid > vh) {
+        opacity = 0;
+      } else if (mid > vh * 0.65) {
+        opacity = 1 - (mid - vh * 0.65) / (vh * 0.35);
+      } else if (mid > vh * 0.35) {
+        opacity = 1;
+      } else if (mid > 0) {
+        opacity = mid / (vh * 0.35);
+      } else {
+        opacity = 0;
+      }
+      slogan.style.opacity = opacity;
+    }
+
+    var sloganTicking = false;
+    window.addEventListener('scroll', function () {
+      if (!sloganTicking) {
+        requestAnimationFrame(function () {
+          updateSloganOpacity();
+          sloganTicking = false;
+        });
+        sloganTicking = true;
+      }
+    }, { passive: true });
+
+    // Set correct opacity on load
+    updateSloganOpacity();
+  }
+
+  /* ----------------------------------------------------------
      Nav: scroll shadow
   ---------------------------------------------------------- */
   const nav = document.querySelector('.nav');

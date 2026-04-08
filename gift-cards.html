@@ -3,167 +3,561 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gift Cards — Niobe Beauty</title>
-  <meta name="description" content="Niobe Beauty gift cards — redeemable against any service or package across all five locations. From GHS 100." />
+  <title>Gift Cards — Niobe Spa</title>
+  <meta name="description" content="Give the gift of expert care. Niobe Spa gift cards redeemable against any service or package across all five locations." />
   <link rel="stylesheet" href="css/styles.css" />
+  <style>
+
+    /* ── Progress indicator ─────────────────────────────────── */
+    .gc-progress {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      padding: clamp(1.25rem, 2.5vw, 1.75rem) 1.5rem;
+      border-bottom: 1px solid rgba(47,36,29,0.08);
+      background: #fff;
+    }
+    .gc-progress__step {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: var(--font-sans);
+      font-size: 0.625rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(47,36,29,0.35);
+    }
+    .gc-progress__step.active { color: var(--espresso); }
+    .gc-progress__step.done   { color: var(--olive); }
+    .gc-progress__num {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 1px solid currentColor;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.6rem;
+      flex-shrink: 0;
+    }
+    .gc-progress__step.active .gc-progress__num {
+      background: var(--espresso);
+      border-color: var(--espresso);
+      color: var(--parchment);
+    }
+    .gc-progress__step.done .gc-progress__num {
+      background: var(--olive);
+      border-color: var(--olive);
+      color: var(--parchment);
+    }
+    .gc-progress__line {
+      width: clamp(2.5rem, 6vw, 5rem);
+      height: 1px;
+      background: rgba(47,36,29,0.12);
+      margin: 0 0.5rem;
+    }
+
+    /* ── Section wrapper ─────────────────────────────────────── */
+    .gc-section {
+      padding: clamp(2.5rem, 5vw, 4rem) 0;
+      border-bottom: 1px solid rgba(47,36,29,0.07);
+    }
+    .gc-section:last-of-type { border-bottom: none; }
+
+    .gc-section__num {
+      font-family: var(--font-sans);
+      font-size: 0.5625rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--olive);
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    .gc-section__title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.3rem, 2.5vw, 1.7rem);
+      font-weight: 400;
+      margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+      line-height: 1.2;
+    }
+
+    /* ── Design selector ─────────────────────────────────────── */
+    .gc-design-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+    @media (max-width: 700px) {
+      .gc-design-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    .gc-design-card {
+      position: relative;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: border-color 0.2s;
+      overflow: hidden;
+    }
+    .gc-design-card.selected {
+      border-color: var(--espresso);
+    }
+    .gc-design-card img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    .gc-design-card__label {
+      padding: 0.65rem 1rem;
+      font-family: var(--font-sans);
+      font-size: 0.625rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      background: #fff;
+      color: var(--espresso);
+      border-top: 1px solid rgba(47,36,29,0.08);
+    }
+    .gc-design-card__check {
+      position: absolute;
+      top: 0.6rem; right: 0.6rem;
+      width: 22px; height: 22px;
+      background: var(--espresso);
+      border-radius: 50%;
+      display: none;
+      align-items: center; justify-content: center;
+    }
+    .gc-design-card__check svg { display: block; }
+    .gc-design-card.selected .gc-design-card__check { display: flex; }
+    .gc-design-note {
+      font-family: var(--font-sans);
+      font-size: 0.625rem;
+      letter-spacing: 0.1em;
+      color: rgba(47,36,29,0.45);
+      margin-top: 0.9rem;
+      font-style: italic;
+    }
+
+    /* ── Voucher type options ────────────────────────────────── */
+    .gc-type-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    @media (max-width: 680px) {
+      .gc-type-grid { grid-template-columns: 1fr; }
+    }
+    .gc-type-card {
+      border: 1px solid rgba(47,36,29,0.12);
+      padding: clamp(1.5rem, 3vw, 2rem);
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      background: #fff;
+    }
+    .gc-type-card:hover { border-color: rgba(47,36,29,0.3); }
+    .gc-type-card.selected {
+      border-color: var(--espresso);
+      background: rgba(47,36,29,0.03);
+    }
+    .gc-type-card__icon {
+      font-size: 1.4rem;
+      margin-bottom: 0.75rem;
+      display: block;
+      line-height: 1;
+    }
+    .gc-type-card__title {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-bottom: 0.4rem;
+      line-height: 1.2;
+    }
+    .gc-type-card__desc {
+      font-size: 0.8125rem;
+      line-height: 1.7;
+      color: rgba(47,36,29,0.6);
+    }
+
+    /* ── Conditional sub-selections ─────────────────────────── */
+    .gc-sub-section {
+      display: none;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(47,36,29,0.08);
+      animation: fadeSlide 0.25s ease;
+    }
+    .gc-sub-section.visible { display: block; }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .gc-sub-label {
+      font-family: var(--font-sans);
+      font-size: 0.5625rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--olive);
+      display: block;
+      margin-bottom: 0.75rem;
+    }
+
+    /* ── Amount buttons ──────────────────────────────────────── */
+    .gc-amount-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-bottom: 1rem;
+    }
+    .gc-amount-btn {
+      padding: 0.65rem 1.2rem;
+      border: 1px solid rgba(47,36,29,0.15);
+      background: #fff;
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      color: var(--espresso);
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .gc-amount-btn:hover { border-color: rgba(47,36,29,0.35); }
+    .gc-amount-btn.selected {
+      background: var(--espresso);
+      border-color: var(--espresso);
+      color: var(--parchment);
+    }
+    .gc-custom-input-wrap {
+      display: none;
+      margin-top: 0.75rem;
+    }
+    .gc-custom-input-wrap.visible { display: block; }
+
+    /* ── Delivery options ────────────────────────────────────── */
+    .gc-delivery-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      max-width: 480px;
+    }
+    @media (max-width: 500px) {
+      .gc-delivery-grid { grid-template-columns: 1fr; }
+    }
+    .gc-delivery-card {
+      border: 1px solid rgba(47,36,29,0.12);
+      padding: 1.25rem 1.5rem;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .gc-delivery-card:hover { border-color: rgba(47,36,29,0.3); }
+    .gc-delivery-card.selected {
+      border-color: var(--espresso);
+      background: rgba(47,36,29,0.03);
+    }
+    .gc-delivery-card__icon {
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+    .gc-delivery-card__title {
+      font-family: var(--font-serif);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+    .gc-delivery-card__sub {
+      font-size: 0.75rem;
+      color: rgba(47,36,29,0.5);
+      margin-top: 0.15rem;
+    }
+
+    /* ── Continue bar ────────────────────────────────────────── */
+    .gc-continue {
+      padding: clamp(2rem, 4vw, 3rem) 0;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    .gc-continue__note {
+      font-size: 0.8125rem;
+      color: rgba(47,36,29,0.45);
+      line-height: 1.6;
+    }
+    #gc-error {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      color: #b04040;
+      margin-top: 0.75rem;
+      display: none;
+    }
+    #gc-error.visible { display: block; }
+
+  </style>
 </head>
 <body>
 
   <nav class="nav" role="navigation" aria-label="Main navigation">
     <div class="nav__inner">
-      <a href="index.html"  class="nav__logo">Niobe Beauty</a>
+      <a href="index.html" class="nav__logo"><img src="images/niobe-logo-dark.png" class="nav__logo-img" alt="Niobe Spa"></a>
+      <div class="nav__sep" aria-hidden="true"></div>
       <ul class="nav__links" role="list">
+        <li><a href="index.html"      class="nav__link">Home</a></li>
         <li><a href="treatments.html" class="nav__link">Treatments</a></li>
         <li><a href="packages.html"   class="nav__link">Spa Packages</a></li>
+        <li><a href="easter.html"     class="nav__link">Easter</a></li>
         <li><a href="about.html"      class="nav__link">About</a></li>
+        <li><a href="locations.html"  class="nav__link">Locations</a></li>
+        <li><a href="gift-cards.html" class="nav__link active">Gift Cards</a></li>
+        <li><a href="faqs.html"       class="nav__link">FAQs</a></li>
+        <li><a href="vacancies.html"  class="nav__link">Vacancies</a></li>
         <li><a href="contact.html"    class="nav__link">Contact</a></li>
       </ul>
-      <a href="contact.html#book" class="nav__book">Book Now</a>
+      <a href="booking.html" class="nav__book">Book Now</a>
       <button class="nav__toggle" aria-label="Open menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
     </div>
   </nav>
   <div class="nav__mobile" role="dialog" aria-label="Mobile navigation">
+    <a href="index.html"      class="nav__mobile-link">Home</a>
     <a href="treatments.html" class="nav__mobile-link">Treatments</a>
     <a href="packages.html"   class="nav__mobile-link">Spa Packages</a>
+    <a href="easter.html"     class="nav__mobile-link">Easter</a>
     <a href="about.html"      class="nav__mobile-link">About</a>
+    <a href="locations.html"  class="nav__mobile-link">Locations</a>
+    <a href="gift-cards.html" class="nav__mobile-link">Gift Cards</a>
+    <a href="faqs.html"       class="nav__mobile-link">FAQs</a>
+    <a href="vacancies.html"  class="nav__mobile-link">Vacancies</a>
     <a href="contact.html"    class="nav__mobile-link">Contact</a>
-    <a href="contact.html#book" class="nav__mobile-cta">Book Now</a>
+    <a href="booking.html"    class="nav__mobile-cta">Book Now</a>
   </div>
 
   <main>
 
-    <div class="page-hero page-hero--sage">
+    <div class="page-hero">
       <div class="page-hero__inner">
         <span class="eyebrow">Gift Cards</span>
         <h1 class="t-display t-lg page-hero__title">
-          The gift of<br><em>expert care</em>
+          Give the gift of<br><em>expert care</em>
         </h1>
         <p class="page-hero__desc">
-          A Niobe gift card can be redeemed against any service, package or product across all five locations.
-          Available from GHS 100, with no upper limit.
+          Choose a design, select a treatment, package or open value, and we will deliver a beautiful e-gift card directly to your recipient.
         </p>
       </div>
     </div>
 
+    <!-- Step progress -->
+    <div class="gc-progress" role="navigation" aria-label="Purchase steps">
+      <div class="gc-progress__step active">
+        <span class="gc-progress__num">1</span>
+        <span>Selection</span>
+      </div>
+      <div class="gc-progress__line" aria-hidden="true"></div>
+      <div class="gc-progress__step">
+        <span class="gc-progress__num">2</span>
+        <span>Details</span>
+      </div>
+      <div class="gc-progress__line" aria-hidden="true"></div>
+      <div class="gc-progress__step">
+        <span class="gc-progress__num">3</span>
+        <span>Payment</span>
+      </div>
+    </div>
 
     <section class="section">
+
+        <!-- 01 — Design (full-width, outside wrap) -->
+        <div class="gc-section fade-up" style="padding-bottom: clamp(2rem, 4vw, 3rem); border-bottom: 1px solid rgba(47,36,29,0.07);">
+          <div class="wrap">
+            <span class="gc-section__num">01 &mdash; Choose a design</span>
+            <h2 class="gc-section__title">Select your card design</h2>
+          </div>
+
+          <div class="gc-design-grid" role="radiogroup" aria-label="Gift card design">
+
+            <div class="gc-design-card" data-design="2" data-design-name="Signature" role="radio" aria-checked="false" tabindex="0">
+              <img src="images/gc-design-2.png" alt="Gift card design — Signature" />
+              <div class="gc-design-card__label">Signature</div>
+              <div class="gc-design-card__check" aria-hidden="true">
+                <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.8 7L9 1" stroke="#FFFEF6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+
+            <div class="gc-design-card" data-design="1" data-design-name="Love" role="radio" aria-checked="false" tabindex="0">
+              <img src="images/gc-design-1.png" alt="Gift card design — Love" />
+              <div class="gc-design-card__label">Love</div>
+              <div class="gc-design-card__check" aria-hidden="true">
+                <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.8 7L9 1" stroke="#FFFEF6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+
+            <div class="gc-design-card" data-design="3" data-design-name="Celebration" role="radio" aria-checked="false" tabindex="0">
+              <img src="images/gc-design-3.png" alt="Gift card design — Celebration" />
+              <div class="gc-design-card__label">Celebration</div>
+              <div class="gc-design-card__check" aria-hidden="true">
+                <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.8 7L9 1" stroke="#FFFEF6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+
+            <div class="gc-design-card" data-design="4" data-design-name="Gratitude" role="radio" aria-checked="false" tabindex="0">
+              <img src="images/gc-design-4.png" alt="Gift card design — Gratitude" />
+              <div class="gc-design-card__label">Gratitude</div>
+              <div class="gc-design-card__check" aria-hidden="true">
+                <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.8 7L9 1" stroke="#FFFEF6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="wrap">
+            <p class="gc-design-note">The design names are a guide only — please select whichever feels right for the occasion.</p>
+          </div>
+        </div>
+
       <div class="wrap">
 
-        <div class="gc-intro fade-up">
-          <p class="body-lg" style="opacity: 0.72; margin-bottom: 1rem;">
-            Choose a specific treatment, a spa package, or leave the amount open so the recipient can decide.
-            Gift cards are valid for 90 days from the date of purchase. Please ensure they are redeemed before
-            the expiry date, as extensions are not routinely granted once expired.
-          </p>
-          <p class="body-sm" style="opacity: 0.52; margin-bottom: 2.5rem;">
-            In exceptional circumstances, an extension request may be considered within 30 days of expiry
-            via WhatsApp (0561 11 00 00), subject to an additional fee and valid supporting evidence.
-          </p>
-        </div>
+        <!-- 02 — Voucher type -->
+        <div class="gc-section fade-up">
+          <span class="gc-section__num">02 &mdash; What to give</span>
+          <h2 class="gc-section__title">What would you like to gift?</h2>
+          <div class="gc-type-grid" role="radiogroup" aria-label="Voucher type">
 
-        <div class="divider"></div>
-
-        <h2 class="t-display t-sm fade-up" style="margin-bottom: clamp(1.5rem, 3vw, 2.5rem);">How to purchase</h2>
-
-        <div class="gc-purchase-methods fade-up d1">
-          <div class="gc-method">
-            <h3 class="gc-method__title">In person</h3>
-            <p class="gc-method__body">
-              Visit any Niobe location to purchase a physical gift card over the counter.
-              Payment by cash, bank transfer, Visa or mobile money.
-            </p>
-          </div>
-
-          <div class="gc-method">
-            <h3 class="gc-method__title">Online</h3>
-            <p class="gc-method__body">
-              Choose a service, package or open amount and make payment below. Forward proof of payment to
-              WhatsApp <a href="https://wa.me/233561110000" style="border-bottom: 1px solid currentColor;">+233 (0) 561 11 00 00</a>.
-              Include the payment reference (beginning with PAY_) to link your payment. Upon confirmation,
-              an e-gift card will be emailed directly to the recipient.
-            </p>
-          </div>
-
-          <div class="gc-method">
-            <h3 class="gc-method__title">International purchases</h3>
-            <p class="gc-method__body">
-              We accept payment via mobile money using WorldRemit, Sendwave or similar apps.<br>
-              Telecel: +233 (0) 204 62 62 00 &nbsp;·&nbsp; MTN: +233 (0) 242 62 62 00<br>
-              Name: Niobe Spa / Kofi Labi.<br>
-              Upon receipt of cleared funds, we can arrange local collection or delivery (at additional cost).
-            </p>
-          </div>
-
-          <div class="gc-method">
-            <h3 class="gc-method__title">Bank transfer</h3>
-            <p class="gc-method__body">
-              Account name: Niobe Salon and Spa Ltd<br>
-              Bank: Zenith Bank · Branch: East Legon<br>
-              Account: 6011304206<br>
-              Sort Code: 12-01-09 · SWIFT: ZEBLGHAC
-            </p>
-          </div>
-        </div>
-
-        <div class="divider"></div>
-
-        <h2 class="t-display t-sm fade-up" style="margin-bottom: clamp(1.5rem, 3vw, 2.5rem);">Purchase online</h2>
-
-        <form class="form fade-up d1" style="max-width: 680px;" novalidate>
-          <div class="form-row">
-            <div class="form-field">
-              <label class="form-label" for="gc-sender">Your name</label>
-              <input class="form-input" type="text" id="gc-sender" name="sender_name" placeholder="Your full name" autocomplete="name" required />
+            <div class="gc-type-card" data-type="treatment" role="radio" aria-checked="false" tabindex="0">
+              <span class="gc-type-card__icon">✦</span>
+              <div class="gc-type-card__title">A specific treatment</div>
+              <p class="gc-type-card__desc">Choose a treatment by name. The recipient redeems it at any of our five locations.</p>
             </div>
-            <div class="form-field">
-              <label class="form-label" for="gc-sender-phone">Your WhatsApp / phone</label>
-              <input class="form-input" type="tel" id="gc-sender-phone" name="sender_phone" placeholder="+233" required />
+
+            <div class="gc-type-card" data-type="package" role="radio" aria-checked="false" tabindex="0">
+              <span class="gc-type-card__icon">◈</span>
+              <div class="gc-type-card__title">A spa package</div>
+              <p class="gc-type-card__desc">Gift a full spa experience — from half-day packages to our signature full-day rituals.</p>
             </div>
+
+            <div class="gc-type-card" data-type="open" role="radio" aria-checked="false" tabindex="0">
+              <span class="gc-type-card__icon">◇</span>
+              <div class="gc-type-card__title">An open-value card</div>
+              <p class="gc-type-card__desc">Choose an amount and let the recipient decide how to spend it. Valid for 90 days.</p>
+            </div>
+
           </div>
 
-          <div class="form-row">
-            <div class="form-field">
-              <label class="form-label" for="gc-recipient">Recipient's name</label>
-              <input class="form-input" type="text" id="gc-recipient" name="recipient_name" placeholder="Recipient's full name" required />
-            </div>
-            <div class="form-field">
-              <label class="form-label" for="gc-recipient-email">Recipient's email</label>
-              <input class="form-input" type="email" id="gc-recipient-email" name="recipient_email" placeholder="recipient@email.com" />
-            </div>
-          </div>
-
-          <div class="form-field">
-            <label class="form-label" for="gc-amount">Gift card value</label>
-            <select class="form-select" id="gc-amount" name="amount" required>
-              <option value="" disabled selected>Select an amount</option>
-              <option value="100">GHS 100</option>
-              <option value="200">GHS 200</option>
-              <option value="300">GHS 300</option>
-              <option value="500">GHS 500</option>
-              <option value="1000">GHS 1,000</option>
-              <option value="custom">Custom amount</option>
+          <!-- Sub: Treatment picker -->
+          <div class="gc-sub-section" id="sub-treatment">
+            <span class="gc-sub-label">Choose a treatment</span>
+            <select class="form-select" id="gc-treatment-select" style="max-width: 480px;">
+              <option value="" disabled selected>Select a treatment</option>
+              <optgroup label="Facials">
+                <option value="Elemis BIOTEC Facial">Elemis BIOTEC Facial</option>
+                <option value="Million Dollar Super Facial">Million Dollar Super Facial</option>
+                <option value="Elemis Superfood Facial">Elemis Superfood Facial</option>
+                <option value="Elemis Pro-Collagen Facial">Elemis Pro-Collagen Facial</option>
+                <option value="Elemis Skin Booster Facial">Elemis Skin Booster Facial</option>
+              </optgroup>
+              <optgroup label="Massage">
+                <option value="Deep Tissue Massage">Deep Tissue Massage</option>
+                <option value="Garden of England Rose Massage">Garden of England Rose Massage</option>
+                <option value="Hot Stone Massage">Hot Stone Massage</option>
+                <option value="Indian Head Massage">Indian Head Massage</option>
+                <option value="Swedish Massage">Swedish Massage</option>
+                <option value="Reflexology">Reflexology</option>
+              </optgroup>
+              <optgroup label="Body">
+                <option value="Elemis Salt Glow Scrub">Elemis Salt Glow Scrub</option>
+                <option value="Elemis Lime &amp; Ginger Salt Scrub">Elemis Lime &amp; Ginger Salt Scrub</option>
+                <option value="Hot Mineral Body Boost Massage">Hot Mineral Body Boost Massage</option>
+                <option value="Universal Contour Body Wrap">Universal Contour Body Wrap</option>
+              </optgroup>
+              <optgroup label="Nails &amp; Beauty">
+                <option value="Sole Delight Pedicure">Sole Delight Pedicure</option>
+                <option value="Spa Manicure">Spa Manicure</option>
+                <option value="Gel Manicure">Gel Manicure</option>
+              </optgroup>
+              <optgroup label="Thermal">
+                <option value="Steam, Sauna &amp; Jacuzzi Session">Steam, Sauna &amp; Jacuzzi Session</option>
+                <option value="Hammam Ceremony">Hammam Ceremony</option>
+              </optgroup>
             </select>
           </div>
 
-          <div class="form-field" id="gc-custom-wrap" style="display: none;">
-            <label class="form-label" for="gc-custom-amount">Custom amount (GHS)</label>
-            <input class="form-input" type="number" id="gc-custom-amount" name="custom_amount" placeholder="e.g. 750" min="100" />
+          <!-- Sub: Package picker -->
+          <div class="gc-sub-section" id="sub-package">
+            <span class="gc-sub-label">Choose a package</span>
+            <select class="form-select" id="gc-package-select" style="max-width: 480px;">
+              <option value="" disabled selected>Select a package</option>
+              <optgroup label="Elemis Packages">
+                <option value="Elemis Bliss Package (3 hrs+)">Elemis Bliss Package — 3 hrs+</option>
+                <option value="Elemis Indulgence Package (2 hrs+)">Elemis Indulgence Package — 2 hrs+</option>
+                <option value="Elemis Refresh Package">Elemis Refresh Package</option>
+              </optgroup>
+              <optgroup label="Niobe Signature">
+                <option value="Niobe Spa Escape Journey (5 hrs+)">Niobe Spa Escape Journey — 5 hrs+</option>
+                <option value="Niobe Pure Indulgence Package">Niobe Pure Indulgence Package</option>
+                <option value="Niobe Sublime Package">Niobe Sublime Package</option>
+                <option value="Two's Company (couples)">Two's Company — Couples Package</option>
+              </optgroup>
+              <optgroup label="Hammam Ceremonies">
+                <option value="Hammam Thousand &amp; One Night">Hammam Thousand &amp; One Night</option>
+                <option value="Hammam Foundation Ceremony">Hammam Foundation Ceremony</option>
+              </optgroup>
+              <optgroup label="Easter 2026">
+                <option value="Easter — First Light (GHS 620)">Easter — First Light · GHS 620</option>
+                <option value="Easter — The Soft Reawakening (GHS 650)">Easter — The Soft Reawakening · GHS 650</option>
+                <option value="Easter — In Full Bloom (GHS 970)">Easter — In Full Bloom · GHS 970</option>
+                <option value="Easter — Gentle Return (GHS 730)">Easter — Gentle Return · GHS 730</option>
+              </optgroup>
+            </select>
           </div>
 
-          <div class="form-field">
-            <label class="form-label" for="gc-message">Personal message <span style="opacity: 0.45;">(optional)</span></label>
-            <textarea class="form-textarea" id="gc-message" name="message" placeholder="A note to include with the gift card…"></textarea>
+          <!-- Sub: Amount picker -->
+          <div class="gc-sub-section" id="sub-open">
+            <span class="gc-sub-label">Choose an amount</span>
+            <div class="gc-amount-row" role="group" aria-label="Gift card value">
+              <button class="gc-amount-btn" data-amount="100" type="button">GHS 100</button>
+              <button class="gc-amount-btn" data-amount="200" type="button">GHS 200</button>
+              <button class="gc-amount-btn" data-amount="300" type="button">GHS 300</button>
+              <button class="gc-amount-btn" data-amount="500" type="button">GHS 500</button>
+              <button class="gc-amount-btn" data-amount="1000" type="button">GHS 1,000</button>
+              <button class="gc-amount-btn" data-amount="custom" type="button">Custom</button>
+            </div>
+            <div class="gc-custom-input-wrap" id="gc-custom-wrap">
+              <label class="form-label" for="gc-custom-amount">Enter amount (GHS)</label>
+              <input class="form-input" type="number" id="gc-custom-amount" placeholder="e.g. 750" min="100" style="max-width: 240px;" />
+            </div>
           </div>
 
-          <p class="form-note">
-            After submitting this form, we will send you payment details by WhatsApp. The e-gift card is issued
-            once payment is confirmed.
-          </p>
+        </div>
 
-          <button type="submit" class="btn btn-onyx">Request Gift Card</button>
-        </form>
+        <!-- 03 — Delivery -->
+        <div class="gc-section fade-up">
+          <span class="gc-section__num">03 &mdash; Delivery</span>
+          <h2 class="gc-section__title">How should we deliver it?</h2>
+          <div class="gc-delivery-grid" role="radiogroup" aria-label="Delivery method">
+
+            <div class="gc-delivery-card" data-delivery="email" role="radio" aria-checked="false" tabindex="0">
+              <span class="gc-delivery-card__icon">✉</span>
+              <div>
+                <div class="gc-delivery-card__title">Email</div>
+                <div class="gc-delivery-card__sub">PDF e-gift card sent to recipient's inbox</div>
+              </div>
+            </div>
+
+            <div class="gc-delivery-card" data-delivery="whatsapp" role="radio" aria-checked="false" tabindex="0">
+              <span class="gc-delivery-card__icon">💬</span>
+              <div>
+                <div class="gc-delivery-card__title">WhatsApp</div>
+                <div class="gc-delivery-card__sub">Sent directly to recipient's WhatsApp number</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Continue -->
+        <div class="gc-continue fade-up">
+          <div>
+            <button class="btn btn-onyx" id="gc-continue-btn" type="button">Continue to Details &rarr;</button>
+            <p id="gc-error">Please complete all selections above before continuing.</p>
+          </div>
+          <p class="gc-continue__note">Gift cards are valid for 90 days from purchase.<br>No upper limit on open-value cards.</p>
+        </div>
 
       </div>
     </section>
@@ -171,43 +565,200 @@
   </main>
 
   <footer class="footer" role="contentinfo">
-    <div class="footer__grid">
-      <div>
-        <p class="footer__brand">Niobe Beauty</p>
-        <p class="footer__brand-desc">Award-winning spa and salon across Accra and Tema. Over twenty years of expert care.</p>
+    <div class="footer__inner">
+      <div class="footer__grid">
+
+        <div>
+          <img src="images/niobe-spa-logo.png" class="footer__logo-img" alt="Niobe Spa" />
+          <p class="footer__brand-desc">Five locations. One standard. Award-winning care for skin, body and beauty.</p>
+          <div class="footer__social">
+            <a href="https://www.facebook.com/niobesalonspa" class="footer__social-link" aria-label="Facebook" target="_blank" rel="noopener noreferrer">f</a>
+            <a href="https://www.instagram.com/niobesalonspa/" class="footer__social-link" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+            </a>
+            <a href="https://www.tiktok.com/@niobesalonspa" class="footer__social-link" aria-label="TikTok" target="_blank" rel="noopener noreferrer">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V9.09a8.16 8.16 0 004.77 1.52V7.17a4.85 4.85 0 01-1-.48z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <p class="footer__col-title">Locations</p>
+          <ul class="footer__links">
+            <li><span class="footer__link">Community 18, Tema</span></li>
+            <li><span class="footer__link">Cantonments, Accra</span></li>
+            <li><span class="footer__link">East Legon, Accra</span></li>
+            <li><span class="footer__link">Alisa Hotel, Tema</span></li>
+            <li><span class="footer__link">African Regent, Accra</span></li>
+            <li><a href="locations.html" class="footer__link" style="opacity:0.7;border-bottom:1px solid rgba(47,36,29,0.15);">View all locations &rarr;</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="footer__col-title">Quick Links</p>
+          <ul class="footer__links">
+            <li><a href="treatments.html" class="footer__link">Treatments</a></li>
+            <li><a href="packages.html"   class="footer__link">Spa Packages</a></li>
+            <li><a href="gift-cards.html" class="footer__link">Gift Cards</a></li>
+            <li><a href="vacancies.html"  class="footer__link">Vacancies</a></li>
+            <li><a href="faqs.html"       class="footer__link">FAQs</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="footer__col-title">Contact</p>
+          <ul class="footer__links">
+            <li><a href="mailto:info@niobebeauty.com" class="footer__link">info@niobebeauty.com</a></li>
+            <li><a href="tel:+233302777222" class="footer__link">+233 30 277 7222</a></li>
+            <li><a href="tel:+233244334323" class="footer__link">+233 24 433 4323</a></li>
+            <li><a href="locations.html" class="footer__link">Opening hours &rarr;</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="footer__col-title">Stay Connected</p>
+          <p class="footer__connect-desc">Be the first to know about offers and new treatments.</p>
+          <form class="footer__email-form" onsubmit="return false;">
+            <input type="email" class="footer__email-input" placeholder="Your email address" aria-label="Email address" />
+            <button type="submit" class="footer__email-btn" aria-label="Subscribe">&rarr;</button>
+          </form>
+        </div>
+
       </div>
-      <div>
-        <p class="footer__col-title">Services</p>
-        <ul class="footer__links">
-          <li><a href="treatments.html" class="footer__link">Treatments</a></li>
-          <li><a href="packages.html"   class="footer__link">Spa Packages</a></li>
-          <li><a href="gift-cards.html" class="footer__link">Gift Cards</a></li>
-        </ul>
-      </div>
-      <div>
-        <p class="footer__col-title">Company</p>
-        <ul class="footer__links">
-          <li><a href="about.html"   class="footer__link">About Us</a></li>
-          <li><a href="contact.html" class="footer__link">Contact</a></li>
-        </ul>
-      </div>
-      <div>
-        <p class="footer__col-title">Contact</p>
-        <ul class="footer__links">
-          <li><a href="https://wa.me/233561110000" class="footer__link">WhatsApp: 0561 11 00 00</a></li>
-          <li class="footer__link">Accra &amp; Tema, Ghana</li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer__bottom">
-      <p class="footer__copy">&copy; 2025 Niobe Salon and Spa Ltd. All rights reserved.</p>
-      <div class="footer__legal">
-        <a href="#" class="footer__legal-link">Privacy</a>
-        <a href="#" class="footer__legal-link">Terms</a>
+
+      <div class="footer__bottom">
+        <p class="footer__copy">&copy; 2025 Niobe Spa. All rights reserved.</p>
+        <p class="footer__payment">Payment methods: Visa &middot; Mastercard &middot; Mobile Money &middot; Cash</p>
       </div>
     </div>
   </footer>
 
   <script src="js/main.js"></script>
+  <script>
+  (function () {
+
+    var selection = {
+      design: null,
+      designName: null,
+      type: null,
+      treatment: null,
+      package: null,
+      amount: null,
+      customAmount: null,
+      delivery: null
+    };
+
+    // ── Design cards ──────────────────────────────────────────
+    document.querySelectorAll('.gc-design-card').forEach(function (card) {
+      card.addEventListener('click', function () {
+        document.querySelectorAll('.gc-design-card').forEach(function (c) {
+          c.classList.remove('selected');
+          c.setAttribute('aria-checked', 'false');
+        });
+        card.classList.add('selected');
+        card.setAttribute('aria-checked', 'true');
+        selection.design     = card.dataset.design;
+        selection.designName = card.dataset.designName;
+      });
+      card.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); }
+      });
+    });
+
+    // ── Type cards ────────────────────────────────────────────
+    document.querySelectorAll('.gc-type-card').forEach(function (card) {
+      card.addEventListener('click', function () {
+        document.querySelectorAll('.gc-type-card').forEach(function (c) {
+          c.classList.remove('selected');
+          c.setAttribute('aria-checked', 'false');
+        });
+        card.classList.add('selected');
+        card.setAttribute('aria-checked', 'true');
+        selection.type = card.dataset.type;
+        selection.treatment = null;
+        selection.package   = null;
+        selection.amount    = null;
+
+        // Hide all sub-sections, show relevant one
+        document.querySelectorAll('.gc-sub-section').forEach(function (s) { s.classList.remove('visible'); });
+        document.getElementById('sub-' + card.dataset.type).classList.add('visible');
+      });
+      card.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); }
+      });
+    });
+
+    // ── Treatment select ──────────────────────────────────────
+    document.getElementById('gc-treatment-select').addEventListener('change', function () {
+      selection.treatment = this.value;
+    });
+
+    // ── Package select ────────────────────────────────────────
+    document.getElementById('gc-package-select').addEventListener('change', function () {
+      selection.package = this.value;
+    });
+
+    // ── Amount buttons ────────────────────────────────────────
+    document.querySelectorAll('.gc-amount-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.gc-amount-btn').forEach(function (b) { b.classList.remove('selected'); });
+        btn.classList.add('selected');
+        selection.amount = btn.dataset.amount;
+        var customWrap = document.getElementById('gc-custom-wrap');
+        if (btn.dataset.amount === 'custom') {
+          customWrap.classList.add('visible');
+        } else {
+          customWrap.classList.remove('visible');
+          selection.customAmount = null;
+        }
+      });
+    });
+
+    document.getElementById('gc-custom-amount').addEventListener('input', function () {
+      selection.customAmount = this.value;
+    });
+
+    // ── Delivery cards ────────────────────────────────────────
+    document.querySelectorAll('.gc-delivery-card').forEach(function (card) {
+      card.addEventListener('click', function () {
+        document.querySelectorAll('.gc-delivery-card').forEach(function (c) {
+          c.classList.remove('selected');
+          c.setAttribute('aria-checked', 'false');
+        });
+        card.classList.add('selected');
+        card.setAttribute('aria-checked', 'true');
+        selection.delivery = card.dataset.delivery;
+      });
+      card.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); }
+      });
+    });
+
+    // ── Continue button ───────────────────────────────────────
+    document.getElementById('gc-continue-btn').addEventListener('click', function () {
+      var error = document.getElementById('gc-error');
+      var valid = true;
+
+      if (!selection.type) { valid = false; }
+      if (selection.type === 'treatment' && !selection.treatment) { valid = false; }
+      if (selection.type === 'package'   && !selection.package)   { valid = false; }
+      if (selection.type === 'open') {
+        if (!selection.amount) { valid = false; }
+        if (selection.amount === 'custom' && !selection.customAmount) { valid = false; }
+      }
+      if (!selection.delivery) { valid = false; }
+
+      if (!valid) {
+        error.classList.add('visible');
+        return;
+      }
+
+      error.classList.remove('visible');
+      sessionStorage.setItem('gc_selection', JSON.stringify(selection));
+      window.location.href = 'giftcard-details.html';
+    });
+
+  })();
+  </script>
 </body>
 </html>

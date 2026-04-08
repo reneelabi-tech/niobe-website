@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Easter Spa Packages 2026 — Niobe Spa</title>
+  <meta name="description" content="Four seasonal spa packages for Easter 2026 at Niobe Spa. First Light, The Soft Reawakening, In Full Bloom and Gentle Return — from GHS 620." />
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    .pkg-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto auto;
+      column-gap: 2rem;
+      row-gap: 0;
+      padding: 1.75rem 0;
+      border-bottom: 1px solid rgba(121,138,132,0.15);
+      align-items: baseline;
+      transition: padding-left var(--t);
+    }
+    .pkg-row:hover { padding-left: 0.5rem; }
+
+    .pkg-row__name {
+      font-family: var(--font-serif);
+      font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+      font-weight: 300;
+      line-height: 1.25;
+      padding-bottom: 0.65rem;
+    }
+    .pkg-row__desc {
+      grid-column: 1 / -1;
+      font-size: 0.875rem;
+      opacity: 0.55;
+      line-height: 1.8;
+      max-width: 72ch;
+      padding-bottom: 0.9rem;
+    }
+    .pkg-row__dur {
+      font-size: 0.625rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      opacity: 0.38;
+      white-space: nowrap;
+      padding-bottom: 0.65rem;
+    }
+    .pkg-row__price {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 1.05rem;
+      white-space: nowrap;
+      padding-bottom: 0.65rem;
+    }
+    .pkg-row__book {
+      display: inline-block;
+      font-family: var(--font-sans);
+      font-size: 0.5625rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--pitch-black);
+      border-bottom: 1px solid rgba(33,26,18,0.28);
+      padding-bottom: 1px;
+      white-space: nowrap;
+      transition: opacity var(--tf);
+      margin-bottom: 0.65rem;
+    }
+    .pkg-row__book:hover { opacity: 0.45; }
+    .pkg-row__avail {
+      grid-column: 1 / -1;
+      font-size: 0.625rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0.38;
+      padding-bottom: 0.25rem;
+    }
+    .t-category__title {
+      font-family: var(--font-display);
+      font-size: clamp(0.875rem, 1.1vw, 1rem);
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+    }
+    .easter-tag {
+      display: inline-block;
+      font-family: var(--font-sans);
+      font-size: 0.5rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      background: #4A4835;
+      color: var(--parchment);
+      padding: 0.3rem 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    @media (max-width: 640px) {
+      .pkg-row { grid-template-columns: 1fr auto; }
+      .pkg-row__dur { display: none; }
+      .pkg-row__desc, .pkg-row__avail { grid-column: 1 / -1; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav__inner">
+      <a href="index.html" class="nav__logo"><img src="images/niobe-logo-dark.png" class="nav__logo-img" alt="Niobe Spa"></a>
+      <div class="nav__sep" aria-hidden="true"></div>
+      <ul class="nav__links" role="list">
+        <li><a href="index.html"      class="nav__link">Home</a></li>
+        <li><a href="treatments.html" class="nav__link">Treatments</a></li>
+        <li><a href="packages.html"   class="nav__link">Spa Packages</a></li>
+        <li><a href="easter.html"     class="nav__link active">Easter</a></li>
+        <li><a href="about.html"      class="nav__link">About</a></li>
+        <li><a href="locations.html"  class="nav__link">Locations</a></li>
+        <li><a href="gift-cards.html" class="nav__link">Gift Cards</a></li>
+        <li><a href="faqs.html"       class="nav__link">FAQs</a></li>
+        <li><a href="vacancies.html"  class="nav__link">Vacancies</a></li>
+        <li><a href="contact.html"    class="nav__link">Contact</a></li>
+      </ul>
+      <a href="booking.html" class="nav__book">Book Now</a>
+      <button class="nav__toggle" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="nav__mobile" role="dialog" aria-label="Mobile navigation">
+    <a href="index.html"      class="nav__mobile-link">Home</a>
+    <a href="treatments.html" class="nav__mobile-link">Treatments</a>
+    <a href="packages.html"   class="nav__mobile-link">Spa Packages</a>
+    <a href="easter.html"     class="nav__mobile-link">Easter</a>
+    <a href="about.html"      class="nav__mobile-link">About</a>
+    <a href="locations.html"  class="nav__mobile-link">Locations</a>
+    <a href="gift-cards.html" class="nav__mobile-link">Gift Cards</a>
+    <a href="faqs.html"       class="nav__mobile-link">FAQs</a>
+    <a href="vacancies.html"  class="nav__mobile-link">Vacancies</a>
+    <a href="contact.html"    class="nav__mobile-link">Contact</a>
+    <a href="booking.html"    class="nav__mobile-cta">Book Now</a>
+  </div>
+
+  <div class="deposit-bar" role="note">100% deposit required at booking &middot; Non-refundable &middot; 5% group discount for 2 or more guests</div>
+
+  <main>
+
+    <div class="page-hero">
+      <div class="page-hero__inner">
+        <span class="eyebrow">Easter 2026</span>
+        <h1 class="t-display t-lg page-hero__title">
+          Step away from<br><em>the ordinary</em>
+        </h1>
+        <p class="page-hero__desc">
+          Four seasonal packages, thoughtfully composed to honour the quiet shift into spring. Each one designed to leave you feeling wholly and unmistakably yourself.
+        </p>
+      </div>
+    </div>
+
+
+    <section class="section">
+      <div class="wrap">
+
+        <div class="t-category fade-up">
+          <div class="t-category__header">
+            <h2 class="t-category__title">Easter Packages</h2>
+          </div>
+          <p class="body-sm" style="padding: 1.25rem 0; opacity: 0.6; max-width: 64ch;">Available across our locations in Accra and Tema. A 100% non-refundable deposit is required to confirm your booking.</p>
+
+          <!-- First Light -->
+          <div class="pkg-row fade-up">
+            <h3 class="pkg-row__name">First Light</h3>
+            <span class="pkg-row__dur">65 min</span>
+            <span class="pkg-row__price">GHS 620</span>
+            <a href="booking.html" data-book class="pkg-row__book">Book Now</a>
+            <p class="pkg-row__desc">A gentle recalibration. The Elemis Skin Booster Facial lifts away dullness and congestion in thirty careful minutes, revealing a clearer, brighter canvas beneath. From there, tension held in the scalp and temples is slowly unwound through Indian head massage, while a dedicated arm massage eases tightness you may not have realised you were carrying. Small in duration, significant in effect.</p>
+            <span class="pkg-row__avail">30-min Elemis Skin Booster Facial &middot; Indian Head Massage &middot; Arm Massage</span>
+          </div>
+
+          <!-- The Soft Reawakening -->
+          <div class="pkg-row fade-up">
+            <h3 class="pkg-row__name">The Soft Reawakening</h3>
+            <span class="pkg-row__dur">120 min</span>
+            <span class="pkg-row__price">GHS 650</span>
+            <a href="booking.html" data-book class="pkg-row__book">Book Now</a>
+            <p class="pkg-row__desc">Some days call for polish, and this package is perfect for them. A full hour of Elemis deep tissue massage works through the body, releasing held tension and restoring ease. The Sole Delight Pedicure with a Spa Manicure follows, attending to hands and feet with the kind of precision that makes everything feel considered. You leave looking exactly as put together as you feel.</p>
+            <span class="pkg-row__avail">60-min Elemis Freestyle Deep Tissue Massage &middot; Sole Delight Pedicure &middot; Spa Manicure</span>
+          </div>
+
+          <!-- In Full Bloom -->
+          <div class="pkg-row fade-up">
+            <h3 class="pkg-row__name">In Full Bloom</h3>
+            <span class="pkg-row__dur">150 min</span>
+            <span class="pkg-row__price">GHS 970</span>
+            <a href="booking.html" data-book class="pkg-row__book">Book Now</a>
+            <p class="pkg-row__desc">Here, body and face receive equal attention. An hour of Garden of England Rose Massage across the head, back and neck dissolves deep-seated tension and restores a sense of physical ease you may have forgotten was possible. The Elemis Superfood Radiance Facial then nourishes the skin over thirty minutes, building a visible glow from within. A pedicure and soothing foot massage close the session, grounding you entirely. This is what it feels like when nothing has been overlooked.</p>
+            <span class="pkg-row__avail">60-min Garden of England Rose Massage &middot; 30-min Elemis Superfood Radiance Facial &middot; Pedicure &amp; Foot Massage</span>
+          </div>
+
+          <!-- Gentle Return -->
+          <div class="pkg-row fade-up">
+            <h3 class="pkg-row__name">Gentle Return</h3>
+            <span class="pkg-row__dur">120 min</span>
+            <span class="pkg-row__price">GHS 730</span>
+            <a href="booking.html" data-book class="pkg-row__book">Book Now</a>
+            <p class="pkg-row__desc">The Elemis Lime and Ginger Salt Scrub opens the ritual with warmth and texture, buffing the skin smooth while the citrus and spice notes wake the senses. Steam follows, opening the pores and softening the body into stillness. Then, the centrepiece — a sixty-minute Elemis Hot Mineral Body Boost Massage uses heated minerals to reach deep into fatigued muscles, coaxing out every held knot and ache. For anyone craving total physical release, this is it.</p>
+            <span class="pkg-row__avail">Steam &middot; 30-min Elemis Lime &amp; Ginger Salt Scrub &middot; 60-min Elemis Hot Mineral Body Boost Massage</span>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <section class="section section--sage">
+      <div class="wrap">
+        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 1.75rem;">
+          <span class="eyebrow" style="color: rgba(255,254,246,0.55);">Book</span>
+          <h2 class="t-display t-md fade-up">Ready to book<br><em>your Easter package?</em></h2>
+          <p class="body-lg fade-up d2" style="font-family: var(--font-serif); max-width: 52ch; font-size: clamp(1rem, 1.3vw, 1.1rem); line-height: 1.85;">
+            East Legon &middot; Cantonments &middot; Community 18 &middot; African Regent Hotel &middot; Alisa Hotel Tema.
+          </p>
+          <div class="fade-up d3" style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+            <a href="booking.html" data-book class="btn btn-ivory">Book a Package</a>
+            <a href="packages.html" class="btn btn-ivory">All Spa Packages</a>
+          </div>
+          <a href="payment-options.html" class="payment-options-link fade-up d4">View payment options &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="footer__inner">
+      <div class="footer__grid">
+
+        <div>
+          <img src="images/niobe-spa-logo.png" class="footer__logo-img" alt="Niobe Spa" />
+          <p class="footer__brand-desc">Five locations. One standard. Award-winning care for skin, body and beauty.</p>
+          <div class="footer__social">
+            <a href="https://www.facebook.com/niobesalonspa" class="footer__social-link" aria-label="Facebook" target="_blank" rel="noopener noreferrer">f</a>
+            <a href="https://www.instagram.com/niobesalonspa/" class="footer__social-link" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+            </a>
+            <a href="https://www.tiktok.com/@niobesalonspa" class="footer__social-link" aria-label="TikTok" target="_blank" rel="noopener noreferrer">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V9.09a8.16 8.16 0 004.77 1.52V7.17a4.85 4.85 0 01-1-.48z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <p class="footer__col-title">Locations</p>
+          <ul class="footer__links">
+            <li><span class="footer__link">Community 18, Tema</span></li>
+            <li><span class="footer__link">Cantonments, Accra</span></li>
+            <li><span class="footer__link">East Legon, Accra</span></li>
+            <li><span class="footer__link">Alisa Hotel, Tema</span></li>
+            <li><span class="footer__link">African Regent, Accra</span></li>
+            <li><a href="locations.html" class="footer__link" style="opacity:0.7;border-bottom:1px solid rgba(47,36,29,0.15);">View all locations &rarr;</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="footer__col-title">Quick Links</p>
+          <ul class="footer__links">
+            <li><a href="treatments.html" class="footer__link">Treatments</a></li>
+            <li><a href="packages.html"   class="footer__link">Spa Packages</a></li>
+            <li><a href="easter.html"     class="footer__link">Easter Packages</a></li>
+            <li><a href="gift-cards.html" class="footer__link">Gift Cards</a></li>
+            <li><a href="faqs.html"       class="footer__link">FAQs</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="footer__col-title">Contact</p>
+          <ul class="footer__links">
+            <li><a href="mailto:info@niobebeauty.com" class="footer__link">info@niobebeauty.com</a></li>
+            <li><a href="tel:+233302777222" class="footer__link">+233 30 277 7222</a></li>
+            <li><a href="tel:+233244334323" class="footer__link">+233 24 433 4323</a></li>
+            <li><a href="locations.html" class="footer__link">Opening hours &rarr;</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="footer__col-title">Stay Connected</p>
+          <p class="footer__connect-desc">Be the first to know about offers and new treatments.</p>
+          <form class="footer__email-form" onsubmit="return false;">
+            <input type="email" class="footer__email-input" placeholder="Your email address" aria-label="Email address" />
+            <button type="submit" class="footer__email-btn" aria-label="Subscribe">&rarr;</button>
+          </form>
+        </div>
+
+      </div>
+
+      <div class="footer__bottom">
+        <p class="footer__copy">&copy; 2026 Niobe Spa. All rights reserved.</p>
+        <p class="footer__payment">Payment methods: Visa &middot; Mastercard &middot; Mobile Money &middot; Cash</p>
+      </div>
+    </div>
+  </footer>
+
+  <script type="application/json" id="booking-locations">
+  [
+    {"city":"Accra","name":"East Legon","url":"https://eastlegon.simplespa.com"},
+    {"city":"Accra","name":"Cantonments","url":"https://cantonments.simplespa.com"},
+    {"city":"Accra","name":"African Regent","url":"https://africanregent.simplespa.com"},
+    {"city":"Tema","name":"Community 18","url":"https://hfcestatec18.simplespa.com"},
+    {"city":"Tema","name":"Alisa Hotel","url":"https://alisahoteltema.simplespa.com"}
+  ]
+  </script>
+  <script src="js/main.js"></script>
+
+</body>
+</html>

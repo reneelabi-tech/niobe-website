@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gift Card Details — Niobe Spa</title>
+  <meta name="description" content="Enter recipient details for your Niobe Spa gift card." />
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+
+    /* ── Progress indicator (shared with gift-cards.html) ────── */
+    .gc-progress {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      padding: clamp(1.25rem, 2.5vw, 1.75rem) 1.5rem;
+      border-bottom: 1px solid rgba(47,36,29,0.08);
+      background: #fff;
+    }
+    .gc-progress__step {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: var(--font-sans);
+      font-size: 0.625rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(47,36,29,0.35);
+    }
+    .gc-progress__step.active { color: var(--espresso); }
+    .gc-progress__step.done   { color: var(--olive); }
+    .gc-progress__num {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 1px solid currentColor;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.6rem;
+      flex-shrink: 0;
+    }
+    .gc-progress__step.active .gc-progress__num {
+      background: var(--espresso);
+      border-color: var(--espresso);
+      color: var(--parchment);
+    }
+    .gc-progress__step.done .gc-progress__num {
+      background: var(--olive);
+      border-color: var(--olive);
+      color: var(--parchment);
+    }
+    .gc-progress__line {
+      width: clamp(2.5rem, 6vw, 5rem);
+      height: 1px;
+      background: rgba(47,36,29,0.12);
+      margin: 0 0.5rem;
+    }
+
+    /* ── Two-column layout ───────────────────────────────────── */
+    .gcd-layout {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: clamp(2rem, 5vw, 5rem);
+      align-items: start;
+      padding: clamp(2.5rem, 5vw, 4rem) 0;
+    }
+    @media (max-width: 900px) {
+      .gcd-layout {
+        grid-template-columns: 1fr;
+      }
+      .gcd-summary { order: -1; }
+    }
+
+    /* ── Summary panel ───────────────────────────────────────── */
+    .gcd-summary {
+      position: sticky;
+      top: 5rem;
+    }
+    .gcd-summary__card-preview {
+      width: 100%;
+      aspect-ratio: 3 / 2;
+      object-fit: cover;
+      display: block;
+      margin-bottom: 1.25rem;
+    }
+    .gcd-summary__card-placeholder {
+      width: 100%;
+      aspect-ratio: 3 / 2;
+      background: rgba(47,36,29,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+    }
+    .gcd-summary__card-placeholder span {
+      font-family: var(--font-sans);
+      font-size: 0.625rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(47,36,29,0.3);
+    }
+    .gcd-summary__label {
+      font-family: var(--font-sans);
+      font-size: 0.5625rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--olive);
+      display: block;
+      margin-bottom: 0.75rem;
+    }
+    .gcd-summary__rows {
+      border-top: 1px solid rgba(47,36,29,0.1);
+    }
+    .gcd-summary__row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid rgba(47,36,29,0.07);
+      font-size: 0.8125rem;
+    }
+    .gcd-summary__row-key {
+      color: rgba(47,36,29,0.5);
+      flex-shrink: 0;
+    }
+    .gcd-summary__row-val {
+      font-family: var(--font-serif);
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-align: right;
+    }
+    .gcd-summary__back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 1.25rem;
+      font-family: var(--font-sans);
+      font-size: 0.625rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(47,36,29,0.45);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(47,36,29,0.2);
+      padding-bottom: 1px;
+      transition: color 0.15s;
+    }
+    .gcd-summary__back:hover { color: var(--espresso); }
+
+    /* ── Form ────────────────────────────────────────────────── */
+    .gcd-form__title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.4rem, 2.5vw, 1.9rem);
+      font-weight: 400;
+      margin-bottom: 0.5rem;
+      line-height: 1.2;
+    }
+    .gcd-form__sub {
+      font-size: 0.875rem;
+      color: rgba(47,36,29,0.55);
+      line-height: 1.7;
+      margin-bottom: clamp(1.75rem, 3vw, 2.5rem);
+    }
+
+    .gcd-field-group {
+      margin-bottom: clamp(1.5rem, 3vw, 2rem);
+    }
+    .gcd-field-group__title {
+      font-family: var(--font-sans);
+      font-size: 0.5625rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--olive);
+      display: block;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(47,36,29,0.08);
+    }
+
+    /* Delivery toggle — switches label between email and whatsapp */
+    .gcd-delivery-label { display: none; }
+    .gcd-delivery-label.visible { display: block; }
+
+    /* ── Date picker note ────────────────────────────────────── */
+    .gcd-date-note {
+      font-size: 0.75rem;
+      color: rgba(47,36,29,0.45);
+      margin-top: 0.4rem;
+      line-height: 1.5;
+    }
+
+    /* ── CTA area ────────────────────────────────────────────── */
+    .gcd-cta {
+      margin-top: clamp(2rem, 4vw, 3rem);
+      padding-top: clamp(1.5rem, 3vw, 2rem);
+      border-top: 1px solid rgba(47,36,29,0.1);
+    }
+    .gcd-cta__note {
+      font-size: 0.8125rem;
+      color: rgba(47,36,29,0.45);
+      margin-top: 0.75rem;
+      line-height: 1.6;
+    }
+
+    /* ── No selection fallback ───────────────────────────────── */
+    .gcd-no-selection {
+      text-align: center;
+      padding: clamp(3rem, 6vw, 5rem) 1.5rem;
+    }
+    .gcd-no-selection p {
+      font-size: 0.875rem;
+      color: rgba(47,36,29,0.5);
+      margin-bottom: 1.5rem;
+    }
+
+  </style>
+</head>
+<body>
+
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav__inner">
+      <a href="index.html" class="nav__logo"><img src="images/niobe-logo-dark.png" class="nav__logo-img" alt="Niobe Spa"></a>
+      <div class="nav__sep" aria-hidden="true"></div>
+      <ul class="nav__links" role="list">
+        <li><a href="index.html"      class="nav__link">Home</a></li>
+        <li><a href="treatments.html" class="nav__link">Treatments</a></li>
+        <li><a href="packages.html"   class="nav__link">Spa Packages</a></li>
+        <li><a href="easter.html"     class="nav__link">Easter</a></li>
+        <li><a href="about.html"      class="nav__link">About</a></li>
+        <li><a href="locations.html"  class="nav__link">Locations</a></li>
+        <li><a href="gift-cards.html" class="nav__link active">Gift Cards</a></li>
+        <li><a href="faqs.html"       class="nav__link">FAQs</a></li>
+        <li><a href="vacancies.html"  class="nav__link">Vacancies</a></li>
+        <li><a href="contact.html"    class="nav__link">Contact</a></li>
+      </ul>
+      <a href="booking.html" class="nav__book">Book Now</a>
+      <button class="nav__toggle" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="nav__mobile" role="dialog" aria-label="Mobile navigation">
+    <a href="index.html"      class="nav__mobile-link">Home</a>
+    <a href="treatments.html" class="nav__mobile-link">Treatments</a>
+    <a href="packages.html"   class="nav__mobile-link">Spa Packages</a>
+    <a href="easter.html"     class="nav__mobile-link">Easter</a>
+    <a href="about.html"      class="nav__mobile-link">About</a>
+    <a href="locations.html"  class="nav__mobile-link">Locations</a>
+    <a href="gift-cards.html" class="nav__mobile-link">Gift Cards</a>
+    <a href="faqs.html"       class="nav__mobile-link">FAQs</a>
+    <a href="vacancies.html"  class="nav__mobile-link">Vacancies</a>
+    <a href="contact.html"    class="nav__mobile-link">Contact</a>
+    <a href="booking.html"    class="nav__mobile-cta">Book Now</a>
+  </div>
+
+  <main>
+
+    <!-- Step progress -->
+    <div class="gc-progress" role="navigation" aria-label="Purchase steps">
+      <div class="gc-progress__step done">
+        <span class="gc-progress__num">✓</span>
+        <span>Selection</span>
+      </div>
+      <div class="gc-progress__line" aria-hidden="true"></div>
+      <div class="gc-progress__step active">
+        <span class="gc-progress__num">2</span>
+        <span>Details</span>
+      </div>
+      <div class="gc-progress__line" aria-hidden="true"></div>
+      <div class="gc-progress__step">
+        <span class="gc-progress__num">3</span>
+        <span>Payment</span>
+      </div>
+    </div>
+
+    <!-- No selection fallback (hidden by JS if selection exists) -->
+    <div class="wrap" id="gcd-no-selection-msg" style="display:none;">
+      <div class="gcd-no-selection">
+        <p>It looks like you arrived here without completing a selection.</p>
+        <a href="gift-cards.html" class="btn btn-onyx">&larr; Choose a gift card</a>
+      </div>
+    </div>
+
+    <!-- Main layout -->
+    <section class="section" id="gcd-main" style="display:none;">
+      <div class="wrap">
+        <div class="gcd-layout">
+
+          <!-- Form -->
+          <div class="gcd-form">
+            <h1 class="gcd-form__title">Recipient &amp; delivery<br><em>details</em></h1>
+            <p class="gcd-form__sub">Let us know who this gift is for and how you'd like it delivered.</p>
+
+            <form id="gcd-form" novalidate>
+
+              <!-- Recipient -->
+              <div class="gcd-field-group">
+                <span class="gcd-field-group__title">Recipient</span>
+                <div class="form-row">
+                  <div class="form-field">
+                    <label class="form-label" for="gcd-recipient-name">Recipient's name <span style="color:#b04040;">*</span></label>
+                    <input class="form-input" type="text" id="gcd-recipient-name" name="recipient_name" placeholder="Full name" autocomplete="off" required />
+                  </div>
+                </div>
+
+                <!-- Email delivery field -->
+                <div class="form-field gcd-delivery-label" id="gcd-email-field">
+                  <label class="form-label" for="gcd-recipient-email">Recipient's email address <span style="color:#b04040;">*</span></label>
+                  <input class="form-input" type="email" id="gcd-recipient-email" name="recipient_email" placeholder="recipient@email.com" autocomplete="off" />
+                </div>
+
+                <!-- WhatsApp delivery field -->
+                <div class="form-field gcd-delivery-label" id="gcd-whatsapp-field">
+                  <label class="form-label" for="gcd-recipient-whatsapp">Recipient's WhatsApp number <span style="color:#b04040;">*</span></label>
+                  <input class="form-input" type="tel" id="gcd-recipient-whatsapp" name="recipient_whatsapp" placeholder="+233" autocomplete="off" />
+                </div>
+              </div>
+
+              <!-- Sender -->
+              <div class="gcd-field-group">
+                <span class="gcd-field-group__title">From</span>
+                <div class="form-row">
+                  <div class="form-field">
+                    <label class="form-label" for="gcd-sender-name">Your name <span style="color:#b04040;">*</span></label>
+                    <input class="form-input" type="text" id="gcd-sender-name" name="sender_name" placeholder="Your full name" autocomplete="name" required />
+                  </div>
+                  <div class="form-field">
+                    <label class="form-label" for="gcd-sender-phone">Your phone / WhatsApp <span style="color:#b04040;">*</span></label>
+                    <input class="form-input" type="tel" id="gcd-sender-phone" name="sender_phone" placeholder="+233" autocomplete="tel" required />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Message & date -->
+              <div class="gcd-field-group">
+                <span class="gcd-field-group__title">Your message</span>
+                <div class="form-field">
+                  <label class="form-label" for="gcd-message">Gift message <span style="opacity:0.45;">(optional)</span></label>
+                  <textarea class="form-textarea" id="gcd-message" name="message" rows="4" placeholder="A personal note to include with the gift card…"></textarea>
+                </div>
+                <div class="form-field" style="margin-top: 1rem;">
+                  <label class="form-label" for="gcd-send-date">Preferred send date <span style="opacity:0.45;">(optional)</span></label>
+                  <input class="form-input" type="date" id="gcd-send-date" name="send_date" style="max-width: 240px;" />
+                  <p class="gcd-date-note">Leave blank and we will send it as soon as payment is confirmed.</p>
+                </div>
+              </div>
+
+              <p id="gcd-error" style="font-family: var(--font-sans); font-size: 0.75rem; color: #b04040; display: none; margin-bottom: 1rem;">
+                Please fill in all required fields before continuing.
+              </p>
+
+              <!-- CTA -->
+              <div class="gcd-cta">
+                <button type="submit" class="btn btn-onyx">Continue to Payment &rarr;</button>
+                <p class="gcd-cta__note">Payment is processed securely in the next step.<br>Your gift card is issued once payment clears.</p>
+              </div>
+
+            </form>
+          </div>
+
+          <!-- Summary panel -->
+          <div class="gcd-summary">
+            <img id="gcd-card-preview" src="" alt="Selected gift card design" class="gcd-summary__card-preview" style="display:none;" />
+            <div id="gcd-card-placeholder" class="gcd-summary__card-placeholder">
+              <span>No design selected</span>
+            </div>
+
+            <span class="gcd-summary__label">Your selection</span>
+            <div class="gcd-summary__rows">
+              <div class="gcd-summary__row">
+                <span class="gcd-summary__row-key">Design</span>
+                <span class="gcd-summary__row-val" id="sum-design">—</span>
+              </div>
+              <div class="gcd-summary__row">
+                <span class="gcd-summary__row-key">Type</span>
+                <span class="gcd-summary__row-val" id="sum-type">—</span>
+              </div>
+              <div class="gcd-summary__row">
+                <span class="gcd-summary__row-key">Value / Item</span>
+                <span class="gcd-summary__row-val" id="sum-value">—</span>
+              </div>
+              <div class="gcd-summary__row">
+                <span class="gcd-summary__row-key">Delivery</span>
+                <span class="gcd-summary__row-val" id="sum-delivery">—</span>
+              </div>
+            </div>
+
+            <a href="gift-cards.html" class="gcd-summary__back">&larr; Change selection</a>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="footer__inner">
+      <div class="footer__grid">
+
+        <div>
+          <img src="images/niobe-spa-logo.png" class="footer__logo-img" alt="Niobe Spa" />
+          <p class="footer__brand-desc">Five locations. One standard. Award-winning care for skin, body and beauty.</p>
+          <div class="footer__social">
+            <a href="https://www.facebook.com/niobesalonspa" class="footer__social-link" aria-label="Facebook" target="_blank" rel="noopener noreferrer">f</a>
+            <a href="https://www.instagram.com/niobesalonspa/" class="footer__social-link" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+            </a>
+            <a href="https://www.tiktok.com/@niobesalonspa" class="footer__social-link" aria-label="TikTok" target="_blank" rel="noopener noreferrer">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V9.09a8.16 8.16 0 004.77 1.52V7.17a4.85 4.85 0 01-1-.48z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <p class="footer__col-title">Locations</p>
+          <ul class="footer__links">
+            <li><span class="footer__link">Community 18, Tema</span></li>
+            <li><span class="footer__link">Cantonments, Accra</span></li>
+            <li><span class="footer__link">East Legon, Accra</span></li>
+            <li><span class="footer__link">Alisa Hotel, Tema</span></li>
+            <li><span class="footer__link">African Regent, Accra</span></li>
+            <li><a href="locations.html" class="footer__link" style="opacity:0.7;border-bottom:1px solid rgba(47,36,29,0.15);">View all locations &rarr;</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="footer__col-title">Quick Links</p>
+          <ul class="footer__links">
+            <li><a href="treatments.html" class="footer__link">Treatments</a></li>
+            <li><a href="packages.html"   class="footer__link">Spa Packages</a></li>
+            <li><a href="gift-cards.html" class="footer__link">Gift Cards</a></li>
+            <li><a href="vacancies.html"  class="footer__link">Vacancies</a></li>
+            <li><a href="faqs.html"       class="footer__link">FAQs</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="footer__col-title">Contact</p>
+          <ul class="footer__links">
+            <li><a href="mailto:info@niobebeauty.com" class="footer__link">info@niobebeauty.com</a></li>
+            <li><a href="tel:+233302777222" class="footer__link">+233 30 277 7222</a></li>
+            <li><a href="tel:+233244334323" class="footer__link">+233 24 433 4323</a></li>
+            <li><a href="locations.html" class="footer__link">Opening hours &rarr;</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="footer__col-title">Stay Connected</p>
+          <p class="footer__connect-desc">Be the first to know about offers and new treatments.</p>
+          <form class="footer__email-form" onsubmit="return false;">
+            <input type="email" class="footer__email-input" placeholder="Your email address" aria-label="Email address" />
+            <button type="submit" class="footer__email-btn" aria-label="Subscribe">&rarr;</button>
+          </form>
+        </div>
+
+      </div>
+
+      <div class="footer__bottom">
+        <p class="footer__copy">&copy; 2025 Niobe Spa. All rights reserved.</p>
+        <p class="footer__payment">Payment methods: Visa &middot; Mastercard &middot; Mobile Money &middot; Cash</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+  (function () {
+
+    var raw = sessionStorage.getItem('gc_selection');
+
+    if (!raw) {
+      document.getElementById('gcd-no-selection-msg').style.display = 'block';
+      return;
+    }
+
+    var sel = JSON.parse(raw);
+    document.getElementById('gcd-main').style.display = 'block';
+
+    // ── Populate summary panel ────────────────────────────────
+    var designNames = { '1': 'Classic', '2': 'Botanical', '3': 'Celebration', '4': 'Wellness' };
+    var typeLabels  = { 'treatment': 'Specific treatment', 'package': 'Spa package', 'open': 'Open-value card' };
+    var delivLabels = { 'email': 'Email', 'whatsapp': 'WhatsApp' };
+
+    if (sel.design) {
+      var preview = document.getElementById('gcd-card-preview');
+      var placeholder = document.getElementById('gcd-card-placeholder');
+      preview.src = 'images/gc-design-' + sel.design + '.png';
+      preview.style.display = 'block';
+      placeholder.style.display = 'none';
+    }
+
+    document.getElementById('sum-design').textContent   = sel.designName || '—';
+    document.getElementById('sum-type').textContent     = typeLabels[sel.type] || '—';
+    document.getElementById('sum-delivery').textContent = delivLabels[sel.delivery] || '—';
+
+    var valueText = '—';
+    if (sel.type === 'treatment') valueText = sel.treatment || '—';
+    if (sel.type === 'package')   valueText = sel.package   || '—';
+    if (sel.type === 'open') {
+      if (sel.amount === 'custom') {
+        valueText = sel.customAmount ? 'GHS ' + sel.customAmount : 'Custom';
+      } else if (sel.amount) {
+        valueText = 'GHS ' + Number(sel.amount).toLocaleString();
+      }
+    }
+    document.getElementById('sum-value').textContent = valueText;
+
+    // ── Show correct delivery field ───────────────────────────
+    if (sel.delivery === 'email') {
+      document.getElementById('gcd-email-field').classList.add('visible');
+    } else if (sel.delivery === 'whatsapp') {
+      document.getElementById('gcd-whatsapp-field').classList.add('visible');
+    }
+
+    // ── Form submission ───────────────────────────────────────
+    document.getElementById('gcd-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      var error = document.getElementById('gcd-error');
+      var valid = true;
+
+      var recipientName = document.getElementById('gcd-recipient-name').value.trim();
+      var senderName    = document.getElementById('gcd-sender-name').value.trim();
+      var senderPhone   = document.getElementById('gcd-sender-phone').value.trim();
+
+      if (!recipientName || !senderName || !senderPhone) { valid = false; }
+
+      if (sel.delivery === 'email') {
+        if (!document.getElementById('gcd-recipient-email').value.trim()) { valid = false; }
+      }
+      if (sel.delivery === 'whatsapp') {
+        if (!document.getElementById('gcd-recipient-whatsapp').value.trim()) { valid = false; }
+      }
+
+      if (!valid) {
+        error.style.display = 'block';
+        return;
+      }
+
+      error.style.display = 'none';
+
+      // Merge details into the selection object and save
+      sel.recipientName      = recipientName;
+      sel.recipientEmail     = document.getElementById('gcd-recipient-email').value.trim();
+      sel.recipientWhatsapp  = document.getElementById('gcd-recipient-whatsapp').value.trim();
+      sel.senderName         = senderName;
+      sel.senderPhone        = senderPhone;
+      sel.message            = document.getElementById('gcd-message').value.trim();
+      sel.sendDate           = document.getElementById('gcd-send-date').value;
+
+      sessionStorage.setItem('gc_selection', JSON.stringify(sel));
+
+      // TODO: Navigate to Hubtel payment page
+      // window.location.href = 'giftcard-payment.html';
+
+      // Placeholder — payment step not yet integrated
+      alert('Details saved. Payment integration (Hubtel) will be connected here.');
+    });
+
+  })();
+  </script>
+</body>
+</html>
