@@ -367,6 +367,75 @@
       border-top: 1px solid rgba(47,36,29,0.08);
     }
 
+    /* ── Aftercare ───────────────────────────────────── */
+    .hub-aftercare-header {
+      margin-bottom: 1.75rem;
+    }
+    .hub-aftercare-header h2 {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      font-weight: 300;
+      color: var(--espresso);
+      margin-bottom: 0.4rem;
+    }
+    .hub-aftercare-header p {
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      color: var(--espresso);
+      opacity: 0.55;
+      line-height: 1.6;
+    }
+    .hub-aftercare-source {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      color: var(--olive);
+      margin-bottom: 1.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .hub-aftercare-source::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: var(--olive);
+    }
+    .hub-aftercare-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 2rem;
+      border-top: 1px solid rgba(47,36,29,0.08);
+    }
+    .hub-aftercare-list li {
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      color: var(--espresso);
+      line-height: 1.7;
+      padding: 0.9rem 0 0.9rem 1.5rem;
+      border-bottom: 1px solid rgba(47,36,29,0.06);
+      position: relative;
+    }
+    .hub-aftercare-list li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--olive);
+      font-size: 0.8rem;
+      top: 1rem;
+    }
+    .hub-aftercare-cta {
+      background-color: rgba(47,36,29,0.04);
+      border: 1px solid rgba(47,36,29,0.08);
+      padding: 1.25rem 1.5rem;
+      font-family: var(--font-sans);
+      font-size: 0.82rem;
+      color: var(--espresso);
+      opacity: 0.6;
+      line-height: 1.6;
+    }
+
     /* ── Responsive ──────────────────────────────────── */
     @media (max-width: 600px) {
       .hub-card { grid-template-columns: 1fr; }
@@ -464,6 +533,7 @@
           <button class="hub-tab active" data-tab="overview">Overview</button>
           <button class="hub-tab" data-tab="consultations">My Consultations</button>
           <button class="hub-tab" data-tab="health">Health Profile</button>
+          <button class="hub-tab" data-tab="aftercare">Aftercare</button>
         </nav>
 
         <!-- Loading -->
@@ -484,6 +554,21 @@
         <div class="hub-panel" id="panel-consultations">
           <div class="hub-consultations" id="hub-consultations-list">
             <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- ── AFTERCARE ─────────────────────────────── -->
+        <div class="hub-panel" id="panel-aftercare">
+          <div class="hub-aftercare-header">
+            <h2>Your aftercare</h2>
+            <p>Follow-up care for your most recent treatment. Keeping to these guidelines helps protect and extend your results.</p>
+          </div>
+          <div id="hub-aftercare-source" class="hub-aftercare-source" style="display:none;"></div>
+          <ul id="hub-aftercare-list" class="hub-aftercare-list">
+            <!-- Populated by JS -->
+          </ul>
+          <div class="hub-aftercare-cta">
+            If you have any concerns following your treatment, please contact us at <a href="mailto:info@niobebeauty.com" style="border-bottom:1px solid currentColor;opacity:1;">info@niobebeauty.com</a> or call <a href="tel:+233302777222" style="border-bottom:1px solid currentColor;opacity:1;">+233 30 277 7222</a>.
           </div>
         </div>
 
@@ -694,6 +779,7 @@
     renderOverview();
     renderConsultations();
     renderHealthProfile();
+    renderAftercare();
   }
 
   // ── Overview ─────────────────────────────────────────────────
@@ -797,6 +883,136 @@
         </div>
       `;
     }).join('');
+  }
+
+  // ── Aftercare ────────────────────────────────────────────────
+  const AFTERCARE = {
+    facial: {
+      label: 'Facial Aftercare',
+      items: [
+        'Avoid touching or washing your face for at least 4 hours after your treatment',
+        'Keep skin hydrated — apply your regular moisturiser or the one recommended by your therapist',
+        'Avoid direct sun exposure for 48 hours and apply SPF before going outdoors',
+        'If you had an active treatment or peel, avoid retinol, AHAs and BHAs for 5–7 days',
+        'Avoid heavy makeup for 24 hours to allow skin to breathe and settle',
+        'Drink plenty of water throughout the day',
+        'Some temporary redness or sensitivity is completely normal and will ease within a few hours',
+        'If you had extractions, keep the area clean and apply a light soothing serum — avoid touching it',
+      ],
+    },
+    massage: {
+      label: 'Massage Aftercare',
+      items: [
+        'Drink plenty of water to help flush toxins released during the massage',
+        'Rest where possible — the body continues to process the treatment after you leave',
+        'Avoid strenuous exercise for 24 hours',
+        'If oils were used, wait a few hours before showering to allow them to absorb fully',
+        'Mild muscle soreness is normal, especially after deep tissue work — it will ease within 48 hours',
+        'Avoid alcohol for the rest of the day',
+        'Apply a warm compress to any areas of tension if needed',
+      ],
+    },
+    wraps: {
+      label: 'Body Treatment Aftercare',
+      items: [
+        'Avoid showering for at least 4–6 hours after a wrap to allow the ingredients to continue absorbing',
+        'Apply a rich body moisturiser within 24 hours to lock in hydration',
+        'Drink plenty of water throughout the day',
+        'Avoid hot baths, saunas or steam rooms for 24 hours',
+        'Wear loose, comfortable clothing after your treatment to avoid irritating freshly treated skin',
+        'Some temporary flushing or warmth in the skin is completely normal',
+      ],
+    },
+    waxing: {
+      label: 'Waxing Aftercare',
+      items: [
+        'Avoid touching the waxed area for at least 24 hours',
+        'No hot baths, saunas, steam rooms or swimming pools for 24 hours',
+        'Avoid direct sun exposure on waxed areas for 48 hours — apply SPF if needed',
+        'Wear loose clothing to prevent friction and irritation',
+        'Begin gentle exfoliation 48–72 hours after treatment to help prevent ingrown hairs',
+        'Avoid perfumed products, deodorants or tanning products on waxed areas for 24 hours',
+        'Some redness and sensitivity is normal and will settle quickly',
+      ],
+    },
+    'brows-lashes': {
+      label: 'Brows & Lashes Aftercare',
+      items: [
+        'Avoid water, steam or oil-based products near the eye area for 24–48 hours',
+        'Do not rub, pull or pick at lashes or brows',
+        'If you had a tint, avoid direct sun exposure for 24 hours',
+        'For lash extensions: brush gently daily with a clean spoolie, sleep on your back where possible, and avoid oil-based makeup removers around the eyes',
+        'For brow lamination: brush brows upward each morning and apply a nourishing brow serum regularly',
+        'Avoid waterproof mascara on extensions as it weakens the adhesive bond',
+      ],
+    },
+    hammam: {
+      label: 'Hammam Aftercare',
+      items: [
+        'Apply a rich moisturiser to the body — skin will be particularly receptive to hydration after the ceremony',
+        'Drink plenty of water to rehydrate fully',
+        'Avoid sun exposure for 24 hours as freshly exfoliated skin is more sensitive',
+        'Rest for the remainder of the day where possible — the relaxation effect continues for several hours',
+        'Avoid strenuous exercise and alcohol for the rest of the day',
+        'A gentle moisturising routine over the following days will help maintain the softness and clarity of the skin',
+      ],
+    },
+    thermal: {
+      label: 'Thermal Aftercare',
+      items: [
+        'Drink plenty of water to rehydrate — this is the most important step',
+        'Rest where possible for the remainder of the day',
+        'Avoid strenuous exercise and alcohol for at least a few hours',
+        'A light, nourishing meal is ideal — avoid anything heavy straight after',
+        'Apply moisturiser to the body as the skin will be more open and receptive after heat exposure',
+      ],
+    },
+    general: {
+      label: 'After Your Visit',
+      items: [
+        'Allow any nail polish or gel to set fully before handling objects or getting hands wet',
+        'Apply cuticle oil regularly over the coming days to keep nails and skin nourished',
+        'Avoid prolonged water exposure for the first few hours',
+        'Drink plenty of water throughout the day',
+        'If you have any concerns about your treatment or skin response, please do not hesitate to contact us',
+      ],
+    },
+  };
+
+  // Map Airtable treatment/service names to aftercare keys
+  function treatmentToAftercareKey(treatment) {
+    if (!treatment) return 'general';
+    const t = treatment.toLowerCase();
+    if (t.includes('facial') || t.includes('elemis couture') || t.includes('biotec')) return 'facial';
+    if (t.includes('hammam') || t.includes('turkish bath') || t.includes('thousand and one')) return 'hammam';
+    if (t.includes('massage') || t.includes('time out') || t.includes('relax') || t.includes('pregnancy') || t.includes('love package')) return 'massage';
+    if (t.includes('wrap') || t.includes('scrub') || t.includes('body detox') || t.includes('indulge')) return 'wraps';
+    if (t.includes('wax') || t.includes('hair removal')) return 'waxing';
+    if (t.includes('brow') || t.includes('lash') || t.includes('eye')) return 'brows-lashes';
+    if (t.includes('thermal') || t.includes('steam') || t.includes('sauna')) return 'thermal';
+    if (t.includes('spa escape') || t.includes('serenity') || t.includes('ultimate') || t.includes('recharge') || t.includes('renew') || t.includes('bliss')) return 'massage'; // multi-treatment packages → massage as primary
+    return 'general';
+  }
+
+  function renderAftercare() {
+    const latest  = consultations[0];
+    const srcEl   = document.getElementById('hub-aftercare-source');
+    const listEl  = document.getElementById('hub-aftercare-list');
+
+    if (!latest) {
+      listEl.innerHTML = '<li style="padding-left:0;list-style:none;">No visit on file yet. Aftercare guidance will appear here after your first consultation.</li>';
+      return;
+    }
+
+    const treatment = latest.fields['Treatment Booked'] || '';
+    const apptDate  = formatDate(latest.fields['Appointment Date'] || latest.fields['Submission Date']);
+    const key       = treatmentToAftercareKey(treatment);
+    const content   = AFTERCARE[key] || AFTERCARE.general;
+
+    srcEl.style.display  = 'flex';
+    srcEl.textContent    = `${treatment || 'Most recent visit'} — ${apptDate}`;
+
+    listEl.innerHTML = content.items.map(item => `<li>${item}</li>`).join('');
   }
 
   // ── Helpers ───────────────────────────────────────────────────
