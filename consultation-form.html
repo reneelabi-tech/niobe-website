@@ -762,44 +762,9 @@
             </div>
           </div>
 
-          <div class="cf-row">
-            <div class="cf-field-group">
-              <label class="form-label" for="f-address">Home address / town</label>
-              <input class="form-input" type="text" id="f-address" name="home_address" placeholder="Town or neighbourhood" autocomplete="address-level2" />
-            </div>
-            <div class="cf-field-group">
-              <label class="form-label" for="f-language">Preferred language</label>
-              <input class="form-input" type="text" id="f-language" name="preferred_language" placeholder="e.g. English, Twi, French" />
-            </div>
-          </div>
-
-          <!-- Interpreter needed -->
           <div class="cf-field-group">
-            <span class="form-label" id="lbl-interpreter">Interpreter needed?</span>
-            <div class="cf-toggle-group" role="radiogroup" aria-labelledby="lbl-interpreter">
-              <button type="button" class="cf-toggle-btn" data-toggle="interpreter" data-val="yes">Yes</button>
-              <button type="button" class="cf-toggle-btn" data-toggle="interpreter" data-val="no">No</button>
-            </div>
-            <input type="hidden" id="f-interpreter" name="interpreter_needed" value="" />
-          </div>
-
-          <div class="cf-spacer-sm"></div>
-          <p class="cf-sub-label">Emergency contact</p>
-
-          <div class="cf-row">
-            <div class="cf-field-group">
-              <label class="form-label" for="f-ec-name">Emergency contact name <span aria-hidden="true">*</span></label>
-              <input class="form-input" type="text" id="f-ec-name" name="emergency_contact_name" required placeholder="Full name" />
-            </div>
-            <div class="cf-field-group">
-              <label class="form-label" for="f-ec-rel">Relationship</label>
-              <input class="form-input" type="text" id="f-ec-rel" name="emergency_contact_relationship" placeholder="e.g. Partner, Sister, Friend" />
-            </div>
-          </div>
-
-          <div class="cf-field-group" style="max-width:340px;">
-            <label class="form-label" for="f-ec-phone">Emergency contact phone <span aria-hidden="true">*</span></label>
-            <input class="form-input" type="tel" id="f-ec-phone" name="emergency_contact_phone" required placeholder="+233 …" />
+            <label class="form-label" for="f-address">Home address / town</label>
+            <input class="form-input" type="text" id="f-address" name="home_address" placeholder="Town or neighbourhood" autocomplete="address-level2" />
           </div>
 
           <div class="cf-spacer-sm"></div>
@@ -832,7 +797,7 @@
 
           <!-- Wellness goal -->
           <div class="cf-field-group">
-            <label class="form-label" for="f-wellness-goal">Main reason for today's visit / wellness goal</label>
+            <label class="form-label" for="f-wellness-goal">Main reason for today's visit / wellness goal <span style="font-weight:300;opacity:0.55;">(optional)</span></label>
             <textarea class="form-textarea" id="f-wellness-goal" name="wellness_goal" rows="3" placeholder="e.g. relaxation, specific skin concern, pain relief, treat myself…"></textarea>
           </div>
 
@@ -2112,7 +2077,7 @@
 
             <div class="cf-consent-item">
               <input type="checkbox" id="consent-wellness" name="consent_wellness" value="yes" required />
-              <label for="consent-wellness">I understand that spa services are wellness and beauty therapies, not a substitute for medical diagnosis or treatment.</label>
+              <label for="consent-wellness">I understand that spa services are wellness and beauty therapies, not a substitute for medical diagnosis or treatment. I consent to receive the service(s) I have booked, as indicated in this form. Some services involve the use of heat, steam, essential oils, wax, tinting chemicals, adhesives, or exfoliants.</label>
             </div>
 
             <div class="cf-consent-item">
@@ -2121,18 +2086,8 @@
             </div>
 
             <div class="cf-consent-item">
-              <input type="checkbox" id="consent-receive" name="consent_receive" value="yes" required />
-              <label for="consent-receive">I consent to receive the service(s) I have booked, as indicated in this form.</label>
-            </div>
-
-            <div class="cf-consent-item">
               <input type="checkbox" id="consent-contact" name="consent_contact" value="yes" required />
               <label for="consent-contact">I understand that spa services involve physical contact with my body and skin by a trained therapist.</label>
-            </div>
-
-            <div class="cf-consent-item">
-              <input type="checkbox" id="consent-products" name="consent_products" value="yes" required />
-              <label for="consent-products">Some services involve the use of heat, steam, essential oils, wax, tinting chemicals, adhesives, or exfoliants.</label>
             </div>
 
             <div class="cf-consent-item">
@@ -2193,7 +2148,7 @@
             <span class="cf-consent-group__title">Data privacy</span>
             <div class="cf-consent-item">
               <input type="checkbox" id="consent-privacy" name="consent_privacy" value="yes" required />
-              <label for="consent-privacy">I have read and understood Niobe's data privacy notice. I consent to the collection and use of my personal and health data for the purposes of providing safe spa services, managing my appointments, and maintaining my client records. My information will not be sold to third parties.</label>
+              <label for="consent-privacy">I have read and understood Niobe's <a href="privacy-policy.html" target="_blank" style="color:var(--espresso);text-decoration:underline;">Privacy Policy</a>. I consent to the collection and use of my personal and health data for the purposes of providing safe spa services, managing my appointments, and maintaining my client records. My information will not be sold to third parties.</label>
             </div>
           </div>
 
@@ -2284,6 +2239,7 @@
             <li><a href="gift-cards.html" class="footer__link">Gift Cards</a></li>
             <li><a href="vacancies.html"  class="footer__link">Vacancies</a></li>
             <li><a href="faqs.html"       class="footer__link">FAQs</a></li>
+            <li><a href="privacy-policy.html" class="footer__link">Privacy Policy</a></li>
           </ul>
         </div>
 
@@ -2341,11 +2297,6 @@
       whatsapp_number:               '',
       email_address:                 '',
       home_address:                  '',
-      preferred_language:            '',
-      interpreter_needed:            '',
-      emergency_contact_name:        '',
-      emergency_contact_relationship:'',
-      emergency_contact_phone:       '',
       first_visit:                   '',
       how_did_you_hear:              '',
       wellness_goal:                 '',
@@ -2750,7 +2701,6 @@
         var hidden = document.getElementById('f-' + group);
         if (hidden) hidden.value = val;
         // Map to formData
-        if (group === 'interpreter')  formData.interpreter_needed = val;
         if (group === 'first-visit')  formData.first_visit = val;
       });
     });
@@ -2805,8 +2755,6 @@
         { id: 'f-full-name',  label: 'full name' },
         { id: 'f-dob',        label: 'date of birth' },
         { id: 'f-phone',      label: 'phone number' },
-        { id: 'f-ec-name',    label: 'emergency contact name' },
-        { id: 'f-ec-phone',   label: 'emergency contact phone' },
       ];
 
       for (var i = 0; i < required.length; i++) {
@@ -2827,10 +2775,6 @@
       formData.whatsapp_number                = document.getElementById('f-whatsapp').value.trim();
       formData.email_address                  = document.getElementById('f-email').value.trim();
       formData.home_address                   = document.getElementById('f-address').value.trim();
-      formData.preferred_language             = document.getElementById('f-language').value.trim();
-      formData.emergency_contact_name         = document.getElementById('f-ec-name').value.trim();
-      formData.emergency_contact_relationship = document.getElementById('f-ec-rel').value.trim();
-      formData.emergency_contact_phone        = document.getElementById('f-ec-phone').value.trim();
       formData.wellness_goal                  = document.getElementById('f-wellness-goal').value.trim();
       formData.previous_spa_services          = document.getElementById('f-prev-services').value.trim();
       formData.how_did_you_hear               = document.getElementById('f-hear').value;
