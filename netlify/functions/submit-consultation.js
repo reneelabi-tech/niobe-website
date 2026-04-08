@@ -94,7 +94,6 @@ exports.handler = async function (event) {
       'Client Type':              formData.first_visit === 'yes' ? 'New' : formData.first_visit === 'no' ? 'Returning' : '',
       'Treatment Booked':         serviceLabel || '',
       'Main Wellness Goal':       formData.wellness_goal || '',
-      'Skin Concerns':            csvToLabelArray(formData.facial_skin_concerns, SKIN_CONCERN_LABELS),
       'Skin Type':                SKIN_TYPE_LABELS[formData.facial_skin_type] || formData.facial_skin_type || '',
       'Allergies/Conditions':     formData.health_allergies_notes || (formData.health_allergies === 'yes' ? 'Yes — see Health Flags' : 'None'),
       'Medication Details':       formData.health_medications_notes || (formData.health_medications === 'yes' ? 'Yes — see Health Flags' : 'None'),
