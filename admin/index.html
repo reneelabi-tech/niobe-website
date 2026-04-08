@@ -8,53 +8,56 @@
   <style>
     body { margin: 0; background: #FFFEF6; font-family: Georgia, serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; text-align: center; }
     .msg { color: #2F241D; }
-    .msg h1 { font-size: 1.5rem; font-weight: 300; margin-bottom: 0.5rem; }
-    .msg p  { font-size: 0.9rem; opacity: 0.55; }
+    .msg h1 { font-size: 1.5rem; font-weight: 300; margin-bottom: 0.75rem; }
+    .msg p  { font-size: 0.9rem; opacity: 0.55; margin-bottom: 1.5rem; }
+    .btn { display: inline-block; background: #2F241D; color: #FFFEF6; font-family: Arial, sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; padding: 0.9rem 2rem; border: none; cursor: pointer; text-decoration: none; }
   </style>
 </head>
 <body>
   <div class="msg">
-    <h1>Confirming your account&hellip;</h1>
-    <p>You'll be redirected to your client hub in a moment.</p>
+    <h1 id="msg-title">Confirming your account&hellip;</h1>
+    <p id="msg-body">Please wait a moment.</p>
+    <a id="hub-link" href="/client-hub.html" class="btn" style="display:none;">Go to my account &rarr;</a>
   </div>
   <script>
     var identity = window.netlifyIdentity;
 
-    function goToHub() {
-      window.location.replace('/client-hub.html');
-    }
-
     identity.on('init', function(user) {
-      if (user) goToHub();
+      if (user) {
+        document.getElementById('msg-title').textContent = 'You\'re confirmed!';
+        document.getElementById('msg-body').textContent = 'Your account is ready.';
+        document.getElementById('hub-link').style.display = 'inline-block';
+        setTimeout(function() { window.location.replace('/client-hub.html'); }, 1500);
+      }
     });
 
-    identity.on('login', function() {
-      goToHub();
+    identity.on('login', function(user) {
+      document.getElementById('msg-title').textContent = 'Account confirmed!';
+      document.getElementById('msg-body').textContent = 'Redirecting you now…';
+      setTimeout(function() { window.location.replace('/client-hub.html'); }, 1500);
     });
 
     identity.on('error', function(err) {
-      document.querySelector('.msg h1').textContent = 'Confirmation failed';
-      document.querySelector('.msg p').textContent = (err && err.message) ? err.message : 'Please try signing up again from the client hub.';
+      document.getElementById('msg-title').textContent = 'Something went wrong';
+      document.getElementById('msg-body').textContent = (err && err.message) ? err.message : 'Please try again.';
+      document.getElementById('hub-link').style.display = 'inline-block';
     });
 
-    // Explicit API URL so widget finds the right Identity instance
     identity.init({
       APIUrl: 'https://niobebeauty.netlify.app/.netlify/identity'
     });
 
-    // Fallback: poll every second in case events don't fire
-    var poll = setInterval(function() {
+    // If nothing fires after 4 seconds, show manual button
+    setTimeout(function() {
       var user = identity.currentUser();
       if (user) {
-        clearInterval(poll);
-        goToHub();
+        window.location.replace('/client-hub.html');
+      } else {
+        document.getElementById('msg-title').textContent = 'Almost there';
+        document.getElementById('msg-body').textContent = 'Click below to go to your account — you may already be confirmed.';
+        document.getElementById('hub-link').style.display = 'inline-block';
       }
-    }, 1000);
-
-    // Stop polling after 15 seconds
-    setTimeout(function() {
-      clearInterval(poll);
-    }, 15000);
+    }, 4000);
   </script>
 </body>
 </html>
