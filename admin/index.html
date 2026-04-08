@@ -3,24 +3,33 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Niobe Spa</title>
+  <title>Confirming your account — Niobe Spa</title>
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <style>
+    body { margin: 0; background: #FFFEF6; font-family: Georgia, serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; text-align: center; }
+    .msg { color: #2F241D; }
+    .msg h1 { font-size: 1.5rem; font-weight: 300; margin-bottom: 0.5rem; }
+    .msg p  { font-size: 0.9rem; opacity: 0.55; }
+  </style>
 </head>
 <body>
+  <div class="msg">
+    <h1>Confirming your account&hellip;</h1>
+    <p>You'll be redirected to your client hub in a moment.</p>
+  </div>
   <script>
-    // Handle Netlify Identity tokens (confirmation, recovery, invite)
-    // and redirect to the client hub once processed.
-    if (window.netlifyIdentity) {
-      window.netlifyIdentity.on('init', function(user) {
-        if (!user) {
-          window.netlifyIdentity.on('login', function() {
-            window.location.href = '/client-hub.html';
-          });
-        } else {
-          window.location.href = '/client-hub.html';
-        }
-      });
-    }
+    window.netlifyIdentity.on('init', function(user) {
+      if (user) {
+        window.location.replace('/client-hub.html');
+      }
+    });
+    window.netlifyIdentity.on('login', function() {
+      window.location.replace('/client-hub.html');
+    });
+    window.netlifyIdentity.on('error', function(err) {
+      document.querySelector('.msg h1').textContent = 'Something went wrong';
+      document.querySelector('.msg p').textContent = err.message || 'Please try signing up again.';
+    });
     window.netlifyIdentity.init();
   </script>
 </body>
