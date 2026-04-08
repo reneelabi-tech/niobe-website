@@ -422,26 +422,24 @@ button, input, textarea, select { font-family: inherit; font-size: inherit; }
    ============================================================ */
 
 .hero-sequence {
+  /* Desktop: fixed parallax background image */
+  background-image:
+    linear-gradient(to bottom,
+      rgba(8,3,1,0.32) 0%,
+      rgba(8,3,1,0.04) 30%,
+      rgba(8,3,1,0.06) 60%,
+      rgba(8,3,1,0.28) 100%),
+    url('../images/hero-oil.jpg');
+  background-size: cover;
+  background-position: center 50%;
+  background-attachment: fixed;
   position: relative;
   overflow: hidden;
 }
 
-/* Gradient overlay — sits between video and text */
-.hero-sequence::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom,
-    rgba(8,3,1,0.32) 0%,
-    rgba(8,3,1,0.04) 30%,
-    rgba(8,3,1,0.06) 60%,
-    rgba(8,3,1,0.28) 100%);
-  z-index: 1;
-  pointer-events: none;
-}
-
-/* Video fills the hero, stays behind all content */
+/* Video — hidden on desktop, shown on mobile */
 .hero__video {
+  display: none;
   position: absolute;
   top: 0; left: 0;
   width: 100%; height: 100%;
@@ -450,11 +448,25 @@ button, input, textarea, select { font-family: inherit; font-size: inherit; }
   z-index: 0;
 }
 
-/* All hero content must sit above the video and overlay */
+/* All hero content must sit above the video */
 .hero__stage1,
 .hero__stage2 {
   position: relative;
   z-index: 2;
+}
+
+@media (max-width: 1024px) {
+  .hero-sequence {
+    background-image: linear-gradient(to bottom,
+      rgba(8,3,1,0.32) 0%,
+      rgba(8,3,1,0.04) 30%,
+      rgba(8,3,1,0.06) 60%,
+      rgba(8,3,1,0.28) 100%);
+    background-attachment: scroll;
+  }
+  .hero__video {
+    display: block;
+  }
 }
 
 /* Stage 1: Logo + nav — visible on load, scrolls off top naturally */
