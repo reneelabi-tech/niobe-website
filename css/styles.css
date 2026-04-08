@@ -430,6 +430,14 @@ button, input, textarea, select { font-family: inherit; font-size: inherit; }
   background-attachment: fixed;
   position: relative;
 }
+/* iOS/mobile: background-attachment:fixed is broken on Safari — disable it */
+@media (max-width: 1024px) {
+  .hero-sequence {
+    background-attachment: scroll;
+    background-size: cover;
+    background-position: center center;
+  }
+}
 
 /* Stage 1: Logo + nav — visible on load, scrolls off top naturally */
 .hero__stage1 {
@@ -500,6 +508,7 @@ button, input, textarea, select { font-family: inherit; font-size: inherit; }
   position: absolute;
   right: var(--side);
   top: clamp(1.75rem, 4vw, 3rem);
+  z-index: 20;
 }
 .hero__nav-toggle span {
   display: block;
