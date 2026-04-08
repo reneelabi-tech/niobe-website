@@ -546,6 +546,58 @@
     .cf-spacer { height: 1.5rem; }
     .cf-spacer-sm { height: 1rem; }
 
+    /* ── Readability overrides ───────────────────────────────── */
+    .form-label {
+      opacity: 1 !important;
+      color: var(--espresso) !important;
+      font-weight: 700 !important;
+      font-size: 0.75rem !important;
+    }
+    .cf-yn-question {
+      font-size: 0.95rem !important;
+      font-weight: 600 !important;
+      color: var(--espresso) !important;
+    }
+    .cf-section-block__title {
+      font-weight: 700 !important;
+      color: var(--espresso) !important;
+    }
+    .cf-sub-label {
+      opacity: 1 !important;
+      color: var(--espresso) !important;
+      font-weight: 700 !important;
+      font-size: 0.65rem !important;
+    }
+    .cf-consent-item label {
+      font-weight: 500 !important;
+      color: var(--espresso) !important;
+    }
+    .form-input, .form-textarea, .form-select {
+      color: var(--espresso) !important;
+      font-weight: 500 !important;
+    }
+
+    /* ── Phone prefix wrapper ────────────────────────────────── */
+    .cf-phone-wrap {
+      display: flex;
+      align-items: stretch;
+      border-bottom: 1px solid rgba(121,138,132,0.35);
+      transition: border-color 0.2s;
+    }
+    .cf-phone-wrap:focus-within { border-color: var(--espresso); }
+    .cf-phone-prefix {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--espresso);
+      padding: 0.7rem 0.5rem 0.7rem 0;
+      white-space: nowrap;
+      user-select: none;
+    }
+    .cf-phone-wrap .form-input {
+      border-bottom: none !important;
+      padding-left: 0.25rem;
+    }
+
     /* ── intimate consent ────────────────────────────────────── */
     #wax-intimate-consent {
       display: none;
@@ -730,7 +782,7 @@
             </div>
             <div class="cf-field-group">
               <label class="form-label" for="f-dob">Date of birth <span aria-hidden="true">*</span></label>
-              <input class="form-input" type="date" id="f-dob" name="date_of_birth" required />
+              <input class="form-input" type="text" id="f-dob" name="date_of_birth" required placeholder="DD/MM/YYYY" pattern="\d{2}/\d{2}/\d{4}" inputmode="numeric" />
             </div>
           </div>
 
@@ -747,14 +799,20 @@
             </div>
             <div class="cf-field-group">
               <label class="form-label" for="f-phone">Phone number <span aria-hidden="true">*</span></label>
-              <input class="form-input" type="tel" id="f-phone" name="phone_number" required placeholder="+233 …" autocomplete="tel" />
+              <div class="cf-phone-wrap">
+                <span class="cf-phone-prefix">+233</span>
+                <input class="form-input" type="tel" id="f-phone" name="phone_number" required placeholder="XX XXX XXXX" autocomplete="tel" />
+              </div>
             </div>
           </div>
 
           <div class="cf-row">
             <div class="cf-field-group">
               <label class="form-label" for="f-whatsapp">WhatsApp number</label>
-              <input class="form-input" type="tel" id="f-whatsapp" name="whatsapp_number" placeholder="If different from above" />
+              <div class="cf-phone-wrap">
+                <span class="cf-phone-prefix">+233</span>
+                <input class="form-input" type="tel" id="f-whatsapp" name="whatsapp_number" placeholder="If different from above" />
+              </div>
             </div>
             <div class="cf-field-group">
               <label class="form-label" for="f-email">Email address</label>
