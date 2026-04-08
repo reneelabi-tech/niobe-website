@@ -1,0 +1,2973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Consultation Form — Niobe Spa</title>
+  <meta name="description" content="Complete your pre-treatment consultation form before your appointment at Niobe Spa." />
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="js/consultation-config.js"></script>
+  <style>
+
+    /* ── Progress indicator ─────────────────────────────────── */
+    .gc-progress {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      padding: clamp(1.25rem, 2.5vw, 1.75rem) 1.5rem;
+      border-bottom: 1px solid rgba(47,36,29,0.08);
+      background: #fff;
+      flex-wrap: wrap;
+      row-gap: 0.75rem;
+    }
+    .gc-progress__step {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: var(--font-sans);
+      font-size: 0.625rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(47,36,29,0.35);
+    }
+    .gc-progress__step.active { color: var(--espresso); }
+    .gc-progress__step.done   { color: var(--olive); }
+    .gc-progress__num {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 1px solid currentColor;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.6rem;
+      flex-shrink: 0;
+    }
+    .gc-progress__step.active .gc-progress__num {
+      background: var(--espresso);
+      border-color: var(--espresso);
+      color: var(--parchment);
+    }
+    .gc-progress__step.done .gc-progress__num {
+      background: var(--olive);
+      border-color: var(--olive);
+      color: var(--parchment);
+    }
+    .gc-progress__line {
+      width: clamp(2rem, 5vw, 5rem);
+      height: 1px;
+      background: rgba(47,36,29,0.12);
+      margin: 0 0.5rem;
+      flex-shrink: 0;
+    }
+
+    /* ── Form wrapper ────────────────────────────────────────── */
+    .cf-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: clamp(2rem, 5vw, 4rem) clamp(1.25rem, 5vw, 2rem);
+    }
+
+    /* ── Step panels ─────────────────────────────────────────── */
+    .cf-step {
+      display: none;
+    }
+    .cf-step.active {
+      display: block;
+      animation: cfFadeIn 0.3s ease;
+    }
+    @keyframes cfFadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Step heading ────────────────────────────────────────── */
+    .cf-step__eyebrow {
+      font-family: var(--font-sans);
+      font-size: 0.5625rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--olive);
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    .cf-step__title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 400;
+      line-height: 1.2;
+      margin-bottom: clamp(1.75rem, 3.5vw, 2.75rem);
+      color: var(--espresso);
+    }
+    .cf-step__title em {
+      font-style: italic;
+    }
+
+    /* ── Booking type cards ──────────────────────────────────── */
+    .cf-type-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    @media (max-width: 520px) {
+      .cf-type-grid { grid-template-columns: 1fr; }
+    }
+    .cf-type-card {
+      border: 1px solid rgba(47,36,29,0.15);
+      padding: clamp(1.25rem, 3vw, 1.75rem);
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      background: #fff;
+      user-select: none;
+    }
+    .cf-type-card:hover { border-color: rgba(47,36,29,0.35); }
+    .cf-type-card.selected {
+      border-color: var(--espresso);
+      background: rgba(47,36,29,0.03);
+    }
+    .cf-type-card__icon {
+      font-size: 1.25rem;
+      margin-bottom: 0.65rem;
+      display: block;
+      line-height: 1;
+    }
+    .cf-type-card__title {
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      font-weight: 500;
+      margin-bottom: 0.35rem;
+      line-height: 1.2;
+      color: var(--espresso);
+    }
+    .cf-type-card__desc {
+      font-size: 0.8125rem;
+      line-height: 1.65;
+      color: rgba(47,36,29,0.55);
+    }
+
+    /* ── Conditional picker sub-section ─────────────────────── */
+    .cf-sub-section {
+      display: none;
+      margin-bottom: 1.75rem;
+      animation: cfFadeIn 0.22s ease;
+    }
+    .cf-sub-section.visible { display: block; }
+
+    /* ── Field groups ────────────────────────────────────────── */
+    .cf-field-group {
+      margin-bottom: 1.75rem;
+    }
+    .cf-field-group .form-label {
+      margin-bottom: 0.5rem;
+    }
+
+    /* ── Section dividers inside step 3 ─────────────────────── */
+    .cf-section-block {
+      margin-bottom: 2.5rem;
+      padding-bottom: 2.5rem;
+      border-bottom: 1px solid rgba(47,36,29,0.07);
+    }
+    .cf-section-block:last-of-type {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+    .cf-section-block__heading {
+      font-family: var(--font-sans);
+      font-size: 0.5625rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--olive);
+      display: block;
+      margin-bottom: 0.4rem;
+    }
+    .cf-section-block__title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.15rem, 2.5vw, 1.4rem);
+      font-weight: 400;
+      color: var(--espresso);
+      margin-bottom: 1.5rem;
+      line-height: 1.25;
+    }
+
+    /* ── Why do we ask expandable ────────────────────────────── */
+    .cf-why {
+      margin-bottom: 1.25rem;
+    }
+    .cf-why__trigger {
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: var(--font-sans);
+      font-size: 0.6875rem;
+      color: var(--olive);
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .cf-why__body {
+      display: none;
+      margin-top: 0.65rem;
+      padding: 0.85rem 1rem;
+      background: rgba(122,121,93,0.06);
+      border-left: 2px solid var(--olive);
+      font-size: 0.8125rem;
+      line-height: 1.7;
+      color: rgba(47,36,29,0.7);
+    }
+    .cf-why__body.open { display: block; animation: cfFadeIn 0.2s ease; }
+
+    /* ── YES / NO toggle questions ───────────────────────────── */
+    .cf-yn-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .cf-yn-item {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.85rem 0;
+      border-bottom: 1px solid rgba(47,36,29,0.06);
+    }
+    .cf-yn-item:last-child { border-bottom: none; }
+    .cf-yn-question {
+      font-size: 0.875rem;
+      line-height: 1.6;
+      color: var(--espresso);
+      flex: 1;
+      padding-top: 0.1rem;
+    }
+    .cf-yn-btns {
+      display: flex;
+      gap: 0.4rem;
+      flex-shrink: 0;
+    }
+    .cf-yn-btn {
+      padding: 0.35rem 0.85rem;
+      border: 1px solid rgba(47,36,29,0.2);
+      background: transparent;
+      font-family: var(--font-sans);
+      font-size: 0.6875rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--espresso);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      min-width: 44px;
+      min-height: 36px;
+      white-space: nowrap;
+    }
+    .cf-yn-btn:hover {
+      border-color: rgba(47,36,29,0.45);
+    }
+    .cf-yn-btn.selected-yes {
+      background: var(--espresso);
+      border-color: var(--espresso);
+      color: var(--parchment);
+    }
+    .cf-yn-btn.selected-no {
+      border-color: var(--espresso);
+      background: transparent;
+      color: var(--espresso);
+      font-weight: 500;
+    }
+    .cf-yn-detail {
+      display: none;
+      margin-top: 0.65rem;
+      margin-bottom: 0.25rem;
+      animation: cfFadeIn 0.2s ease;
+    }
+    .cf-yn-detail.open { display: block; }
+    .cf-yn-detail textarea {
+      width: 100%;
+    }
+    @media (max-width: 520px) {
+      .cf-yn-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.6rem;
+      }
+    }
+
+    /* ── Chip selectors (multi + single) ─────────────────────── */
+    .cf-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .cf-chip {
+      padding: 0.4rem 0.9rem;
+      border: 1px solid rgba(47,36,29,0.18);
+      background: #fff;
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      color: var(--espresso);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      user-select: none;
+      min-height: 36px;
+      display: flex;
+      align-items: center;
+    }
+    .cf-chip:hover {
+      border-color: rgba(47,36,29,0.4);
+    }
+    .cf-chip.selected {
+      background: var(--espresso);
+      border-color: var(--espresso);
+      color: var(--parchment);
+    }
+
+    /* ── Info notice box ─────────────────────────────────────── */
+    .cf-notice {
+      padding: 0.9rem 1.1rem;
+      background: rgba(122,121,93,0.08);
+      border-left: 3px solid var(--olive);
+      font-size: 0.8125rem;
+      line-height: 1.7;
+      color: rgba(47,36,29,0.75);
+      margin-bottom: 1.25rem;
+    }
+    .cf-notice strong {
+      display: block;
+      font-size: 0.6875rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--olive);
+      margin-bottom: 0.35rem;
+      font-family: var(--font-sans);
+    }
+
+    /* ── Right-to-refuse notice ──────────────────────────────── */
+    .cf-refuse-notice {
+      padding: 1rem 1.25rem;
+      border: 1px solid rgba(47,36,29,0.12);
+      background: rgba(47,36,29,0.025);
+      font-size: 0.8125rem;
+      line-height: 1.7;
+      color: rgba(47,36,29,0.65);
+      margin: 1.5rem 0;
+    }
+    .cf-refuse-notice strong {
+      display: block;
+      font-size: 0.625rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--espresso);
+      margin-bottom: 0.4rem;
+      font-family: var(--font-sans);
+    }
+
+    /* ── Consent checkboxes ──────────────────────────────────── */
+    .cf-consent-group {
+      margin-bottom: 2rem;
+    }
+    .cf-consent-group__title {
+      font-family: var(--font-sans);
+      font-size: 0.5625rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--olive);
+      display: block;
+      margin-bottom: 0.9rem;
+    }
+    .cf-consent-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.65rem 0;
+      border-bottom: 1px solid rgba(47,36,29,0.05);
+    }
+    .cf-consent-item:last-child { border-bottom: none; }
+    .cf-consent-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      min-width: 18px;
+      margin-top: 0.15rem;
+      accent-color: var(--espresso);
+      cursor: pointer;
+    }
+    .cf-consent-item label {
+      font-size: 0.875rem;
+      line-height: 1.65;
+      color: var(--espresso);
+      cursor: pointer;
+    }
+
+    /* ── Toggle (Yes/No radio) ───────────────────────────────── */
+    .cf-toggle-group {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .cf-toggle-btn {
+      padding: 0.45rem 1.1rem;
+      border: 1px solid rgba(47,36,29,0.18);
+      background: transparent;
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      color: var(--espresso);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      min-height: 38px;
+      min-width: 60px;
+    }
+    .cf-toggle-btn.active {
+      background: var(--espresso);
+      border-color: var(--espresso);
+      color: var(--parchment);
+    }
+
+    /* ── Navigation bar ──────────────────────────────────────── */
+    .cf-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 2.5rem;
+      margin-top: 2rem;
+      border-top: 1px solid rgba(47,36,29,0.08);
+    }
+    .cf-nav__back {
+      background: none;
+      border: none;
+      font-family: var(--font-sans);
+      font-size: 0.8125rem;
+      color: rgba(47,36,29,0.5);
+      cursor: pointer;
+      padding: 0;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      transition: color 0.15s;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+    }
+    .cf-nav__back:hover { color: var(--espresso); }
+    .cf-nav__back[hidden] { visibility: hidden; pointer-events: none; }
+
+    /* ── Error message ───────────────────────────────────────── */
+    .cf-error {
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      color: #b04040;
+      margin-top: 0.75rem;
+      display: none;
+    }
+    .cf-error.visible { display: block; }
+
+    /* ── Dynamic treatment sections (step 3) ─────────────────── */
+    .cf-dynamic-section {
+      display: none;
+      animation: cfFadeIn 0.3s ease;
+    }
+    .cf-dynamic-section.visible { display: block; }
+
+    /* ── Signature / thank-you ───────────────────────────────── */
+    .cf-thankyou {
+      display: none;
+      text-align: center;
+      padding: clamp(3rem, 8vw, 6rem) clamp(1.25rem, 5vw, 2rem);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .cf-thankyou.visible { display: block; animation: cfFadeIn 0.4s ease; }
+    .cf-thankyou__eyebrow {
+      font-family: var(--font-sans);
+      font-size: 0.5625rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--olive);
+      display: block;
+      margin-bottom: 0.75rem;
+    }
+    .cf-thankyou__title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 400;
+      color: var(--espresso);
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+    }
+    .cf-thankyou__body {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: rgba(47,36,29,0.75);
+      margin-bottom: 1rem;
+    }
+    .cf-thankyou__sub {
+      font-size: 0.875rem;
+      line-height: 1.7;
+      color: rgba(47,36,29,0.5);
+      margin-bottom: 2.5rem;
+      font-style: italic;
+    }
+    .cf-thankyou__actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .cf-thankyou__secondary {
+      font-family: var(--font-sans);
+      font-size: 0.8125rem;
+      color: rgba(47,36,29,0.5);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      padding: 0.75rem 0;
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+    .cf-thankyou__secondary:hover { color: var(--espresso); }
+
+    /* ── Section label above sub-fields ─────────────────────── */
+    .cf-sub-label {
+      font-family: var(--font-sans);
+      font-size: 0.5625rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--olive);
+      display: block;
+      margin-bottom: 0.65rem;
+    }
+
+    /* ── General spacing helpers ─────────────────────────────── */
+    .cf-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 560px) {
+      .cf-row { grid-template-columns: 1fr; }
+    }
+    .cf-spacer { height: 1.5rem; }
+    .cf-spacer-sm { height: 1rem; }
+
+    /* ── intimate consent ────────────────────────────────────── */
+    #wax-intimate-consent {
+      display: none;
+      animation: cfFadeIn 0.2s ease;
+    }
+    #wax-intimate-consent.visible { display: block; }
+
+    /* ── contact lens declaration ────────────────────────────── */
+    #bl-contact-lens-decl {
+      display: none;
+      animation: cfFadeIn 0.2s ease;
+    }
+    #bl-contact-lens-decl.visible { display: block; }
+
+  </style>
+</head>
+<body>
+
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav__inner">
+      <a href="index.html" class="nav__logo"><img src="images/niobe-logo-dark.png" class="nav__logo-img" alt="Niobe Spa"></a>
+      <div class="nav__sep" aria-hidden="true"></div>
+      <ul class="nav__links" role="list">
+        <li><a href="index.html"              class="nav__link">Home</a></li>
+        <li><a href="treatments.html"         class="nav__link">Treatments</a></li>
+        <li><a href="packages.html"           class="nav__link">Spa Packages</a></li>
+        <li><a href="easter.html"             class="nav__link">Easter</a></li>
+        <li><a href="about.html"              class="nav__link">About</a></li>
+        <li><a href="locations.html"          class="nav__link">Locations</a></li>
+        <li><a href="gift-cards.html"         class="nav__link">Gift Cards</a></li>
+        <li><a href="faqs.html"               class="nav__link">FAQs</a></li>
+        <li><a href="vacancies.html"          class="nav__link">Vacancies</a></li>
+        <li><a href="contact.html"            class="nav__link">Contact</a></li>
+      </ul>
+      <a href="booking.html" class="nav__book">Book Now</a>
+      <button class="nav__toggle" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="nav__mobile" role="dialog" aria-label="Mobile navigation">
+    <a href="index.html"              class="nav__mobile-link">Home</a>
+    <a href="treatments.html"         class="nav__mobile-link">Treatments</a>
+    <a href="packages.html"           class="nav__mobile-link">Spa Packages</a>
+    <a href="easter.html"             class="nav__mobile-link">Easter</a>
+    <a href="about.html"              class="nav__mobile-link">About</a>
+    <a href="locations.html"          class="nav__mobile-link">Locations</a>
+    <a href="gift-cards.html"         class="nav__mobile-link">Gift Cards</a>
+    <a href="faqs.html"               class="nav__mobile-link">FAQs</a>
+    <a href="vacancies.html"          class="nav__mobile-link">Vacancies</a>
+    <a href="contact.html"            class="nav__mobile-link">Contact</a>
+    <a href="booking.html"            class="nav__mobile-cta">Book Now</a>
+  </div>
+
+  <main>
+
+    <div class="page-hero">
+      <div class="page-hero__inner">
+        <span class="eyebrow">Consultation Form</span>
+        <h1 class="t-display t-lg page-hero__title">
+          Before your<br><em>treatment</em>
+        </h1>
+        <p class="page-hero__desc">
+          This form helps your therapist prepare the safest, most personalised experience for you. It takes around five minutes to complete.
+        </p>
+      </div>
+    </div>
+
+    <!-- Step progress indicator -->
+    <div class="gc-progress" role="navigation" aria-label="Form steps" id="cf-progress">
+      <div class="gc-progress__step active" data-step="1">
+        <span class="gc-progress__num">1</span>
+        <span>Booking</span>
+      </div>
+      <div class="gc-progress__line" aria-hidden="true"></div>
+      <div class="gc-progress__step" data-step="2">
+        <span class="gc-progress__num">2</span>
+        <span>Personal Details</span>
+      </div>
+      <div class="gc-progress__line" aria-hidden="true"></div>
+      <div class="gc-progress__step" data-step="3">
+        <span class="gc-progress__num">3</span>
+        <span>Health &amp; Treatment</span>
+      </div>
+      <div class="gc-progress__line" aria-hidden="true"></div>
+      <div class="gc-progress__step" data-step="4">
+        <span class="gc-progress__num">4</span>
+        <span>Consent</span>
+      </div>
+    </div>
+
+    <section class="section">
+      <div class="cf-wrap">
+
+        <!-- ════════════════════════════════════════════════════
+             STEP 1 — YOUR BOOKING
+             ════════════════════════════════════════════════════ -->
+        <div class="cf-step active" id="step-1">
+
+          <span class="cf-step__eyebrow">Step 1 of 4</span>
+          <h2 class="cf-step__title">Your <em>booking</em></h2>
+
+          <!-- Booking type cards -->
+          <div class="cf-type-grid" role="radiogroup" aria-label="Booking type">
+            <div class="cf-type-card" data-booking-type="treatment" role="radio" aria-checked="false" tabindex="0">
+              <span class="cf-type-card__icon">✦</span>
+              <div class="cf-type-card__title">A single treatment</div>
+              <p class="cf-type-card__desc">Select a specific treatment by name — facials, massage, waxing, brows &amp; lashes, body wraps, and more.</p>
+            </div>
+            <div class="cf-type-card" data-booking-type="package" role="radio" aria-checked="false" tabindex="0">
+              <span class="cf-type-card__icon">◈</span>
+              <div class="cf-type-card__title">A spa package</div>
+              <p class="cf-type-card__desc">Select a curated spa package — half-day, full-day, couples, Hammam, Elemis, and seasonal collections.</p>
+            </div>
+          </div>
+
+          <!-- Hidden input for booking type -->
+          <input type="hidden" id="field-booking-type" name="booking_type" value="" />
+          <input type="hidden" id="field-service-id"   name="service_id"   value="" />
+          <input type="hidden" id="field-package-id"   name="package_id"   value="" />
+
+          <!-- Sub-section: Treatment selector -->
+          <div class="cf-sub-section" id="sub-treatment">
+            <label class="cf-sub-label" for="select-treatment">Choose a treatment</label>
+            <select class="form-select" id="select-treatment" style="max-width: 540px;">
+              <option value="" disabled selected>Select a treatment</option>
+            </select>
+          </div>
+
+          <!-- Sub-section: Package selector -->
+          <div class="cf-sub-section" id="sub-package">
+            <label class="cf-sub-label" for="select-package">Choose a package</label>
+            <select class="form-select" id="select-package" style="max-width: 540px;">
+              <option value="" disabled selected>Select a package</option>
+            </select>
+          </div>
+
+          <div class="cf-spacer"></div>
+
+          <!-- Branch -->
+          <div class="cf-field-group">
+            <label class="form-label" for="field-branch">Which branch are you visiting? <span aria-hidden="true">*</span></label>
+            <select class="form-select" id="field-branch" name="branch" required style="max-width: 540px;">
+              <option value="" disabled selected>Select a branch</option>
+              <option value="Community 18 Tema">Community 18, Tema</option>
+              <option value="Cantonments Accra">Cantonments, Accra</option>
+              <option value="East Legon Accra">East Legon, Accra</option>
+              <option value="Alisa Hotel Tema">Alisa Hotel, Tema</option>
+              <option value="African Regent Accra">African Regent, Accra</option>
+            </select>
+          </div>
+
+          <!-- Appointment date -->
+          <div class="cf-field-group">
+            <label class="form-label" for="field-appt-date">Appointment date <span aria-hidden="true">*</span></label>
+            <input class="form-input" type="date" id="field-appt-date" name="appointment_date" required style="max-width: 280px;" />
+          </div>
+
+          <p class="cf-error" id="error-step1">Please complete all fields above before continuing.</p>
+
+          <div class="cf-nav">
+            <button class="cf-nav__back" type="button" hidden>&#8592; Back</button>
+            <button class="btn btn-onyx" type="button" id="btn-next-1">Continue &rarr;</button>
+          </div>
+
+        </div>
+        <!-- end step 1 -->
+
+
+        <!-- ════════════════════════════════════════════════════
+             STEP 2 — PERSONAL DETAILS
+             ════════════════════════════════════════════════════ -->
+        <div class="cf-step" id="step-2">
+
+          <span class="cf-step__eyebrow">Step 2 of 4</span>
+          <h2 class="cf-step__title">Personal <em>details</em></h2>
+
+          <div class="cf-row">
+            <div class="cf-field-group">
+              <label class="form-label" for="f-full-name">Full name <span aria-hidden="true">*</span></label>
+              <input class="form-input" type="text" id="f-full-name" name="full_name" required placeholder="Your full name" autocomplete="name" />
+            </div>
+            <div class="cf-field-group">
+              <label class="form-label" for="f-dob">Date of birth <span aria-hidden="true">*</span></label>
+              <input class="form-input" type="date" id="f-dob" name="date_of_birth" required />
+            </div>
+          </div>
+
+          <div class="cf-row">
+            <div class="cf-field-group">
+              <label class="form-label" for="f-gender">Gender</label>
+              <select class="form-select" id="f-gender" name="gender">
+                <option value="prefer-not-to-say" selected>Prefer not to say</option>
+                <option value="female">Female</option>
+                <option value="male">Male</option>
+                <option value="non-binary">Non-binary</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="cf-field-group">
+              <label class="form-label" for="f-phone">Phone number <span aria-hidden="true">*</span></label>
+              <input class="form-input" type="tel" id="f-phone" name="phone_number" required placeholder="+233 …" autocomplete="tel" />
+            </div>
+          </div>
+
+          <div class="cf-row">
+            <div class="cf-field-group">
+              <label class="form-label" for="f-whatsapp">WhatsApp number</label>
+              <input class="form-input" type="tel" id="f-whatsapp" name="whatsapp_number" placeholder="If different from above" />
+            </div>
+            <div class="cf-field-group">
+              <label class="form-label" for="f-email">Email address</label>
+              <input class="form-input" type="email" id="f-email" name="email_address" placeholder="you@example.com" autocomplete="email" />
+            </div>
+          </div>
+
+          <div class="cf-row">
+            <div class="cf-field-group">
+              <label class="form-label" for="f-address">Home address / town</label>
+              <input class="form-input" type="text" id="f-address" name="home_address" placeholder="Town or neighbourhood" autocomplete="address-level2" />
+            </div>
+            <div class="cf-field-group">
+              <label class="form-label" for="f-language">Preferred language</label>
+              <input class="form-input" type="text" id="f-language" name="preferred_language" placeholder="e.g. English, Twi, French" />
+            </div>
+          </div>
+
+          <!-- Interpreter needed -->
+          <div class="cf-field-group">
+            <span class="form-label" id="lbl-interpreter">Interpreter needed?</span>
+            <div class="cf-toggle-group" role="radiogroup" aria-labelledby="lbl-interpreter">
+              <button type="button" class="cf-toggle-btn" data-toggle="interpreter" data-val="yes">Yes</button>
+              <button type="button" class="cf-toggle-btn" data-toggle="interpreter" data-val="no">No</button>
+            </div>
+            <input type="hidden" id="f-interpreter" name="interpreter_needed" value="" />
+          </div>
+
+          <div class="cf-spacer-sm"></div>
+          <p class="cf-sub-label">Emergency contact</p>
+
+          <div class="cf-row">
+            <div class="cf-field-group">
+              <label class="form-label" for="f-ec-name">Emergency contact name <span aria-hidden="true">*</span></label>
+              <input class="form-input" type="text" id="f-ec-name" name="emergency_contact_name" required placeholder="Full name" />
+            </div>
+            <div class="cf-field-group">
+              <label class="form-label" for="f-ec-rel">Relationship</label>
+              <input class="form-input" type="text" id="f-ec-rel" name="emergency_contact_relationship" placeholder="e.g. Partner, Sister, Friend" />
+            </div>
+          </div>
+
+          <div class="cf-field-group" style="max-width:340px;">
+            <label class="form-label" for="f-ec-phone">Emergency contact phone <span aria-hidden="true">*</span></label>
+            <input class="form-input" type="tel" id="f-ec-phone" name="emergency_contact_phone" required placeholder="+233 …" />
+          </div>
+
+          <div class="cf-spacer-sm"></div>
+
+          <!-- First visit -->
+          <div class="cf-field-group">
+            <span class="form-label" id="lbl-first-visit">Is this your first visit to Niobe Spa?</span>
+            <div class="cf-toggle-group" role="radiogroup" aria-labelledby="lbl-first-visit">
+              <button type="button" class="cf-toggle-btn" data-toggle="first-visit" data-val="yes">Yes</button>
+              <button type="button" class="cf-toggle-btn" data-toggle="first-visit" data-val="no">No</button>
+            </div>
+            <input type="hidden" id="f-first-visit" name="first_visit" value="" />
+          </div>
+
+          <!-- How did you hear -->
+          <div class="cf-field-group">
+            <label class="form-label" for="f-hear">How did you hear about us?</label>
+            <select class="form-select" id="f-hear" name="how_did_you_hear" style="max-width:360px;">
+              <option value="" disabled selected>Select one</option>
+              <option value="google">Google</option>
+              <option value="instagram">Instagram</option>
+              <option value="facebook">Facebook</option>
+              <option value="tiktok">TikTok</option>
+              <option value="friend">Friend or family recommendation</option>
+              <option value="walk-in">Walk-in</option>
+              <option value="returning">Returning client</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <!-- Wellness goal -->
+          <div class="cf-field-group">
+            <label class="form-label" for="f-wellness-goal">Main reason for today's visit / wellness goal</label>
+            <textarea class="form-textarea" id="f-wellness-goal" name="wellness_goal" rows="3" placeholder="e.g. relaxation, specific skin concern, pain relief, treat myself…"></textarea>
+          </div>
+
+          <!-- Previous services -->
+          <div class="cf-field-group">
+            <label class="form-label" for="f-prev-services">Any previous spa or beauty services?</label>
+            <textarea class="form-textarea" id="f-prev-services" name="previous_spa_services" rows="3" placeholder="Tell us about any treatments you've had before — what you enjoyed, what didn't work well, any reactions…"></textarea>
+          </div>
+
+          <p class="cf-error" id="error-step2">Please fill in all required fields before continuing.</p>
+
+          <div class="cf-nav">
+            <button class="cf-nav__back" type="button" data-go="1">&larr; Back</button>
+            <button class="btn btn-onyx" type="button" id="btn-next-2">Continue &rarr;</button>
+          </div>
+
+        </div>
+        <!-- end step 2 -->
+
+
+        <!-- ════════════════════════════════════════════════════
+             STEP 3 — HEALTH & TREATMENT QUESTIONS
+             ════════════════════════════════════════════════════ -->
+        <div class="cf-step" id="step-3">
+
+          <span class="cf-step__eyebrow">Step 3 of 4</span>
+          <h2 class="cf-step__title">Health &amp; <em>treatment</em> questions</h2>
+
+          <!-- ── GENERAL HEALTH ── -->
+          <div class="cf-section-block">
+            <span class="cf-section-block__heading">General Health</span>
+            <h3 class="cf-section-block__title">General health information</h3>
+
+            <div class="cf-why">
+              <button type="button" class="cf-why__trigger" aria-expanded="false">Why do we ask this?</button>
+              <div class="cf-why__body">
+                Your therapist needs to know about any health conditions or medications before your treatment to ensure your safety and provide the most appropriate service. All information is treated in the strictest confidence.
+              </div>
+            </div>
+
+            <p style="font-size:0.8125rem;line-height:1.7;color:rgba(47,36,29,0.6);margin-bottom:1.25rem;">Please answer YES or NO to each question. Selecting YES will reveal a small notes box — please add any useful details there.</p>
+
+            <ul class="cf-yn-list">
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">1. Are you currently pregnant or breastfeeding?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="health_pregnant" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="health_pregnant" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="health_pregnant" id="yn-health_pregnant" value="" />
+                <div class="cf-yn-detail" id="detail-health_pregnant">
+                  <textarea class="form-textarea" name="health_pregnant_notes" rows="2" placeholder="Please provide details…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">2. Do you have any known allergies (skincare, nuts, latex, fragrance, dyes)?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="health_allergies" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="health_allergies" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="health_allergies" id="yn-health_allergies" value="" />
+                <div class="cf-yn-detail" id="detail-health_allergies">
+                  <textarea class="form-textarea" name="health_allergies_notes" rows="2" placeholder="Please list your allergies…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">3. Are you taking any medications (prescription or over-the-counter)?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="health_medications" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="health_medications" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="health_medications" id="yn-health_medications" value="" />
+                <div class="cf-yn-detail" id="detail-health_medications">
+                  <textarea class="form-textarea" name="health_medications_notes" rows="2" placeholder="Please list medications…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">4. Have you had any surgery, medical procedure, or hospitalisation in the last 12 months?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="health_surgery" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="health_surgery" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="health_surgery" id="yn-health_surgery" value="" />
+                <div class="cf-yn-detail" id="detail-health_surgery">
+                  <textarea class="form-textarea" name="health_surgery_notes" rows="2" placeholder="Please provide details…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">5. Do you have a heart condition, high/low blood pressure, or circulatory disorder?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="health_heart" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="health_heart" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="health_heart" id="yn-health_heart" value="" />
+                <div class="cf-yn-detail" id="detail-health_heart">
+                  <textarea class="form-textarea" name="health_heart_notes" rows="2" placeholder="Please provide details…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">6. Do you have diabetes or any endocrine/hormonal condition?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="health_diabetes" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="health_diabetes" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="health_diabetes" id="yn-health_diabetes" value="" />
+                <div class="cf-yn-detail" id="detail-health_diabetes">
+                  <textarea class="form-textarea" name="health_diabetes_notes" rows="2" placeholder="Please provide details…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">7. Do you have any skin conditions (eczema, psoriasis, dermatitis, rosacea, active acne)?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="health_skin_conditions" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="health_skin_conditions" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="health_skin_conditions" id="yn-health_skin_conditions" value="" />
+                <div class="cf-yn-detail" id="detail-health_skin_conditions">
+                  <textarea class="form-textarea" name="health_skin_conditions_notes" rows="2" placeholder="Please describe…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">8. Do you have any active skin infections, cold sores, or communicable conditions?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="health_infections" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="health_infections" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="health_infections" id="yn-health_infections" value="" />
+                <div class="cf-yn-detail" id="detail-health_infections">
+                  <textarea class="form-textarea" name="health_infections_notes" rows="2" placeholder="Please provide details…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">9. Do you have epilepsy, seizures, or a neurological condition?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="health_epilepsy" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="health_epilepsy" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="health_epilepsy" id="yn-health_epilepsy" value="" />
+                <div class="cf-yn-detail" id="detail-health_epilepsy">
+                  <textarea class="form-textarea" name="health_epilepsy_notes" rows="2" placeholder="Please provide details…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">10. Do you have asthma or any respiratory condition?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="health_asthma" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="health_asthma" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="health_asthma" id="yn-health_asthma" value="" />
+                <div class="cf-yn-detail" id="detail-health_asthma">
+                  <textarea class="form-textarea" name="health_asthma_notes" rows="2" placeholder="Please provide details…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">11. Do you have any implanted medical devices (pacemaker, pins, plates, implants)?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="health_implants" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="health_implants" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="health_implants" id="yn-health_implants" value="" />
+                <div class="cf-yn-detail" id="detail-health_implants">
+                  <textarea class="form-textarea" name="health_implants_notes" rows="2" placeholder="Please describe the device/implant and location…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">12. Do you have varicose veins, blood clots, or are you on blood-thinning medication?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="health_varicose" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="health_varicose" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="health_varicose" id="yn-health_varicose" value="" />
+                <div class="cf-yn-detail" id="detail-health_varicose">
+                  <textarea class="form-textarea" name="health_varicose_notes" rows="2" placeholder="Please provide details…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">13. Have you had cancer or are you currently receiving cancer treatment?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="health_cancer" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="health_cancer" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="health_cancer" id="yn-health_cancer" value="" />
+                <div class="cf-yn-detail" id="detail-health_cancer">
+                  <textarea class="form-textarea" name="health_cancer_notes" rows="2" placeholder="Please provide details…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">14. Do you have any musculoskeletal injuries, chronic pain, or mobility limitations?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="health_musculo" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="health_musculo" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="health_musculo" id="yn-health_musculo" value="" />
+                <div class="cf-yn-detail" id="detail-health_musculo">
+                  <textarea class="form-textarea" name="health_musculo_notes" rows="2" placeholder="Please describe the area and nature of the condition…"></textarea>
+                </div>
+              </li>
+
+            </ul>
+
+            <div class="cf-spacer-sm"></div>
+            <div class="cf-field-group">
+              <label class="form-label" for="f-general-notes">Please provide details for any YES answers above</label>
+              <textarea class="form-textarea" id="f-general-notes" name="general_health_notes" rows="4" placeholder="Add any context that will help your therapist…"></textarea>
+            </div>
+          </div>
+          <!-- end general health -->
+
+
+          <!-- ── FACIAL SECTION ── -->
+          <div class="cf-dynamic-section cf-section-block" id="section-facial">
+            <span class="cf-section-block__heading">Treatment Specific</span>
+            <h3 class="cf-section-block__title">Facial treatment questions</h3>
+
+            <div class="cf-why">
+              <button type="button" class="cf-why__trigger" aria-expanded="false">Why do we ask this?</button>
+              <div class="cf-why__body">
+                Facial treatments involve applying products directly to your skin. These questions help us identify contraindications and choose the safest products and techniques for your skin type and current condition.
+              </div>
+            </div>
+
+            <ul class="cf-yn-list">
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">1. Do you have any active skin infections, cold sores, or open wounds on your face or neck?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="facial_active_infection" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="facial_active_infection" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="facial_active_infection" id="yn-facial_active_infection" value="" />
+                <div class="cf-yn-detail" id="detail-facial_active_infection">
+                  <textarea class="form-textarea" name="facial_active_infection_notes" rows="2" placeholder="Please describe…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">2. Do you have a skin condition (eczema, rosacea, psoriasis, severe active acne)?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="facial_skin_condition" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="facial_skin_condition" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="facial_skin_condition" id="yn-facial_skin_condition" value="" />
+                <div class="cf-yn-detail" id="detail-facial_skin_condition">
+                  <textarea class="form-textarea" name="facial_skin_condition_notes" rows="2" placeholder="Please describe your condition…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">3. Are you currently using Retinol, Retinoids, or have you used Accutane in the last 6 months?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="facial_retinol" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="facial_retinol" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="facial_retinol" id="yn-facial_retinol" value="" />
+                <div class="cf-yn-detail" id="detail-facial_retinol">
+                  <textarea class="form-textarea" name="facial_retinol_notes" rows="2" placeholder="Please provide details, including product name if known…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">4. Have you had a chemical peel, laser, microdermabrasion, or dermaplaning in the last 2 weeks?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="facial_recent_treatment" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="facial_recent_treatment" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="facial_recent_treatment" id="yn-facial_recent_treatment" value="" />
+                <div class="cf-yn-detail" id="detail-facial_recent_treatment">
+                  <textarea class="form-textarea" name="facial_recent_treatment_notes" rows="2" placeholder="Please describe the treatment and approximate date…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">5. Have you had facial waxing, threading, or electrolysis in the last 48 hours?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="facial_waxing_48h" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="facial_waxing_48h" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="facial_waxing_48h" id="yn-facial_waxing_48h" value="" />
+                <div class="cf-yn-detail" id="detail-facial_waxing_48h">
+                  <textarea class="form-textarea" name="facial_waxing_48h_notes" rows="2" placeholder="Please provide details…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">6. Do you have sunburn, windburn, or very sensitive skin right now?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="facial_sunburn" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="facial_sunburn" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="facial_sunburn" id="yn-facial_sunburn" value="" />
+                <div class="cf-yn-detail" id="detail-facial_sunburn">
+                  <textarea class="form-textarea" name="facial_sunburn_notes" rows="2" placeholder="Please describe…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">7. Are you using any prescription topical medications on your face?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="facial_prescription_topical" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="facial_prescription_topical" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="facial_prescription_topical" id="yn-facial_prescription_topical" value="" />
+                <div class="cf-yn-detail" id="detail-facial_prescription_topical">
+                  <textarea class="form-textarea" name="facial_prescription_topical_notes" rows="2" placeholder="Please list medications…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">8. Do you have any known allergies to skincare products, fragrances, or essential oils?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="facial_product_allergy" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="facial_product_allergy" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="facial_product_allergy" id="yn-facial_product_allergy" value="" />
+                <div class="cf-yn-detail" id="detail-facial_product_allergy">
+                  <textarea class="form-textarea" name="facial_product_allergy_notes" rows="2" placeholder="Please list specific allergens…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">9. Have you ever had an allergic reaction to a facial product or treatment?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="facial_past_reaction" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="facial_past_reaction" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="facial_past_reaction" id="yn-facial_past_reaction" value="" />
+                <div class="cf-yn-detail" id="detail-facial_past_reaction">
+                  <textarea class="form-textarea" name="facial_past_reaction_notes" rows="2" placeholder="Please describe the reaction and product involved…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">10. Do you have dental implants, permanent fillers, or recent cosmetic injectables (Botox, fillers)?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="facial_injectables" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="facial_injectables" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="facial_injectables" id="yn-facial_injectables" value="" />
+                <div class="cf-yn-detail" id="detail-facial_injectables">
+                  <textarea class="form-textarea" name="facial_injectables_notes" rows="2" placeholder="Please provide approximate date and area treated…"></textarea>
+                </div>
+              </li>
+
+            </ul>
+
+            <div class="cf-spacer"></div>
+
+            <!-- Skin type -->
+            <div class="cf-field-group">
+              <span class="form-label" id="lbl-skin-type">Skin type</span>
+              <div class="cf-chips" role="radiogroup" aria-labelledby="lbl-skin-type" data-chip-group="skin_type" data-single="true">
+                <div class="cf-chip" data-chip-group="skin_type" data-val="normal" role="radio" aria-checked="false" tabindex="0">Normal</div>
+                <div class="cf-chip" data-chip-group="skin_type" data-val="oily"   role="radio" aria-checked="false" tabindex="0">Oily</div>
+                <div class="cf-chip" data-chip-group="skin_type" data-val="dry"    role="radio" aria-checked="false" tabindex="0">Dry</div>
+                <div class="cf-chip" data-chip-group="skin_type" data-val="combination" role="radio" aria-checked="false" tabindex="0">Combination</div>
+                <div class="cf-chip" data-chip-group="skin_type" data-val="sensitive"   role="radio" aria-checked="false" tabindex="0">Sensitive</div>
+              </div>
+              <input type="hidden" name="facial_skin_type" id="chip-skin_type" value="" />
+            </div>
+
+            <!-- Skin concerns -->
+            <div class="cf-field-group">
+              <span class="form-label" id="lbl-skin-concerns">Skin concerns <span style="font-weight:300;font-size:0.75rem;">(select all that apply)</span></span>
+              <div class="cf-chips" role="group" aria-labelledby="lbl-skin-concerns" data-chip-group="skin_concerns" data-single="false">
+                <div class="cf-chip" data-chip-group="skin_concerns" data-val="acne"           tabindex="0">Acne / Breakouts</div>
+                <div class="cf-chip" data-chip-group="skin_concerns" data-val="hyperpigmentation" tabindex="0">Hyperpigmentation</div>
+                <div class="cf-chip" data-chip-group="skin_concerns" data-val="uneven-tone"    tabindex="0">Uneven skin tone</div>
+                <div class="cf-chip" data-chip-group="skin_concerns" data-val="dryness"        tabindex="0">Dryness / Dehydration</div>
+                <div class="cf-chip" data-chip-group="skin_concerns" data-val="fine-lines"     tabindex="0">Fine lines / Wrinkles</div>
+                <div class="cf-chip" data-chip-group="skin_concerns" data-val="pores"          tabindex="0">Enlarged pores</div>
+                <div class="cf-chip" data-chip-group="skin_concerns" data-val="oiliness"       tabindex="0">Oiliness / Shine</div>
+                <div class="cf-chip" data-chip-group="skin_concerns" data-val="sensitivity"    tabindex="0">Sensitivity / Redness</div>
+                <div class="cf-chip" data-chip-group="skin_concerns" data-val="other"          tabindex="0">Other</div>
+              </div>
+              <input type="hidden" name="facial_skin_concerns" id="chip-skin_concerns" value="" />
+            </div>
+
+            <!-- Main skin concern -->
+            <div class="cf-field-group">
+              <label class="form-label" for="f-facial-skin-goal">Main skin concern / goal for today's treatment</label>
+              <textarea class="form-textarea" id="f-facial-skin-goal" name="facial_skin_goal" rows="3" placeholder="Tell us what you'd most like to address or achieve…"></textarea>
+            </div>
+
+            <!-- Patch test -->
+            <div class="cf-consent-item" style="border:none;padding:0;">
+              <input type="checkbox" id="f-facial-patch-test" name="facial_patch_test_requested" value="yes" />
+              <label for="f-facial-patch-test">I would like to request a patch test before this treatment</label>
+            </div>
+
+          </div>
+          <!-- end section-facial -->
+
+
+          <!-- ── MASSAGE SECTION ── -->
+          <div class="cf-dynamic-section cf-section-block" id="section-massage">
+            <span class="cf-section-block__heading">Treatment Specific</span>
+            <h3 class="cf-section-block__title">Massage treatment questions</h3>
+
+            <div class="cf-why">
+              <button type="button" class="cf-why__trigger" aria-expanded="false">Why do we ask this?</button>
+              <div class="cf-why__body">
+                Massage involves physical manipulation of muscles and soft tissue. These questions help us identify any areas or techniques that may need to be avoided or modified for your safety and comfort.
+              </div>
+            </div>
+
+            <!-- Pressure preference -->
+            <div class="cf-field-group">
+              <span class="form-label" id="lbl-pressure">Pressure preference</span>
+              <div class="cf-chips" role="radiogroup" aria-labelledby="lbl-pressure" data-chip-group="massage_pressure" data-single="true">
+                <div class="cf-chip" data-chip-group="massage_pressure" data-val="light"     role="radio" aria-checked="false" tabindex="0">Light</div>
+                <div class="cf-chip" data-chip-group="massage_pressure" data-val="medium"    role="radio" aria-checked="false" tabindex="0">Medium</div>
+                <div class="cf-chip" data-chip-group="massage_pressure" data-val="firm"      role="radio" aria-checked="false" tabindex="0">Firm</div>
+                <div class="cf-chip" data-chip-group="massage_pressure" data-val="very-firm" role="radio" aria-checked="false" tabindex="0">Very Firm</div>
+              </div>
+              <input type="hidden" name="massage_pressure" id="chip-massage_pressure" value="" />
+            </div>
+
+            <!-- Goal -->
+            <div class="cf-field-group">
+              <label class="form-label" for="f-massage-goal">Goal for today's massage</label>
+              <textarea class="form-textarea" id="f-massage-goal" name="massage_goal" rows="2" placeholder="e.g. relaxation, tension release, pain relief, post-exercise recovery…"></textarea>
+            </div>
+
+            <ul class="cf-yn-list">
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">1. Do you have any areas of current pain, injury, inflammation, or recent surgery?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="massage_injury" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="massage_injury" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="massage_injury" id="yn-massage_injury" value="" />
+                <div class="cf-yn-detail" id="detail-massage_injury">
+                  <textarea class="form-textarea" name="massage_injury_notes" rows="2" placeholder="Please describe the area and nature of the pain/injury…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">2. Do you have any muscle, joint, or spine conditions (herniated disc, arthritis)?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="massage_spine" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="massage_spine" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="massage_spine" id="yn-massage_spine" value="" />
+                <div class="cf-yn-detail" id="detail-massage_spine">
+                  <textarea class="form-textarea" name="massage_spine_notes" rows="2" placeholder="Please provide details…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">3. Do you have a heart condition, high/low blood pressure, or a pacemaker/implanted device?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="massage_heart" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="massage_heart" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="massage_heart" id="yn-massage_heart" value="" />
+                <div class="cf-yn-detail" id="detail-massage_heart">
+                  <textarea class="form-textarea" name="massage_heart_notes" rows="2" placeholder="Please provide details…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">4. Do you have varicose veins, deep vein thrombosis (DVT), or a clotting disorder?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="massage_varicose" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="massage_varicose" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="massage_varicose" id="yn-massage_varicose" value="" />
+                <div class="cf-yn-detail" id="detail-massage_varicose">
+                  <textarea class="form-textarea" name="massage_varicose_notes" rows="2" placeholder="Please indicate affected areas…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">5. Are you taking blood-thinning medication (e.g. warfarin, aspirin therapy)?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="massage_blood_thinners" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="massage_blood_thinners" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="massage_blood_thinners" id="yn-massage_blood_thinners" value="" />
+                <div class="cf-yn-detail" id="detail-massage_blood_thinners">
+                  <textarea class="form-textarea" name="massage_blood_thinners_notes" rows="2" placeholder="Please list medication name(s)…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">6. Do you have any metal implants, pins, rods, or plates in your body?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="massage_metal_implants" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="massage_metal_implants" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="massage_metal_implants" id="yn-massage_metal_implants" value="" />
+                <div class="cf-yn-detail" id="detail-massage_metal_implants">
+                  <textarea class="form-textarea" name="massage_metal_implants_notes" rows="2" placeholder="Please describe the implant and its location…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">7. Do you have diabetes, neuropathy, or reduced sensation in any part of your body?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="massage_neuropathy" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="massage_neuropathy" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="massage_neuropathy" id="yn-massage_neuropathy" value="" />
+                <div class="cf-yn-detail" id="detail-massage_neuropathy">
+                  <textarea class="form-textarea" name="massage_neuropathy_notes" rows="2" placeholder="Please describe affected areas…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">8. Do you have any active skin infections, rashes, or open wounds?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="massage_skin_infection" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="massage_skin_infection" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="massage_skin_infection" id="yn-massage_skin_infection" value="" />
+                <div class="cf-yn-detail" id="detail-massage_skin_infection">
+                  <textarea class="form-textarea" name="massage_skin_infection_notes" rows="2" placeholder="Please describe and indicate location…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">9. Do you have any allergies to massage oils, essential oils, or nut-based carrier oils?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="massage_oil_allergy" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="massage_oil_allergy" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="massage_oil_allergy" id="yn-massage_oil_allergy" value="" />
+                <div class="cf-yn-detail" id="detail-massage_oil_allergy">
+                  <textarea class="form-textarea" name="massage_oil_allergy_notes" rows="2" placeholder="Please list specific oils or ingredients to avoid…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">10. Do you have osteoporosis or a bone condition affecting pressure tolerance?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="massage_osteoporosis" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="massage_osteoporosis" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="massage_osteoporosis" id="yn-massage_osteoporosis" value="" />
+                <div class="cf-yn-detail" id="detail-massage_osteoporosis">
+                  <textarea class="form-textarea" name="massage_osteoporosis_notes" rows="2" placeholder="Please provide details…"></textarea>
+                </div>
+              </li>
+
+            </ul>
+
+            <div class="cf-spacer"></div>
+
+            <div class="cf-field-group">
+              <label class="form-label" for="f-massage-avoid">Areas to AVOID</label>
+              <textarea class="form-textarea" id="f-massage-avoid" name="massage_areas_avoid" rows="2" placeholder="e.g. lower back, left shoulder, feet…"></textarea>
+            </div>
+
+            <div class="cf-field-group">
+              <label class="form-label" for="f-massage-focus">Areas needing EXTRA ATTENTION</label>
+              <textarea class="form-textarea" id="f-massage-focus" name="massage_areas_focus" rows="2" placeholder="e.g. neck and shoulders, upper back, calves…"></textarea>
+            </div>
+
+          </div>
+          <!-- end section-massage -->
+
+
+          <!-- ── WAXING SECTION ── -->
+          <div class="cf-dynamic-section cf-section-block" id="section-waxing">
+            <span class="cf-section-block__heading">Treatment Specific</span>
+            <h3 class="cf-section-block__title">Waxing treatment questions</h3>
+
+            <div class="cf-why">
+              <button type="button" class="cf-why__trigger" aria-expanded="false">Why do we ask this?</button>
+              <div class="cf-why__body">
+                Waxing involves removing hair from the root using warm or hot wax. Certain medications and skin conditions can increase sensitivity and risk of adverse reactions. Your answers help us adapt the service safely.
+              </div>
+            </div>
+
+            <!-- Areas to be waxed -->
+            <div class="cf-field-group">
+              <span class="form-label" id="lbl-wax-areas">Areas to be waxed <span style="font-weight:300;font-size:0.75rem;">(select all that apply)</span></span>
+              <div class="cf-chips" role="group" aria-labelledby="lbl-wax-areas" data-chip-group="wax_areas" data-single="false" id="wax-areas-chips">
+                <div class="cf-chip" data-chip-group="wax_areas" data-val="upper-lip"       tabindex="0">Upper Lip</div>
+                <div class="cf-chip" data-chip-group="wax_areas" data-val="chin"            tabindex="0">Chin</div>
+                <div class="cf-chip" data-chip-group="wax_areas" data-val="cheeks-sideburns" tabindex="0">Cheeks &amp; Sideburns</div>
+                <div class="cf-chip" data-chip-group="wax_areas" data-val="full-face"       tabindex="0">Full Face</div>
+                <div class="cf-chip" data-chip-group="wax_areas" data-val="eyebrows"        tabindex="0">Eyebrows</div>
+                <div class="cf-chip" data-chip-group="wax_areas" data-val="underarms"       tabindex="0">Underarms</div>
+                <div class="cf-chip" data-chip-group="wax_areas" data-val="arms"            tabindex="0">Arms</div>
+                <div class="cf-chip" data-chip-group="wax_areas" data-val="full-legs"       tabindex="0">Full Legs</div>
+                <div class="cf-chip" data-chip-group="wax_areas" data-val="half-legs"       tabindex="0">Half Legs</div>
+                <div class="cf-chip" data-chip-group="wax_areas" data-val="back"            tabindex="0">Back</div>
+                <div class="cf-chip" data-chip-group="wax_areas" data-val="chest"           tabindex="0">Chest</div>
+                <div class="cf-chip" data-chip-group="wax_areas" data-val="bikini-line"     tabindex="0" data-intimate="true">Bikini Line</div>
+                <div class="cf-chip" data-chip-group="wax_areas" data-val="extended-bikini" tabindex="0" data-intimate="true">Extended Bikini</div>
+                <div class="cf-chip" data-chip-group="wax_areas" data-val="full-brazilian"  tabindex="0" data-intimate="true">Full Brazilian</div>
+                <div class="cf-chip" data-chip-group="wax_areas" data-val="hollywood"       tabindex="0" data-intimate="true">Hollywood</div>
+              </div>
+              <input type="hidden" name="waxing_areas" id="chip-wax_areas" value="" />
+            </div>
+
+            <!-- Intimate area consent — shown only when intimate area selected -->
+            <div id="wax-intimate-consent" class="cf-notice" style="border-left-color: var(--espresso); background: rgba(47,36,29,0.04);">
+              <strong>Intimate area waxing — consent required</strong>
+              <div class="cf-consent-item" style="padding: 0.5rem 0; border: none;">
+                <input type="checkbox" id="f-wax-intimate-consent" name="waxing_intimate_consent" value="yes" />
+                <label for="f-wax-intimate-consent">I consent to intimate/sensitive area waxing as selected above and understand that draping and professional protocols will be maintained throughout my treatment.</label>
+              </div>
+            </div>
+
+            <ul class="cf-yn-list">
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">1. Are you using Retinol, Retinoids, AHAs/BHAs, or Accutane on the area to be waxed?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="waxing_retinol" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="waxing_retinol" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="waxing_retinol" id="yn-waxing_retinol" value="" />
+                <div class="cf-yn-detail" id="detail-waxing_retinol">
+                  <textarea class="form-textarea" name="waxing_retinol_notes" rows="2" placeholder="Please list products and areas of use…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">2. Have you had a chemical peel, laser treatment, or sunburn on this area in the last 2 weeks?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="waxing_recent_treatment" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="waxing_recent_treatment" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="waxing_recent_treatment" id="yn-waxing_recent_treatment" value="" />
+                <div class="cf-yn-detail" id="detail-waxing_recent_treatment">
+                  <textarea class="form-textarea" name="waxing_recent_treatment_notes" rows="2" placeholder="Please describe the treatment and approximate date…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">3. Do you have active acne, broken skin, cuts, bruises, or skin infections on the area?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="waxing_broken_skin" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="waxing_broken_skin" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="waxing_broken_skin" id="yn-waxing_broken_skin" value="" />
+                <div class="cf-yn-detail" id="detail-waxing_broken_skin">
+                  <textarea class="form-textarea" name="waxing_broken_skin_notes" rows="2" placeholder="Please indicate the area and describe…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">4. Do you have eczema, psoriasis, or very sensitive skin in the area to be waxed?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="waxing_eczema" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="waxing_eczema" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="waxing_eczema" id="yn-waxing_eczema" value="" />
+                <div class="cf-yn-detail" id="detail-waxing_eczema">
+                  <textarea class="form-textarea" name="waxing_eczema_notes" rows="2" placeholder="Please describe the condition and affected areas…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">5. Are you on any medications that thin the skin or increase sensitivity (steroids, Accutane)?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="waxing_steroids" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="waxing_steroids" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="waxing_steroids" id="yn-waxing_steroids" value="" />
+                <div class="cf-yn-detail" id="detail-waxing_steroids">
+                  <textarea class="form-textarea" name="waxing_steroids_notes" rows="2" placeholder="Please list medications…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">6. Are you on blood-thinning medication or do you bruise easily?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="waxing_blood_thinners" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="waxing_blood_thinners" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="waxing_blood_thinners" id="yn-waxing_blood_thinners" value="" />
+                <div class="cf-yn-detail" id="detail-waxing_blood_thinners">
+                  <textarea class="form-textarea" name="waxing_blood_thinners_notes" rows="2" placeholder="Please list medications if applicable…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">7. Do you have diabetes or any condition that affects skin healing?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="waxing_diabetes" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="waxing_diabetes" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="waxing_diabetes" id="yn-waxing_diabetes" value="" />
+                <div class="cf-yn-detail" id="detail-waxing_diabetes">
+                  <textarea class="form-textarea" name="waxing_diabetes_notes" rows="2" placeholder="Please provide details…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">8. Have you ever had a waxing-related adverse reaction (severe redness, lifting, burns)?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="waxing_past_reaction" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="waxing_past_reaction" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="waxing_past_reaction" id="yn-waxing_past_reaction" value="" />
+                <div class="cf-yn-detail" id="detail-waxing_past_reaction">
+                  <textarea class="form-textarea" name="waxing_past_reaction_notes" rows="2" placeholder="Please describe the reaction…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">9. Do you have any allergies to wax, resins, or waxing products?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="waxing_wax_allergy" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="waxing_wax_allergy" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="waxing_wax_allergy" id="yn-waxing_wax_allergy" value="" />
+                <div class="cf-yn-detail" id="detail-waxing_wax_allergy">
+                  <textarea class="form-textarea" name="waxing_wax_allergy_notes" rows="2" placeholder="Please specify allergens if known…"></textarea>
+                </div>
+              </li>
+
+            </ul>
+
+          </div>
+          <!-- end section-waxing -->
+
+
+          <!-- ── BROWS & LASHES SECTION ── -->
+          <div class="cf-dynamic-section cf-section-block" id="section-brows-lashes">
+            <span class="cf-section-block__heading">Treatment Specific</span>
+            <h3 class="cf-section-block__title">Eyebrow &amp; eyelash service questions</h3>
+
+            <div class="cf-why">
+              <button type="button" class="cf-why__trigger" aria-expanded="false">Why do we ask this?</button>
+              <div class="cf-why__body">
+                Brow and lash services involve products applied close to the eyes, including tints, adhesives, and chemical solutions. These questions help us protect your eye health and prevent allergic reactions.
+              </div>
+            </div>
+
+            <!-- Services requested -->
+            <div class="cf-field-group">
+              <span class="form-label" id="lbl-bl-services">Services requested <span style="font-weight:300;font-size:0.75rem;">(select all that apply)</span></span>
+              <div class="cf-chips" role="group" aria-labelledby="lbl-bl-services" data-chip-group="bl_services" data-single="false">
+                <div class="cf-chip" data-chip-group="bl_services" data-val="eyebrow-tint"         tabindex="0">Eyebrow Tint</div>
+                <div class="cf-chip" data-chip-group="bl_services" data-val="eyebrow-wax"          tabindex="0">Eyebrow Wax &amp; Shape</div>
+                <div class="cf-chip" data-chip-group="bl_services" data-val="eyebrow-thread"       tabindex="0">Eyebrow Thread &amp; Shape</div>
+                <div class="cf-chip" data-chip-group="bl_services" data-val="brow-lamination"      tabindex="0">Brow Lamination</div>
+                <div class="cf-chip" data-chip-group="bl_services" data-val="henna-brows"          tabindex="0">Henna Brows</div>
+                <div class="cf-chip" data-chip-group="bl_services" data-val="lash-tint"            tabindex="0">Lash Tint</div>
+                <div class="cf-chip" data-chip-group="bl_services" data-val="lash-extensions"      tabindex="0">Lash Extensions</div>
+                <div class="cf-chip" data-chip-group="bl_services" data-val="lash-lift"            tabindex="0">Lash Lift &amp; Perm</div>
+                <div class="cf-chip" data-chip-group="bl_services" data-val="lash-infill"          tabindex="0">Lash Infill</div>
+              </div>
+              <input type="hidden" name="bl_services_requested" id="chip-bl_services" value="" />
+            </div>
+
+            <!-- Patch test notice -->
+            <div class="cf-notice">
+              <strong>Patch test requirement</strong>
+              A patch test is required at least 24–48 hours before tinting, lash adhesive, or brow lamination services for new clients or those returning after 3 or more months.
+            </div>
+
+            <!-- Patch test status -->
+            <div class="cf-field-group">
+              <span class="form-label" id="lbl-patch-status">Patch test status</span>
+              <div class="cf-chips" role="radiogroup" aria-labelledby="lbl-patch-status" data-chip-group="bl_patch_test" data-single="true" style="flex-direction:column;align-items:flex-start;">
+                <div class="cf-chip" data-chip-group="bl_patch_test" data-val="completed-clear"    role="radio" aria-checked="false" tabindex="0" style="width:100%;max-width:540px;">I have completed a patch test in the last 48 hours — result was clear</div>
+                <div class="cf-chip" data-chip-group="bl_patch_test" data-val="not-completed"      role="radio" aria-checked="false" tabindex="0" style="width:100%;max-width:540px;">I have not completed a patch test — I understand the service may be declined</div>
+                <div class="cf-chip" data-chip-group="bl_patch_test" data-val="not-required"       role="radio" aria-checked="false" tabindex="0" style="width:100%;max-width:540px;">I do not require tinting, adhesive, or chemical services</div>
+              </div>
+              <input type="hidden" name="bl_patch_test_status" id="chip-bl_patch_test" value="" />
+            </div>
+
+            <ul class="cf-yn-list">
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">1. Do you have any known allergies to adhesives, glues, formaldehyde, or lash products?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="bl_adhesive_allergy" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="bl_adhesive_allergy" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="bl_adhesive_allergy" id="yn-bl_adhesive_allergy" value="" />
+                <div class="cf-yn-detail" id="detail-bl_adhesive_allergy">
+                  <textarea class="form-textarea" name="bl_adhesive_allergy_notes" rows="2" placeholder="Please specify allergens…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">2. Do you have any known allergies to hair dye, tinting products, or henna?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="bl_dye_allergy" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="bl_dye_allergy" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="bl_dye_allergy" id="yn-bl_dye_allergy" value="" />
+                <div class="cf-yn-detail" id="detail-bl_dye_allergy">
+                  <textarea class="form-textarea" name="bl_dye_allergy_notes" rows="2" placeholder="Please describe your reaction and the product involved…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">3. Do you have any current eye infections, conjunctivitis, or styes?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="bl_eye_infection" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="bl_eye_infection" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="bl_eye_infection" id="yn-bl_eye_infection" value="" />
+                <div class="cf-yn-detail" id="detail-bl_eye_infection">
+                  <textarea class="form-textarea" name="bl_eye_infection_notes" rows="2" placeholder="Please describe…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">4. Do you have any eye conditions (glaucoma, dry eye, blepharitis, recent eye surgery)?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="bl_eye_condition" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="bl_eye_condition" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="bl_eye_condition" id="yn-bl_eye_condition" value="" />
+                <div class="cf-yn-detail" id="detail-bl_eye_condition">
+                  <textarea class="form-textarea" name="bl_eye_condition_notes" rows="2" placeholder="Please provide details…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">5. Have you had LASIK, cataract surgery, or any eye procedure in the last 3 months?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="bl_eye_surgery" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="bl_eye_surgery" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="bl_eye_surgery" id="yn-bl_eye_surgery" value="" />
+                <div class="cf-yn-detail" id="detail-bl_eye_surgery">
+                  <textarea class="form-textarea" name="bl_eye_surgery_notes" rows="2" placeholder="Please describe the procedure and approximate date…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">6. Do you wear contact lenses? (If yes — lenses must be removed before the service)</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="bl_contacts" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="bl_contacts" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="bl_contacts" id="yn-bl_contacts" value="" />
+                <div class="cf-yn-detail" id="detail-bl_contacts">
+                  <!-- Contact lens declaration shown inside the detail area -->
+                  <div id="bl-contact-lens-decl" class="cf-consent-item" style="border:none;padding:0.5rem 0 0;">
+                    <input type="checkbox" id="f-bl-contact-lens" name="bl_contact_lens_removed" value="yes" />
+                    <label for="f-bl-contact-lens">I confirm I have removed / will remove my contact lenses before this service.</label>
+                  </div>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">7. Do you have eczema, psoriasis, or any skin condition around the eye area?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="bl_eye_skin" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="bl_eye_skin" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="bl_eye_skin" id="yn-bl_eye_skin" value="" />
+                <div class="cf-yn-detail" id="detail-bl_eye_skin">
+                  <textarea class="form-textarea" name="bl_eye_skin_notes" rows="2" placeholder="Please describe…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">8. Are you taking any medications that increase eye sensitivity?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="bl_eye_meds" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="bl_eye_meds" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="bl_eye_meds" id="yn-bl_eye_meds" value="" />
+                <div class="cf-yn-detail" id="detail-bl_eye_meds">
+                  <textarea class="form-textarea" name="bl_eye_meds_notes" rows="2" placeholder="Please list medications…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">9. Have you ever had a reaction to lash extensions, lash tint, or brow services?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="bl_past_reaction" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="bl_past_reaction" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="bl_past_reaction" id="yn-bl_past_reaction" value="" />
+                <div class="cf-yn-detail" id="detail-bl_past_reaction">
+                  <textarea class="form-textarea" name="bl_past_reaction_notes" rows="2" placeholder="Please describe the reaction and the product/service involved…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">10. Do you use Latisse (bimatoprost) or any lash-growth serum?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="bl_lash_serum" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="bl_lash_serum" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="bl_lash_serum" id="yn-bl_lash_serum" value="" />
+                <div class="cf-yn-detail" id="detail-bl_lash_serum">
+                  <textarea class="form-textarea" name="bl_lash_serum_notes" rows="2" placeholder="Please name the product if possible…"></textarea>
+                </div>
+              </li>
+
+            </ul>
+
+          </div>
+          <!-- end section-brows-lashes -->
+
+
+          <!-- ── STEAM & SAUNA SECTION ── -->
+          <div class="cf-dynamic-section cf-section-block" id="section-steam-sauna">
+            <span class="cf-section-block__heading">Treatment Specific</span>
+            <h3 class="cf-section-block__title">Steam &amp; sauna questions</h3>
+
+            <div class="cf-why">
+              <button type="button" class="cf-why__trigger" aria-expanded="false">Why do we ask this?</button>
+              <div class="cf-why__body">
+                Steam and sauna sessions raise your core body temperature significantly. Certain health conditions can make this unsafe. Your answers allow us to ensure your session is conducted safely and within appropriate time limits.
+              </div>
+            </div>
+
+            <ul class="cf-yn-list">
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">1. Do you have a heart condition, chest pain, or history of heart attack or stroke?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="steam_heart" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="steam_heart" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="steam_heart" id="yn-steam_heart" value="" />
+                <div class="cf-yn-detail" id="detail-steam_heart">
+                  <textarea class="form-textarea" name="steam_heart_notes" rows="2" placeholder="Please provide details…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">2. Do you have high or low blood pressure (hypertension / hypotension)?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="steam_blood_pressure" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="steam_blood_pressure" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="steam_blood_pressure" id="yn-steam_blood_pressure" value="" />
+                <div class="cf-yn-detail" id="detail-steam_blood_pressure">
+                  <textarea class="form-textarea" name="steam_blood_pressure_notes" rows="2" placeholder="Is it currently managed with medication?…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">3. Do you have asthma, COPD, or any respiratory/breathing condition?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="steam_respiratory" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="steam_respiratory" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="steam_respiratory" id="yn-steam_respiratory" value="" />
+                <div class="cf-yn-detail" id="detail-steam_respiratory">
+                  <textarea class="form-textarea" name="steam_respiratory_notes" rows="2" placeholder="Please describe your condition…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">4. Do you have diabetes or any condition affecting blood sugar regulation?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="steam_diabetes" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="steam_diabetes" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="steam_diabetes" id="yn-steam_diabetes" value="" />
+                <div class="cf-yn-detail" id="detail-steam_diabetes">
+                  <textarea class="form-textarea" name="steam_diabetes_notes" rows="2" placeholder="Please provide details…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">5. Do you have epilepsy, seizures, or a neurological condition?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="steam_epilepsy" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="steam_epilepsy" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="steam_epilepsy" id="yn-steam_epilepsy" value="" />
+                <div class="cf-yn-detail" id="detail-steam_epilepsy">
+                  <textarea class="form-textarea" name="steam_epilepsy_notes" rows="2" placeholder="Please provide details…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">6. Are you feeling unwell, feverish, or do you have an active infection today?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="steam_unwell" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="steam_unwell" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="steam_unwell" id="yn-steam_unwell" value="" />
+                <div class="cf-yn-detail" id="detail-steam_unwell">
+                  <textarea class="form-textarea" name="steam_unwell_notes" rows="2" placeholder="Please describe your symptoms…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">7. Do you have any skin conditions worsened by heat (rosacea, severe eczema)?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="steam_heat_skin" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="steam_heat_skin" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="steam_heat_skin" id="yn-steam_heat_skin" value="" />
+                <div class="cf-yn-detail" id="detail-steam_heat_skin">
+                  <textarea class="form-textarea" name="steam_heat_skin_notes" rows="2" placeholder="Please describe…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">8. Are you taking any medications that affect heat tolerance or cause photosensitivity?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="steam_meds_heat" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="steam_meds_heat" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="steam_meds_heat" id="yn-steam_meds_heat" value="" />
+                <div class="cf-yn-detail" id="detail-steam_meds_heat">
+                  <textarea class="form-textarea" name="steam_meds_heat_notes" rows="2" placeholder="Please list medications…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">9. Have you consumed alcohol within the last 4 hours?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="steam_alcohol" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="steam_alcohol" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="steam_alcohol" id="yn-steam_alcohol" value="" />
+                <div class="cf-yn-detail" id="detail-steam_alcohol">
+                  <textarea class="form-textarea" name="steam_alcohol_notes" rows="2" placeholder="Please provide details…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">10. Have you had surgery or a medical procedure within the last 4 weeks?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="steam_surgery" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="steam_surgery" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="steam_surgery" id="yn-steam_surgery" value="" />
+                <div class="cf-yn-detail" id="detail-steam_surgery">
+                  <textarea class="form-textarea" name="steam_surgery_notes" rows="2" placeholder="Please describe the procedure…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">11. Do you have any implanted devices (pacemaker, metal implants)?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="steam_implants" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="steam_implants" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="steam_implants" id="yn-steam_implants" value="" />
+                <div class="cf-yn-detail" id="detail-steam_implants">
+                  <textarea class="form-textarea" name="steam_implants_notes" rows="2" placeholder="Please describe the device and its location…"></textarea>
+                </div>
+              </li>
+
+            </ul>
+
+            <div class="cf-spacer"></div>
+
+            <p class="cf-sub-label">Hydration &amp; safety confirmation</p>
+            <div class="cf-consent-group" style="margin-bottom:0;">
+              <div class="cf-consent-item">
+                <input type="checkbox" id="f-steam-hydration" name="steam_hydration_confirmed" value="yes" />
+                <label for="f-steam-hydration">I have drunk at least 500ml of water in the past 2 hours, or will do so before my session.</label>
+              </div>
+              <div class="cf-consent-item">
+                <input type="checkbox" id="f-steam-exit" name="steam_exit_understood" value="yes" />
+                <label for="f-steam-exit">I understand I must leave the steam/sauna immediately if I feel dizzy, nauseous, or unwell.</label>
+              </div>
+              <div class="cf-consent-item">
+                <input type="checkbox" id="f-steam-duration" name="steam_duration_understood" value="yes" />
+                <label for="f-steam-duration">I understand sessions are limited to a maximum of 20 minutes.</label>
+              </div>
+            </div>
+
+          </div>
+          <!-- end section-steam-sauna -->
+
+
+          <!-- ── BODY SECTION ── -->
+          <div class="cf-dynamic-section cf-section-block" id="section-body">
+            <span class="cf-section-block__heading">Treatment Specific</span>
+            <h3 class="cf-section-block__title">Body wrap &amp; scrub questions</h3>
+
+            <div class="cf-why">
+              <button type="button" class="cf-why__trigger" aria-expanded="false">Why do we ask this?</button>
+              <div class="cf-why__body">
+                Body wraps and scrubs involve exfoliation, active ingredients, and in some cases heat or thermal cocooning. These questions help us choose safe products and techniques tailored to your body and skin condition.
+              </div>
+            </div>
+
+            <!-- Exfoliation strength -->
+            <div class="cf-field-group">
+              <span class="form-label" id="lbl-exfoliation">Exfoliation strength preference</span>
+              <div class="cf-chips" role="radiogroup" aria-labelledby="lbl-exfoliation" data-chip-group="body_exfoliation" data-single="true">
+                <div class="cf-chip" data-chip-group="body_exfoliation" data-val="gentle" role="radio" aria-checked="false" tabindex="0">Gentle</div>
+                <div class="cf-chip" data-chip-group="body_exfoliation" data-val="medium" role="radio" aria-checked="false" tabindex="0">Medium</div>
+                <div class="cf-chip" data-chip-group="body_exfoliation" data-val="firm"   role="radio" aria-checked="false" tabindex="0">Firm</div>
+              </div>
+              <input type="hidden" name="body_exfoliation_preference" id="chip-body_exfoliation" value="" />
+            </div>
+
+            <!-- Goal -->
+            <div class="cf-field-group">
+              <label class="form-label" for="f-body-goal">Goal for today's treatment</label>
+              <textarea class="form-textarea" id="f-body-goal" name="body_goal" rows="2" placeholder="e.g. detox, hydration, softness, relaxation, addressing a specific skin area…"></textarea>
+            </div>
+
+            <ul class="cf-yn-list">
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">1. Do you have any cuts, open wounds, abrasions, or broken skin on your body?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="body_wounds" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="body_wounds" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="body_wounds" id="yn-body_wounds" value="" />
+                <div class="cf-yn-detail" id="detail-body_wounds">
+                  <textarea class="form-textarea" name="body_wounds_notes" rows="2" placeholder="Please indicate the area(s)…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">2. Do you have any skin conditions (eczema, psoriasis, severe dermatitis, active rashes)?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="body_skin_conditions" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="body_skin_conditions" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="body_skin_conditions" id="yn-body_skin_conditions" value="" />
+                <div class="cf-yn-detail" id="detail-body_skin_conditions">
+                  <textarea class="form-textarea" name="body_skin_conditions_notes" rows="2" placeholder="Please describe the condition and affected areas…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">3. Do you have any active skin infections or communicable skin conditions?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="body_infections" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="body_infections" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="body_infections" id="yn-body_infections" value="" />
+                <div class="cf-yn-detail" id="detail-body_infections">
+                  <textarea class="form-textarea" name="body_infections_notes" rows="2" placeholder="Please describe…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">4. Do you have sunburn, windburn, or recent laser/chemical treatment on your body?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="body_sunburn" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="body_sunburn" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="body_sunburn" id="yn-body_sunburn" value="" />
+                <div class="cf-yn-detail" id="detail-body_sunburn">
+                  <textarea class="form-textarea" name="body_sunburn_notes" rows="2" placeholder="Please describe the affected area and approximate date of treatment…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">5. Are you using any topical medications (retinoids, steroids, antibiotics) on your body?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="body_topical_meds" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="body_topical_meds" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="body_topical_meds" id="yn-body_topical_meds" value="" />
+                <div class="cf-yn-detail" id="detail-body_topical_meds">
+                  <textarea class="form-textarea" name="body_topical_meds_notes" rows="2" placeholder="Please list medications and areas of application…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">6. Do you have any allergies to coffee, nuts, seaweed, clay, essential oils, or fragrances?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="body_ingredient_allergy" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="body_ingredient_allergy" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="body_ingredient_allergy" id="yn-body_ingredient_allergy" value="" />
+                <div class="cf-yn-detail" id="detail-body_ingredient_allergy">
+                  <textarea class="form-textarea" name="body_ingredient_allergy_notes" rows="2" placeholder="Please list specific allergens…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">7. Do you have claustrophobia or anxiety triggered by wrapping or heat?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="body_claustrophobia" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="body_claustrophobia" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="body_claustrophobia" id="yn-body_claustrophobia" value="" />
+                <div class="cf-yn-detail" id="detail-body_claustrophobia">
+                  <textarea class="form-textarea" name="body_claustrophobia_notes" rows="2" placeholder="Please describe your experience — we can adapt the service…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">8. Do you have a heart condition, high/low blood pressure, or heat sensitivity?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="body_heat_sensitivity" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="body_heat_sensitivity" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="body_heat_sensitivity" id="yn-body_heat_sensitivity" value="" />
+                <div class="cf-yn-detail" id="detail-body_heat_sensitivity">
+                  <textarea class="form-textarea" name="body_heat_sensitivity_notes" rows="2" placeholder="Please provide details…"></textarea>
+                </div>
+              </li>
+
+              <li class="cf-yn-item">
+                <span class="cf-yn-question">9. Have you consumed alcohol within the last 4 hours?</span>
+                <div class="cf-yn-btns">
+                  <button type="button" class="cf-yn-btn" data-yn="body_alcohol" data-val="yes">Yes</button>
+                  <button type="button" class="cf-yn-btn" data-yn="body_alcohol" data-val="no">No</button>
+                </div>
+                <input type="hidden" name="body_alcohol" id="yn-body_alcohol" value="" />
+                <div class="cf-yn-detail" id="detail-body_alcohol">
+                  <textarea class="form-textarea" name="body_alcohol_notes" rows="2" placeholder="Please provide details…"></textarea>
+                </div>
+              </li>
+
+            </ul>
+
+            <div class="cf-spacer"></div>
+
+            <div class="cf-field-group">
+              <label class="form-label" for="f-body-sensitivities">Known ingredient sensitivities</label>
+              <textarea class="form-textarea" id="f-body-sensitivities" name="body_known_sensitivities" rows="2" placeholder="e.g. I react to products containing fragrance, I cannot use anything with nuts…"></textarea>
+            </div>
+
+            <p class="cf-sub-label">Shower &amp; treatment consent</p>
+            <div class="cf-consent-group" style="margin-bottom:0;">
+              <div class="cf-consent-item">
+                <input type="checkbox" id="f-body-pre-shower" name="body_pre_shower_consent" value="yes" />
+                <label for="f-body-pre-shower">I consent to a pre-treatment rinse/shower as part of this service.</label>
+              </div>
+              <div class="cf-consent-item">
+                <input type="checkbox" id="f-body-post-shower" name="body_post_shower_consent" value="yes" />
+                <label for="f-body-post-shower">I consent to a post-treatment shower to remove products.</label>
+              </div>
+              <div class="cf-consent-item">
+                <input type="checkbox" id="f-body-thermal" name="body_thermal_understood" value="yes" />
+                <label for="f-body-thermal">I understand that wrap treatments may involve heated blankets or thermal cocooning.</label>
+              </div>
+            </div>
+
+          </div>
+          <!-- end section-body -->
+
+          <p class="cf-error" id="error-step3">Please review your answers above before continuing.</p>
+
+          <div class="cf-nav">
+            <button class="cf-nav__back" type="button" data-go="2">&larr; Back</button>
+            <button class="btn btn-onyx" type="button" id="btn-next-3">Continue &rarr;</button>
+          </div>
+
+        </div>
+        <!-- end step 3 -->
+
+
+        <!-- ════════════════════════════════════════════════════
+             STEP 4 — CONSENT
+             ════════════════════════════════════════════════════ -->
+        <div class="cf-step" id="step-4">
+
+          <span class="cf-step__eyebrow">Step 4 of 4</span>
+          <h2 class="cf-step__title">Informed <em>consent</em> &amp; declaration</h2>
+
+          <p style="font-size:0.9rem;line-height:1.75;color:rgba(47,36,29,0.7);margin-bottom:2rem;">Please read each statement carefully and check the box to confirm your understanding. Ask a member of our team if anything is unclear.</p>
+
+          <!-- Informed Consent -->
+          <div class="cf-consent-group">
+            <span class="cf-consent-group__title">Informed consent</span>
+
+            <div class="cf-consent-item">
+              <input type="checkbox" id="consent-wellness" name="consent_wellness" value="yes" required />
+              <label for="consent-wellness">I understand that spa services are wellness and beauty therapies, not a substitute for medical diagnosis or treatment.</label>
+            </div>
+
+            <div class="cf-consent-item">
+              <input type="checkbox" id="consent-honest" name="consent_honest" value="yes" required />
+              <label for="consent-honest">I have completed all sections of this form honestly and have disclosed all relevant health information.</label>
+            </div>
+
+            <div class="cf-consent-item">
+              <input type="checkbox" id="consent-receive" name="consent_receive" value="yes" required />
+              <label for="consent-receive">I consent to receive the service(s) I have booked, as indicated in this form.</label>
+            </div>
+
+            <div class="cf-consent-item">
+              <input type="checkbox" id="consent-contact" name="consent_contact" value="yes" required />
+              <label for="consent-contact">I understand that spa services involve physical contact with my body and skin by a trained therapist.</label>
+            </div>
+
+            <div class="cf-consent-item">
+              <input type="checkbox" id="consent-products" name="consent_products" value="yes" required />
+              <label for="consent-products">Some services involve the use of heat, steam, essential oils, wax, tinting chemicals, adhesives, or exfoliants.</label>
+            </div>
+
+            <div class="cf-consent-item">
+              <input type="checkbox" id="consent-reactions" name="consent_reactions" value="yes" required />
+              <label for="consent-reactions">I may experience temporary redness, sensitivity, or skin reaction, which is generally normal.</label>
+            </div>
+
+            <div class="cf-consent-item">
+              <input type="checkbox" id="consent-stop" name="consent_stop" value="yes" required />
+              <label for="consent-stop">I will inform the therapist of any discomfort, and I understand I may stop or modify the service at any time.</label>
+            </div>
+          </div>
+
+          <!-- Liability -->
+          <div class="cf-consent-group">
+            <span class="cf-consent-group__title">Liability &amp; responsibility</span>
+
+            <div class="cf-consent-item">
+              <input type="checkbox" id="liability-disclosed" name="liability_disclosed" value="yes" required />
+              <label for="liability-disclosed">I have disclosed all medical conditions, medications, allergies, and contraindications to the best of my knowledge.</label>
+            </div>
+
+            <div class="cf-consent-item">
+              <input type="checkbox" id="liability-undisclosed" name="liability_undisclosed" value="yes" required />
+              <label for="liability-undisclosed">Any conditions I have not disclosed that result in an adverse reaction are my own responsibility.</label>
+            </div>
+
+            <div class="cf-consent-item">
+              <input type="checkbox" id="liability-aftercare" name="liability_aftercare" value="yes" required />
+              <label for="liability-aftercare">I am responsible for following all aftercare instructions provided to me.</label>
+            </div>
+
+            <div class="cf-consent-item">
+              <input type="checkbox" id="liability-complaint" name="liability_complaint" value="yes" required />
+              <label for="liability-complaint">I agree that any complaint or concern will be raised with management promptly and in good faith.</label>
+            </div>
+          </div>
+
+          <!-- Right to refuse notice -->
+          <div class="cf-refuse-notice">
+            <strong>Our therapists' right to refuse or modify a service</strong>
+            Our therapists reserve the right to modify or decline a service if, in their professional judgment, it is not safe to proceed. You will be informed respectfully and offered an alternative where possible.
+          </div>
+
+          <!-- Photography consent -->
+          <div class="cf-consent-group">
+            <span class="cf-consent-group__title">Photography consent <span style="font-weight:300;letter-spacing:0;font-size:0.75rem;text-transform:none;">(optional)</span></span>
+            <div class="cf-chips" role="radiogroup" aria-labelledby="lbl-photo-consent" data-chip-group="photo_consent" data-single="true" style="flex-direction:column;align-items:flex-start;gap:0.5rem;">
+              <div class="cf-chip" data-chip-group="photo_consent" data-val="training-only"   role="radio" aria-checked="false" tabindex="0" style="width:100%;max-width:540px;">I consent to photos for staff training purposes only</div>
+              <div class="cf-chip" data-chip-group="photo_consent" data-val="training-social" role="radio" aria-checked="false" tabindex="0" style="width:100%;max-width:540px;">I consent to photos for staff training and social media (face not shown unless agreed separately)</div>
+              <div class="cf-chip" data-chip-group="photo_consent" data-val="no-photos"       role="radio" aria-checked="false" tabindex="0" style="width:100%;max-width:540px;">I do NOT consent to any photography during my visit</div>
+            </div>
+            <input type="hidden" name="photo_consent" id="chip-photo_consent" value="" />
+          </div>
+
+          <!-- Data privacy -->
+          <div class="cf-consent-group">
+            <span class="cf-consent-group__title">Data privacy</span>
+            <div class="cf-consent-item">
+              <input type="checkbox" id="consent-privacy" name="consent_privacy" value="yes" required />
+              <label for="consent-privacy">I have read and understood Niobe's data privacy notice. I consent to the collection and use of my personal and health data for the purposes of providing safe spa services, managing my appointments, and maintaining my client records. My information will not be sold to third parties.</label>
+            </div>
+          </div>
+
+          <!-- Digital signature -->
+          <div style="border-top: 1px solid rgba(47,36,29,0.08); padding-top: 2rem; margin-top: 0.5rem;">
+            <p class="cf-sub-label">Digital signature</p>
+            <div class="cf-row">
+              <div class="cf-field-group">
+                <label class="form-label" for="f-sig-name">Please type your full name as your digital signature <span aria-hidden="true">*</span></label>
+                <input class="form-input" type="text" id="f-sig-name" name="signature_name" required placeholder="Your full name" autocomplete="name" />
+              </div>
+              <div class="cf-field-group">
+                <label class="form-label" for="f-sig-date">Date</label>
+                <input class="form-input" type="text" id="f-sig-date" name="signature_date" readonly style="background: rgba(47,36,29,0.04); color: rgba(47,36,29,0.55);" />
+              </div>
+            </div>
+          </div>
+
+          <p class="cf-error" id="error-step4">Please check all required consent boxes and sign your name before submitting.</p>
+
+          <div class="cf-nav">
+            <button class="cf-nav__back" type="button" data-go="3">&larr; Back</button>
+            <button class="btn btn-onyx" type="button" id="btn-submit">Submit Consultation Form</button>
+          </div>
+
+        </div>
+        <!-- end step 4 -->
+
+
+        <!-- ════════════════════════════════════════════════════
+             THANK YOU STATE
+             ════════════════════════════════════════════════════ -->
+        <div class="cf-thankyou" id="cf-thankyou">
+          <span class="cf-thankyou__eyebrow">Consultation Form</span>
+          <h2 class="cf-thankyou__title" id="thankyou-heading">Thank you</h2>
+          <p class="cf-thankyou__body">
+            Your consultation form has been received and will be reviewed by your therapist before your appointment. Please arrive a few minutes early — your therapist may have a brief question or two before your treatment begins.
+          </p>
+          <p class="cf-thankyou__sub">
+            If you have any urgent concerns or need to update your health information before your appointment, please contact us directly.
+          </p>
+          <div class="cf-thankyou__actions">
+            <a href="contact.html" class="btn btn-onyx">Contact Us</a>
+            <a href="index.html" class="cf-thankyou__secondary">Return to Home</a>
+          </div>
+        </div>
+
+      </div><!-- end cf-wrap -->
+    </section>
+
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="footer__inner">
+      <div class="footer__grid">
+
+        <div>
+          <img src="images/niobe-spa-logo.png" class="footer__logo-img" alt="Niobe Spa" />
+          <p class="footer__brand-desc">Five locations. One standard. Award-winning care for skin, body and beauty.</p>
+          <div class="footer__social">
+            <a href="https://www.facebook.com/niobesalonspa" class="footer__social-link" aria-label="Facebook" target="_blank" rel="noopener noreferrer">f</a>
+            <a href="https://www.instagram.com/niobesalonspa/" class="footer__social-link" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+            </a>
+            <a href="https://www.tiktok.com/@niobesalonspa" class="footer__social-link" aria-label="TikTok" target="_blank" rel="noopener noreferrer">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V9.09a8.16 8.16 0 004.77 1.52V7.17a4.85 4.85 0 01-1-.48z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <p class="footer__col-title">Locations</p>
+          <ul class="footer__links">
+            <li><span class="footer__link">Community 18, Tema</span></li>
+            <li><span class="footer__link">Cantonments, Accra</span></li>
+            <li><span class="footer__link">East Legon, Accra</span></li>
+            <li><span class="footer__link">Alisa Hotel, Tema</span></li>
+            <li><span class="footer__link">African Regent, Accra</span></li>
+            <li><a href="locations.html" class="footer__link" style="opacity:0.7;border-bottom:1px solid rgba(47,36,29,0.15);">View all locations &rarr;</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="footer__col-title">Quick Links</p>
+          <ul class="footer__links">
+            <li><a href="treatments.html" class="footer__link">Treatments</a></li>
+            <li><a href="packages.html"   class="footer__link">Spa Packages</a></li>
+            <li><a href="gift-cards.html" class="footer__link">Gift Cards</a></li>
+            <li><a href="vacancies.html"  class="footer__link">Vacancies</a></li>
+            <li><a href="faqs.html"       class="footer__link">FAQs</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="footer__col-title">Contact</p>
+          <ul class="footer__links">
+            <li><a href="mailto:info@niobebeauty.com" class="footer__link">info@niobebeauty.com</a></li>
+            <li><a href="tel:+233302777222"           class="footer__link">+233 30 277 7222</a></li>
+            <li><a href="tel:+233244334323"           class="footer__link">+233 24 433 4323</a></li>
+            <li><a href="locations.html"              class="footer__link">Opening hours &rarr;</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="footer__col-title">Stay Connected</p>
+          <p class="footer__connect-desc">Be the first to know about offers and new treatments.</p>
+          <form class="footer__email-form" onsubmit="return false;">
+            <input type="email" class="footer__email-input" placeholder="Your email address" aria-label="Email address" />
+            <button type="submit" class="footer__email-btn" aria-label="Subscribe">&rarr;</button>
+          </form>
+        </div>
+
+      </div>
+
+      <div class="footer__bottom">
+        <p class="footer__copy">&copy; 2025 Niobe Spa. All rights reserved.</p>
+        <p class="footer__payment">Payment methods: Visa &middot; Mastercard &middot; Mobile Money &middot; Cash</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+  (function () {
+    'use strict';
+
+    /* ── State ─────────────────────────────────────────────────── */
+    var currentStep = 1;
+    var totalSteps  = 4;
+
+    // Master data object — ready for Airtable/Supabase
+    var formData = {
+      // Step 1 — Booking
+      booking_type:    '',
+      service_id:      '',
+      package_id:      '',
+      branch:          '',
+      appointment_date: '',
+
+      // Step 2 — Personal details
+      full_name:                     '',
+      date_of_birth:                 '',
+      gender:                        '',
+      phone_number:                  '',
+      whatsapp_number:               '',
+      email_address:                 '',
+      home_address:                  '',
+      preferred_language:            '',
+      interpreter_needed:            '',
+      emergency_contact_name:        '',
+      emergency_contact_relationship:'',
+      emergency_contact_phone:       '',
+      first_visit:                   '',
+      how_did_you_hear:              '',
+      wellness_goal:                 '',
+      previous_spa_services:         '',
+
+      // Step 3 — General health
+      health_pregnant:             '', health_pregnant_notes:             '',
+      health_allergies:            '', health_allergies_notes:            '',
+      health_medications:          '', health_medications_notes:          '',
+      health_surgery:              '', health_surgery_notes:              '',
+      health_heart:                '', health_heart_notes:                '',
+      health_diabetes:             '', health_diabetes_notes:             '',
+      health_skin_conditions:      '', health_skin_conditions_notes:      '',
+      health_infections:           '', health_infections_notes:           '',
+      health_epilepsy:             '', health_epilepsy_notes:             '',
+      health_asthma:               '', health_asthma_notes:               '',
+      health_implants:             '', health_implants_notes:             '',
+      health_varicose:             '', health_varicose_notes:             '',
+      health_cancer:               '', health_cancer_notes:               '',
+      health_musculo:              '', health_musculo_notes:              '',
+      general_health_notes:        '',
+
+      // Facial
+      facial_active_infection:      '', facial_active_infection_notes:      '',
+      facial_skin_condition:        '', facial_skin_condition_notes:        '',
+      facial_retinol:               '', facial_retinol_notes:               '',
+      facial_recent_treatment:      '', facial_recent_treatment_notes:      '',
+      facial_waxing_48h:            '', facial_waxing_48h_notes:            '',
+      facial_sunburn:               '', facial_sunburn_notes:               '',
+      facial_prescription_topical:  '', facial_prescription_topical_notes:  '',
+      facial_product_allergy:       '', facial_product_allergy_notes:       '',
+      facial_past_reaction:         '', facial_past_reaction_notes:         '',
+      facial_injectables:           '', facial_injectables_notes:           '',
+      facial_skin_type:             '',
+      facial_skin_concerns:         '',
+      facial_skin_goal:             '',
+      facial_patch_test_requested:  '',
+
+      // Massage
+      massage_pressure:             '',
+      massage_goal:                 '',
+      massage_injury:               '', massage_injury_notes:               '',
+      massage_spine:                '', massage_spine_notes:                '',
+      massage_heart:                '', massage_heart_notes:                '',
+      massage_varicose:             '', massage_varicose_notes:             '',
+      massage_blood_thinners:       '', massage_blood_thinners_notes:       '',
+      massage_metal_implants:       '', massage_metal_implants_notes:       '',
+      massage_neuropathy:           '', massage_neuropathy_notes:           '',
+      massage_skin_infection:       '', massage_skin_infection_notes:       '',
+      massage_oil_allergy:          '', massage_oil_allergy_notes:          '',
+      massage_osteoporosis:         '', massage_osteoporosis_notes:         '',
+      massage_areas_avoid:          '',
+      massage_areas_focus:          '',
+
+      // Waxing
+      waxing_areas:                 '',
+      waxing_intimate_consent:      '',
+      waxing_retinol:               '', waxing_retinol_notes:               '',
+      waxing_recent_treatment:      '', waxing_recent_treatment_notes:      '',
+      waxing_broken_skin:           '', waxing_broken_skin_notes:           '',
+      waxing_eczema:                '', waxing_eczema_notes:                '',
+      waxing_steroids:              '', waxing_steroids_notes:              '',
+      waxing_blood_thinners:        '', waxing_blood_thinners_notes:        '',
+      waxing_diabetes:              '', waxing_diabetes_notes:              '',
+      waxing_past_reaction:         '', waxing_past_reaction_notes:         '',
+      waxing_wax_allergy:           '', waxing_wax_allergy_notes:           '',
+
+      // Brows & Lashes
+      bl_services_requested:        '',
+      bl_patch_test_status:         '',
+      bl_adhesive_allergy:          '', bl_adhesive_allergy_notes:          '',
+      bl_dye_allergy:               '', bl_dye_allergy_notes:               '',
+      bl_eye_infection:             '', bl_eye_infection_notes:             '',
+      bl_eye_condition:             '', bl_eye_condition_notes:             '',
+      bl_eye_surgery:               '', bl_eye_surgery_notes:               '',
+      bl_contacts:                  '',
+      bl_contact_lens_removed:      '',
+      bl_eye_skin:                  '', bl_eye_skin_notes:                  '',
+      bl_eye_meds:                  '', bl_eye_meds_notes:                  '',
+      bl_past_reaction:             '', bl_past_reaction_notes:             '',
+      bl_lash_serum:                '', bl_lash_serum_notes:                '',
+
+      // Steam & Sauna
+      steam_heart:                  '', steam_heart_notes:                  '',
+      steam_blood_pressure:         '', steam_blood_pressure_notes:         '',
+      steam_respiratory:            '', steam_respiratory_notes:            '',
+      steam_diabetes:               '', steam_diabetes_notes:               '',
+      steam_epilepsy:               '', steam_epilepsy_notes:               '',
+      steam_unwell:                 '', steam_unwell_notes:                  '',
+      steam_heat_skin:              '', steam_heat_skin_notes:               '',
+      steam_meds_heat:              '', steam_meds_heat_notes:               '',
+      steam_alcohol:                '', steam_alcohol_notes:                 '',
+      steam_surgery:                '', steam_surgery_notes:                 '',
+      steam_implants:               '', steam_implants_notes:                '',
+      steam_hydration_confirmed:    '',
+      steam_exit_understood:        '',
+      steam_duration_understood:    '',
+
+      // Body
+      body_exfoliation_preference:  '',
+      body_goal:                    '',
+      body_wounds:                  '', body_wounds_notes:                   '',
+      body_skin_conditions:         '', body_skin_conditions_notes:          '',
+      body_infections:              '', body_infections_notes:               '',
+      body_sunburn:                 '', body_sunburn_notes:                  '',
+      body_topical_meds:            '', body_topical_meds_notes:             '',
+      body_ingredient_allergy:      '', body_ingredient_allergy_notes:       '',
+      body_claustrophobia:          '', body_claustrophobia_notes:           '',
+      body_heat_sensitivity:        '', body_heat_sensitivity_notes:         '',
+      body_alcohol:                 '', body_alcohol_notes:                  '',
+      body_known_sensitivities:     '',
+      body_pre_shower_consent:      '',
+      body_post_shower_consent:     '',
+      body_thermal_understood:      '',
+
+      // Step 4 — Consent
+      consent_wellness:             '',
+      consent_honest:               '',
+      consent_receive:              '',
+      consent_contact:              '',
+      consent_products:             '',
+      consent_reactions:            '',
+      consent_stop:                 '',
+      liability_disclosed:          '',
+      liability_undisclosed:        '',
+      liability_aftercare:          '',
+      liability_complaint:          '',
+      photo_consent:                '',
+      consent_privacy:              '',
+      signature_name:               '',
+      signature_date:               '',
+    };
+
+    /* ── Helper: get active sections based on booking selection ── */
+    function getActiveSections() {
+      var type = formData.booking_type;
+      var id   = type === 'treatment' ? formData.service_id : formData.package_id;
+      if (!id) return [];
+      var catalogue = type === 'treatment' ? NIOBE_CONSULTATION.services : NIOBE_CONSULTATION.packages;
+      var entry = catalogue[id];
+      if (!entry) return [];
+      // Return sections in the canonical order
+      return NIOBE_CONSULTATION.sectionOrder.filter(function (s) {
+        return entry.sections.indexOf(s) !== -1;
+      });
+    }
+
+    /* ── Show/hide dynamic sections ─────────────────────────── */
+    function updateDynamicSections() {
+      var activeSections = getActiveSections();
+      document.querySelectorAll('.cf-dynamic-section').forEach(function (el) {
+        var sectionId = el.id.replace('section-', '');
+        if (activeSections.indexOf(sectionId) !== -1) {
+          el.classList.add('visible');
+        } else {
+          el.classList.remove('visible');
+        }
+      });
+    }
+
+    /* ── Progress indicator ──────────────────────────────────── */
+    function updateProgress(step) {
+      document.querySelectorAll('.gc-progress__step').forEach(function (el) {
+        var n = parseInt(el.dataset.step, 10);
+        el.classList.remove('active', 'done');
+        if (n === step)      el.classList.add('active');
+        else if (n < step)   el.classList.add('done');
+      });
+    }
+
+    /* ── Show step ───────────────────────────────────────────── */
+    function goToStep(n) {
+      document.querySelectorAll('.cf-step').forEach(function (el) {
+        el.classList.remove('active');
+      });
+      var target = document.getElementById('step-' + n);
+      if (target) {
+        target.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      currentStep = n;
+      updateProgress(n);
+    }
+
+    /* ── Populate service select ─────────────────────────────── */
+    function populateSelects() {
+      var svcSelect = document.getElementById('select-treatment');
+      var pkgSelect = document.getElementById('select-package');
+
+      // Group services by their first section
+      var groups = {};
+      Object.keys(NIOBE_CONSULTATION.services).forEach(function (key) {
+        var svc = NIOBE_CONSULTATION.services[key];
+        var grp = svc.sections[0];
+        if (!groups[grp]) groups[grp] = [];
+        groups[grp].push({ key: key, label: svc.label });
+      });
+
+      var groupLabels = {
+        'facial':       'Facials',
+        'massage':      'Massage',
+        'waxing':       'Waxing',
+        'brows-lashes': 'Brows & Lashes',
+        'steam-sauna':  'Steam & Sauna',
+        'body':         'Body Treatments',
+      };
+
+      NIOBE_CONSULTATION.sectionOrder.forEach(function (section) {
+        if (!groups[section]) return;
+        var optgroup = document.createElement('optgroup');
+        optgroup.label = groupLabels[section] || section;
+        groups[section].forEach(function (item) {
+          var opt = document.createElement('option');
+          opt.value = item.key;
+          opt.textContent = item.label;
+          optgroup.appendChild(opt);
+        });
+        svcSelect.appendChild(optgroup);
+      });
+
+      // Also add hammam under body if grouped separately
+      // (already covered since hammam's first section is steam-sauna)
+
+      // Packages
+      var pkgGroups = {
+        'Elemis Packages':    ['elemis-bliss', 'elemis-indulgence', 'elemis-refresh'],
+        'Niobe Signature':    ['spa-escape-journey', 'pure-indulgence', 'sublime', 'twos-company'],
+        'Hammam Ceremonies':  ['hammam-1001', 'hammam-foundation'],
+        'Easter 2026':        ['easter-first-light', 'easter-soft-reawakening', 'easter-in-full-bloom', 'easter-gentle-return'],
+      };
+
+      Object.keys(pkgGroups).forEach(function (grpLabel) {
+        var optgroup = document.createElement('optgroup');
+        optgroup.label = grpLabel;
+        pkgGroups[grpLabel].forEach(function (key) {
+          var pkg = NIOBE_CONSULTATION.packages[key];
+          if (!pkg) return;
+          var opt = document.createElement('option');
+          opt.value = key;
+          opt.textContent = pkg.label;
+          optgroup.appendChild(opt);
+        });
+        pkgSelect.appendChild(optgroup);
+      });
+    }
+
+    /* ── Booking type card selection ─────────────────────────── */
+    document.querySelectorAll('[data-booking-type]').forEach(function (card) {
+      card.addEventListener('click', function () {
+        document.querySelectorAll('[data-booking-type]').forEach(function (c) {
+          c.classList.remove('selected');
+          c.setAttribute('aria-checked', 'false');
+        });
+        card.classList.add('selected');
+        card.setAttribute('aria-checked', 'true');
+        var type = card.dataset.bookingType;
+        formData.booking_type = type;
+        document.getElementById('field-booking-type').value = type;
+        // Show relevant sub-section
+        document.getElementById('sub-treatment').classList.toggle('visible', type === 'treatment');
+        document.getElementById('sub-package').classList.toggle('visible',   type === 'package');
+      });
+      card.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); }
+      });
+    });
+
+    /* ── Service select change ───────────────────────────────── */
+    document.getElementById('select-treatment').addEventListener('change', function () {
+      formData.service_id = this.value;
+      document.getElementById('field-service-id').value = this.value;
+    });
+    document.getElementById('select-package').addEventListener('change', function () {
+      formData.package_id = this.value;
+      document.getElementById('field-package-id').value = this.value;
+    });
+
+    /* ── YES/NO toggle buttons ───────────────────────────────── */
+    document.querySelectorAll('.cf-yn-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var fieldName = btn.dataset.yn;
+        var val       = btn.dataset.val;
+        // Deselect both buttons in this pair
+        var allBtns = document.querySelectorAll('[data-yn="' + fieldName + '"]');
+        allBtns.forEach(function (b) {
+          b.classList.remove('selected-yes', 'selected-no');
+        });
+        // Apply selected state
+        if (val === 'yes') btn.classList.add('selected-yes');
+        else               btn.classList.add('selected-no');
+        // Update hidden input
+        var hidden = document.getElementById('yn-' + fieldName);
+        if (hidden) hidden.value = val;
+        // Update formData
+        if (formData.hasOwnProperty(fieldName)) formData[fieldName] = val;
+        // Show/hide detail textarea
+        var detail = document.getElementById('detail-' + fieldName);
+        if (detail) {
+          if (val === 'yes') {
+            detail.classList.add('open');
+            // For contacts question, show the declaration
+            if (fieldName === 'bl_contacts') {
+              document.getElementById('bl-contact-lens-decl').classList.add('visible');
+            }
+          } else {
+            detail.classList.remove('open');
+            if (fieldName === 'bl_contacts') {
+              document.getElementById('bl-contact-lens-decl').classList.remove('visible');
+            }
+          }
+        }
+      });
+    });
+
+    /* ── Waxing area chips — intimate consent ────────────────── */
+    var intimateAreas = ['bikini-line', 'extended-bikini', 'full-brazilian', 'hollywood'];
+    function checkIntimateConsent() {
+      var selected = (formData.waxing_areas || '').split(',');
+      var hasIntimate = selected.some(function (v) { return intimateAreas.indexOf(v) !== -1; });
+      var box = document.getElementById('wax-intimate-consent');
+      if (hasIntimate) box.classList.add('visible');
+      else             box.classList.remove('visible');
+    }
+
+    /* ── Chip selectors (single and multi) ───────────────────── */
+    document.querySelectorAll('.cf-chip').forEach(function (chip) {
+      chip.addEventListener('click', handleChipClick);
+      chip.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleChipClick.call(chip, e); }
+      });
+    });
+
+    function handleChipClick() {
+      var chip      = this;
+      var group     = chip.dataset.chipGroup;
+      var val       = chip.dataset.val;
+      var container = chip.closest('[data-chip-group="' + group + '"][data-single]');
+      if (!container) return;
+      var isSingle  = container.dataset.single === 'true';
+      var hidden    = document.getElementById('chip-' + group);
+
+      if (isSingle) {
+        // Deselect all in group
+        container.querySelectorAll('.cf-chip').forEach(function (c) {
+          c.classList.remove('selected');
+          c.setAttribute('aria-checked', 'false');
+        });
+        chip.classList.add('selected');
+        chip.setAttribute('aria-checked', 'true');
+        if (hidden) hidden.value = val;
+        if (formData.hasOwnProperty(group) || formData.hasOwnProperty(group.replace(/^.*_/, ''))) {
+          // update by chip hidden id convention
+        }
+        // Direct formData updates by group name
+        updateFormDataFromChip(group, val);
+      } else {
+        // Multi-select toggle
+        chip.classList.toggle('selected');
+        var isNowSelected = chip.classList.contains('selected');
+        var current = hidden ? hidden.value.split(',').filter(Boolean) : [];
+        if (isNowSelected) {
+          if (current.indexOf(val) === -1) current.push(val);
+        } else {
+          current = current.filter(function (v) { return v !== val; });
+        }
+        var joined = current.join(',');
+        if (hidden) hidden.value = joined;
+        updateFormDataFromChip(group, joined);
+        // Special: waxing areas — check intimate
+        if (group === 'wax_areas') {
+          formData.waxing_areas = joined;
+          checkIntimateConsent();
+        }
+      }
+    }
+
+    function updateFormDataFromChip(group, val) {
+      // Map chip group names to formData keys
+      var map = {
+        'skin_type':          'facial_skin_type',
+        'skin_concerns':      'facial_skin_concerns',
+        'massage_pressure':   'massage_pressure',
+        'wax_areas':          'waxing_areas',
+        'bl_services':        'bl_services_requested',
+        'bl_patch_test':      'bl_patch_test_status',
+        'body_exfoliation':   'body_exfoliation_preference',
+        'photo_consent':      'photo_consent',
+      };
+      var key = map[group] || group;
+      if (formData.hasOwnProperty(key)) formData[key] = val;
+    }
+
+    /* ── Simple yes/no toggle buttons (not YES/NO questions) ─── */
+    document.querySelectorAll('.cf-toggle-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var group  = btn.dataset.toggle;
+        var val    = btn.dataset.val;
+        document.querySelectorAll('[data-toggle="' + group + '"]').forEach(function (b) {
+          b.classList.remove('active');
+        });
+        btn.classList.add('active');
+        var hidden = document.getElementById('f-' + group);
+        if (hidden) hidden.value = val;
+        // Map to formData
+        if (group === 'interpreter')  formData.interpreter_needed = val;
+        if (group === 'first-visit')  formData.first_visit = val;
+      });
+    });
+
+    /* ── "Why do we ask this?" expandable ───────────────────── */
+    document.querySelectorAll('.cf-why__trigger').forEach(function (trigger) {
+      trigger.addEventListener('click', function () {
+        var body    = trigger.nextElementSibling;
+        var isOpen  = body.classList.contains('open');
+        body.classList.toggle('open', !isOpen);
+        trigger.setAttribute('aria-expanded', String(!isOpen));
+        trigger.textContent = isOpen ? 'Why do we ask this?' : 'Hide explanation';
+      });
+    });
+
+    /* ── Step 1 validation ───────────────────────────────────── */
+    document.getElementById('btn-next-1').addEventListener('click', function () {
+      var err = document.getElementById('error-step1');
+      err.classList.remove('visible');
+
+      var bookingType = formData.booking_type;
+      if (!bookingType) { err.textContent = 'Please select a booking type.'; err.classList.add('visible'); return; }
+
+      if (bookingType === 'treatment') {
+        var svcSel = document.getElementById('select-treatment');
+        if (!svcSel.value) { err.textContent = 'Please select a treatment.'; err.classList.add('visible'); return; }
+        formData.service_id = svcSel.value;
+      } else {
+        var pkgSel = document.getElementById('select-package');
+        if (!pkgSel.value) { err.textContent = 'Please select a package.'; err.classList.add('visible'); return; }
+        formData.package_id = pkgSel.value;
+      }
+
+      var branch = document.getElementById('field-branch').value;
+      if (!branch) { err.textContent = 'Please select which branch you are visiting.'; err.classList.add('visible'); return; }
+      formData.branch = branch;
+
+      var apptDate = document.getElementById('field-appt-date').value;
+      if (!apptDate) { err.textContent = 'Please enter your appointment date.'; err.classList.add('visible'); return; }
+      formData.appointment_date = apptDate;
+
+      updateDynamicSections();
+      goToStep(2);
+    });
+
+    /* ── Step 2 validation ───────────────────────────────────── */
+    document.getElementById('btn-next-2').addEventListener('click', function () {
+      var err = document.getElementById('error-step2');
+      err.classList.remove('visible');
+
+      var required = [
+        { id: 'f-full-name',  label: 'full name' },
+        { id: 'f-dob',        label: 'date of birth' },
+        { id: 'f-phone',      label: 'phone number' },
+        { id: 'f-ec-name',    label: 'emergency contact name' },
+        { id: 'f-ec-phone',   label: 'emergency contact phone' },
+      ];
+
+      for (var i = 0; i < required.length; i++) {
+        var el = document.getElementById(required[i].id);
+        if (!el || !el.value.trim()) {
+          err.textContent = 'Please fill in your ' + required[i].label + '.';
+          err.classList.add('visible');
+          el && el.focus();
+          return;
+        }
+      }
+
+      // Collect step 2 data
+      formData.full_name                      = document.getElementById('f-full-name').value.trim();
+      formData.date_of_birth                  = document.getElementById('f-dob').value;
+      formData.gender                         = document.getElementById('f-gender').value;
+      formData.phone_number                   = document.getElementById('f-phone').value.trim();
+      formData.whatsapp_number                = document.getElementById('f-whatsapp').value.trim();
+      formData.email_address                  = document.getElementById('f-email').value.trim();
+      formData.home_address                   = document.getElementById('f-address').value.trim();
+      formData.preferred_language             = document.getElementById('f-language').value.trim();
+      formData.emergency_contact_name         = document.getElementById('f-ec-name').value.trim();
+      formData.emergency_contact_relationship = document.getElementById('f-ec-rel').value.trim();
+      formData.emergency_contact_phone        = document.getElementById('f-ec-phone').value.trim();
+      formData.wellness_goal                  = document.getElementById('f-wellness-goal').value.trim();
+      formData.previous_spa_services          = document.getElementById('f-prev-services').value.trim();
+      formData.how_did_you_hear               = document.getElementById('f-hear').value;
+
+      goToStep(3);
+    });
+
+    /* ── Step 3 — collect and continue ──────────────────────── */
+    document.getElementById('btn-next-3').addEventListener('click', function () {
+      // Collect general health notes
+      formData.general_health_notes = document.getElementById('f-general-notes').value.trim();
+
+      // Collect facial data
+      formData.facial_skin_goal = document.getElementById('f-facial-skin-goal').value.trim();
+      formData.facial_patch_test_requested = document.getElementById('f-facial-patch-test').checked ? 'yes' : '';
+
+      // Collect massage data
+      formData.massage_goal         = document.getElementById('f-massage-goal').value.trim();
+      formData.massage_areas_avoid  = document.getElementById('f-massage-avoid').value.trim();
+      formData.massage_areas_focus  = document.getElementById('f-massage-focus').value.trim();
+
+      // Collect body data
+      formData.body_goal                 = document.getElementById('f-body-goal').value.trim();
+      formData.body_known_sensitivities  = document.getElementById('f-body-sensitivities').value.trim();
+      formData.body_pre_shower_consent   = document.getElementById('f-body-pre-shower').checked  ? 'yes' : '';
+      formData.body_post_shower_consent  = document.getElementById('f-body-post-shower').checked ? 'yes' : '';
+      formData.body_thermal_understood   = document.getElementById('f-body-thermal').checked     ? 'yes' : '';
+
+      // Collect steam data
+      formData.steam_hydration_confirmed = document.getElementById('f-steam-hydration').checked ? 'yes' : '';
+      formData.steam_exit_understood     = document.getElementById('f-steam-exit').checked      ? 'yes' : '';
+      formData.steam_duration_understood = document.getElementById('f-steam-duration').checked  ? 'yes' : '';
+
+      // Collect waxing intimate consent
+      formData.waxing_intimate_consent = document.getElementById('f-wax-intimate-consent').checked ? 'yes' : '';
+
+      // Collect brows contact lens
+      formData.bl_contact_lens_removed = document.getElementById('f-bl-contact-lens').checked ? 'yes' : '';
+
+      // Collect all YES/NO textarea notes
+      document.querySelectorAll('[name$="_notes"]').forEach(function (ta) {
+        var key = ta.getAttribute('name');
+        if (formData.hasOwnProperty(key)) formData[key] = ta.value.trim();
+      });
+
+      goToStep(4);
+
+      // Auto-fill signature date
+      var today = new Date();
+      var dateStr = today.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
+      document.getElementById('f-sig-date').value = dateStr;
+      formData.signature_date = dateStr;
+    });
+
+    /* ── Step 4 — submit ─────────────────────────────────────── */
+    document.getElementById('btn-submit').addEventListener('click', function () {
+      var err = document.getElementById('error-step4');
+      err.classList.remove('visible');
+
+      // Check all required consent checkboxes
+      var requiredConsents = [
+        'consent-wellness', 'consent-honest', 'consent-receive',
+        'consent-contact',  'consent-products', 'consent-reactions',
+        'consent-stop',     'liability-disclosed', 'liability-undisclosed',
+        'liability-aftercare', 'liability-complaint', 'consent-privacy'
+      ];
+
+      for (var i = 0; i < requiredConsents.length; i++) {
+        var cb = document.getElementById(requiredConsents[i]);
+        if (!cb || !cb.checked) {
+          err.textContent = 'Please check all required consent boxes.';
+          err.classList.add('visible');
+          cb && cb.focus();
+          return;
+        }
+      }
+
+      var sigName = document.getElementById('f-sig-name').value.trim();
+      if (!sigName) {
+        err.textContent = 'Please type your full name as your digital signature.';
+        err.classList.add('visible');
+        document.getElementById('f-sig-name').focus();
+        return;
+      }
+
+      // Collect consent data
+      requiredConsents.forEach(function (id) {
+        var el = document.getElementById(id);
+        var key = id.replace(/-/g, '_');
+        if (formData.hasOwnProperty(key)) formData[key] = el.checked ? 'yes' : '';
+      });
+      formData.signature_name = sigName;
+      formData.consent_privacy = document.getElementById('consent-privacy').checked ? 'yes' : '';
+
+      // Log to console for integration
+      console.log('Niobe Consultation Form — Submitted Data:');
+      console.log(JSON.stringify(formData, null, 2));
+
+      // TODO: POST formData to Airtable/Supabase endpoint
+      // Example:
+      // fetch('https://api.airtable.com/v0/YOUR_BASE_ID/Consultations', {
+      //   method: 'POST',
+      //   headers: { 'Authorization': 'Bearer YOUR_API_KEY', 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ fields: formData })
+      // });
+
+      // Show thank you state
+      document.querySelectorAll('.cf-step').forEach(function (el) { el.classList.remove('active'); });
+      document.getElementById('cf-progress').style.display = 'none';
+
+      var firstName = (formData.full_name || 'you').split(' ')[0];
+      document.getElementById('thankyou-heading').textContent = 'Thank you, ' + firstName;
+      document.getElementById('cf-thankyou').classList.add('visible');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    /* ── Back buttons ────────────────────────────────────────── */
+    document.querySelectorAll('[data-go]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        goToStep(parseInt(btn.dataset.go, 10));
+      });
+    });
+
+    /* ── Init ────────────────────────────────────────────────── */
+    populateSelects();
+    updateProgress(1);
+
+    // Set today's date as default for appointment date (min value)
+    var today = new Date();
+    var yyyy  = today.getFullYear();
+    var mm    = String(today.getMonth() + 1).padStart(2, '0');
+    var dd    = String(today.getDate()).padStart(2, '0');
+    var todayStr = yyyy + '-' + mm + '-' + dd;
+    document.getElementById('field-appt-date').min = todayStr;
+
+  })();
+  </script>
+
+</body>
+</html>
