@@ -18,19 +18,43 @@
     <p>You'll be redirected to your client hub in a moment.</p>
   </div>
   <script>
-    window.netlifyIdentity.on('init', function(user) {
-      if (user) {
-        window.location.replace('/client-hub.html');
-      }
-    });
-    window.netlifyIdentity.on('login', function() {
+    var identity = window.netlifyIdentity;
+
+    function goToHub() {
       window.location.replace('/client-hub.html');
+    }
+
+    identity.on('init', function(user) {
+      if (user) goToHub();
     });
-    window.netlifyIdentity.on('error', function(err) {
-      document.querySelector('.msg h1').textContent = 'Something went wrong';
-      document.querySelector('.msg p').textContent = err.message || 'Please try signing up again.';
+
+    identity.on('login', function() {
+      goToHub();
     });
-    window.netlifyIdentity.init();
+
+    identity.on('error', function(err) {
+      document.querySelector('.msg h1').textContent = 'Confirmation failed';
+      document.querySelector('.msg p').textContent = (err && err.message) ? err.message : 'Please try signing up again from the client hub.';
+    });
+
+    // Explicit API URL so widget finds the right Identity instance
+    identity.init({
+      APIUrl: 'https://niobebeauty.netlify.app/.netlify/identity'
+    });
+
+    // Fallback: poll every second in case events don't fire
+    var poll = setInterval(function() {
+      var user = identity.currentUser();
+      if (user) {
+        clearInterval(poll);
+        goToHub();
+      }
+    }, 1000);
+
+    // Stop polling after 15 seconds
+    setTimeout(function() {
+      clearInterval(poll);
+    }, 15000);
   </script>
 </body>
 </html>
