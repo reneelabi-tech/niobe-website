@@ -2869,26 +2869,36 @@
       formData.signature_name = sigName;
       formData.consent_privacy = document.getElementById('consent-privacy').checked ? 'yes' : '';
 
-      // Log to console for integration
-      console.log('Niobe Consultation Form — Submitted Data:');
-      console.log(JSON.stringify(formData, null, 2));
+      var submitBtn = document.getElementById('btn-submit');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting…';
 
-      // TODO: POST formData to Airtable/Supabase endpoint
-      // Example:
-      // fetch('https://api.airtable.com/v0/YOUR_BASE_ID/Consultations', {
-      //   method: 'POST',
-      //   headers: { 'Authorization': 'Bearer YOUR_API_KEY', 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ fields: formData })
-      // });
-
-      // Show thank you state
-      document.querySelectorAll('.cf-step').forEach(function (el) { el.classList.remove('active'); });
-      document.getElementById('cf-progress').style.display = 'none';
-
-      var firstName = (formData.full_name || 'you').split(' ')[0];
-      document.getElementById('thankyou-heading').textContent = 'Thank you, ' + firstName;
-      document.getElementById('cf-thankyou').classList.add('visible');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      fetch('/.netlify/functions/submit-consultation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+      .then(function (res) {
+        if (!res.ok) throw new Error('Server error ' + res.status);
+        return res.json();
+      })
+      .then(function () {
+        // Show thank you state
+        document.querySelectorAll('.cf-step').forEach(function (el) { el.classList.remove('active'); });
+        document.getElementById('cf-progress').style.display = 'none';
+        var firstName = (formData.full_name || 'you').split(' ')[0];
+        document.getElementById('thankyou-heading').textContent = 'Thank you, ' + firstName;
+        document.getElementById('cf-thankyou').classList.add('visible');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      })
+      .catch(function (err) {
+        console.error('Submission error:', err);
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Consultation Form';
+        var errEl = document.getElementById('error-step4');
+        errEl.textContent = 'Something went wrong — please try again or call us on +233 30 277 7222.';
+        errEl.classList.add('visible');
+      });
     });
 
     /* ── Back buttons ────────────────────────────────────────── */
