@@ -116,7 +116,7 @@ exports.handler = async function (event) {
       'Phone/WhatsApp':            phone,
       'Appointment Date':          formData.appointment_date || '',
       'Client Type':               formData.first_visit === 'yes' ? 'New' : formData.first_visit === 'no' ? 'Returning' : '',
-      'Treatment':                 serviceLabel || '',
+      'Treatment Booked':          serviceLabel || '',
       'Main Wellness Goal':        formData.wellness_goal || '',
       'Skin Concerns':             csvToLabelArray(formData.facial_skin_concerns, SKIN_CONCERN_LABELS),
       'Skin Type':                 SKIN_TYPE_LABELS[formData.facial_skin_type] || formData.facial_skin_type || '',
