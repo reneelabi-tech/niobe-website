@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Account — Niobe Spa</title>
+  <meta name="description" content="View your consultation history and health profile." />
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <style>
+    /* ── Hub layout ──────────────────────────────────── */
+    .hub-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 var(--side) 6rem;
+    }
+
+    /* ── Login gate ──────────────────────────────────── */
+    .hub-login {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 5rem var(--side);
+    }
+    .hub-login__eyebrow {
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--olive);
+      margin-bottom: 1.25rem;
+    }
+    .hub-login__title {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 300;
+      line-height: 1.2;
+      color: var(--espresso);
+      margin-bottom: 1rem;
+    }
+    .hub-login__title em { font-style: italic; }
+    .hub-login__desc {
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      color: var(--espresso);
+      opacity: 0.65;
+      max-width: 38ch;
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+    }
+    .hub-login__btn {
+      display: inline-block;
+      background-color: var(--espresso);
+      color: var(--parchment);
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 1rem 2.5rem;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.2s;
+    }
+    .hub-login__btn:hover { opacity: 0.82; }
+    .hub-login__note {
+      margin-top: 1.25rem;
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      color: var(--espresso);
+      opacity: 0.45;
+    }
+
+    /* ── Welcome bar ─────────────────────────────────── */
+    .hub-welcome {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 2.5rem 0 2rem;
+      border-bottom: 1px solid rgba(47,36,29,0.1);
+      margin-bottom: 2.5rem;
+      flex-wrap: wrap;
+    }
+    .hub-welcome__name {
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 4vw, 2.25rem);
+      font-weight: 300;
+      color: var(--espresso);
+      line-height: 1.2;
+    }
+    .hub-welcome__name em { font-style: italic; }
+    .hub-welcome__actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .hub-logout-btn {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--espresso);
+      opacity: 0.45;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: opacity 0.2s;
+    }
+    .hub-logout-btn:hover { opacity: 0.9; }
+
+    /* ── Tabs ────────────────────────────────────────── */
+    .hub-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid rgba(47,36,29,0.1);
+      margin-bottom: 2.5rem;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .hub-tab {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--espresso);
+      opacity: 0.4;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      padding: 0.75rem 1.5rem 0.75rem 0;
+      cursor: pointer;
+      white-space: nowrap;
+      margin-bottom: -1px;
+      transition: opacity 0.2s, border-color 0.2s;
+    }
+    .hub-tab:hover { opacity: 0.7; }
+    .hub-tab.active {
+      opacity: 1;
+      border-bottom-color: var(--espresso);
+    }
+
+    /* ── Tab panels ──────────────────────────────────── */
+    .hub-panel { display: none; }
+    .hub-panel.active { display: block; }
+
+    /* ── Loading / empty states ──────────────────────── */
+    .hub-loading,
+    .hub-empty {
+      padding: 3rem 0;
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      color: var(--espresso);
+      opacity: 0.5;
+      text-align: center;
+    }
+
+    /* ── Overview stats ──────────────────────────────── */
+    .hub-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1px;
+      background-color: rgba(47,36,29,0.08);
+      border: 1px solid rgba(47,36,29,0.08);
+      margin-bottom: 2.5rem;
+    }
+    .hub-stat {
+      background-color: var(--parchment);
+      padding: 1.5rem;
+    }
+    .hub-stat__label {
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--olive);
+      margin-bottom: 0.5rem;
+    }
+    .hub-stat__value {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      font-weight: 300;
+      color: var(--espresso);
+      line-height: 1;
+    }
+    .hub-stat__sub {
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      color: var(--espresso);
+      opacity: 0.5;
+      margin-top: 0.3rem;
+    }
+
+    /* ── Overview CTA ────────────────────────────────── */
+    .hub-overview-cta {
+      background-color: var(--espresso);
+      padding: 2rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .hub-overview-cta p {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      color: rgba(255,254,246,0.75);
+      font-weight: 300;
+    }
+    .hub-overview-cta a {
+      display: inline-block;
+      background-color: var(--parchment);
+      color: var(--espresso);
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 0.9rem 2rem;
+      white-space: nowrap;
+      transition: opacity 0.2s;
+    }
+    .hub-overview-cta a:hover { opacity: 0.85; }
+
+    /* ── Consultation cards ───────────────────────────── */
+    .hub-consultations { display: flex; flex-direction: column; gap: 1px; }
+    .hub-card {
+      background-color: var(--parchment);
+      border: 1px solid rgba(47,36,29,0.08);
+      padding: 1.5rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1rem;
+      align-items: start;
+    }
+    .hub-card__date {
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--olive);
+      margin-bottom: 0.4rem;
+    }
+    .hub-card__treatment {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      font-weight: 300;
+      color: var(--espresso);
+      margin-bottom: 0.25rem;
+    }
+    .hub-card__meta {
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      color: var(--espresso);
+      opacity: 0.5;
+    }
+    .hub-card__flags {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background-color: rgba(185, 90, 80, 0.08);
+      color: #B95A50;
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.6rem;
+      margin-top: 0.6rem;
+      display: block;
+      width: fit-content;
+    }
+    .hub-card__link {
+      font-family: var(--font-sans);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--espresso);
+      opacity: 0.45;
+      border-bottom: 1px solid rgba(47,36,29,0.2);
+      padding-bottom: 1px;
+      white-space: nowrap;
+      transition: opacity 0.2s;
+    }
+    .hub-card__link:hover { opacity: 1; }
+
+    /* ── Health profile ───────────────────────────────── */
+    .hub-health-header {
+      margin-bottom: 1.75rem;
+    }
+    .hub-health-header h2 {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      font-weight: 300;
+      color: var(--espresso);
+      margin-bottom: 0.4rem;
+    }
+    .hub-health-header p {
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      color: var(--espresso);
+      opacity: 0.55;
+      line-height: 1.6;
+    }
+    .hub-health-source {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      color: var(--olive);
+      margin-bottom: 1.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .hub-health-source::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: var(--olive);
+    }
+    .hub-health-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1px;
+      background-color: rgba(47,36,29,0.08);
+      border: 1px solid rgba(47,36,29,0.08);
+      margin-bottom: 1.5rem;
+    }
+    .hub-health-item {
+      background-color: var(--parchment);
+      padding: 1.25rem 1.5rem;
+    }
+    .hub-health-item__label {
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--olive);
+      margin-bottom: 0.35rem;
+    }
+    .hub-health-item__value {
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      color: var(--espresso);
+      line-height: 1.5;
+    }
+    .hub-health-item__value.flagged {
+      color: #B95A50;
+      font-weight: 500;
+    }
+    .hub-health-note {
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      color: var(--espresso);
+      opacity: 0.4;
+      line-height: 1.6;
+      padding: 1rem 0;
+      border-top: 1px solid rgba(47,36,29,0.08);
+    }
+
+    /* ── Responsive ──────────────────────────────────── */
+    @media (max-width: 600px) {
+      .hub-card { grid-template-columns: 1fr; }
+      .hub-overview-cta { flex-direction: column; align-items: flex-start; }
+      .hub-tab { padding: 0.75rem 1rem 0.75rem 0; font-size: 0.65rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav__inner">
+      <a href="index.html" class="nav__logo"><img src="images/niobe-logo-dark.png" class="nav__logo-img" alt="Niobe Spa"></a>
+      <div class="nav__sep" aria-hidden="true"></div>
+      <ul class="nav__links" role="list">
+        <li><a href="index.html"      class="nav__link">Home</a></li>
+        <li><a href="treatments.html" class="nav__link">Treatments</a></li>
+        <li><a href="packages.html"   class="nav__link">Spa Packages</a></li>
+        <li><a href="easter.html"     class="nav__link">Easter</a></li>
+        <li><a href="about.html"      class="nav__link">About</a></li>
+        <li><a href="locations.html"  class="nav__link">Locations</a></li>
+        <li><a href="gift-cards.html" class="nav__link">Gift Cards</a></li>
+        <li><a href="faqs.html"       class="nav__link">FAQs</a></li>
+        <li><a href="vacancies.html"  class="nav__link">Vacancies</a></li>
+        <li><a href="contact.html"    class="nav__link">Contact</a></li>
+        <li><a href="client-hub.html" class="nav__link active">My Account</a></li>
+      </ul>
+      <a href="booking.html" class="nav__book">Book Now</a>
+      <button class="nav__toggle" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="nav__mobile" role="dialog" aria-label="Mobile navigation">
+    <a href="index.html"      class="nav__mobile-link">Home</a>
+    <a href="treatments.html" class="nav__mobile-link">Treatments</a>
+    <a href="packages.html"   class="nav__mobile-link">Spa Packages</a>
+    <a href="easter.html"     class="nav__mobile-link">Easter</a>
+    <a href="about.html"      class="nav__mobile-link">About</a>
+    <a href="locations.html"  class="nav__mobile-link">Locations</a>
+    <a href="gift-cards.html" class="nav__mobile-link">Gift Cards</a>
+    <a href="faqs.html"       class="nav__mobile-link">FAQs</a>
+    <a href="vacancies.html"  class="nav__mobile-link">Vacancies</a>
+    <a href="contact.html"    class="nav__mobile-link">Contact</a>
+    <a href="client-hub.html" class="nav__mobile-link">My Account</a>
+    <a href="booking.html"    class="nav__mobile-cta">Book Now</a>
+  </div>
+
+  <main>
+
+    <div class="page-hero">
+      <div class="page-hero__inner">
+        <span class="eyebrow">My Account</span>
+        <h1 class="t-display t-lg page-hero__title">
+          Your Niobe<br><em>client hub</em>
+        </h1>
+        <p class="page-hero__desc">
+          Your consultation history and health profile, all in one place.
+        </p>
+      </div>
+    </div>
+
+    <!-- ────────────────────────────────────────────── -->
+    <!-- LOGGED OUT STATE                               -->
+    <!-- ────────────────────────────────────────────── -->
+    <div id="hub-logged-out" style="display:none;">
+      <div class="hub-login">
+        <p class="hub-login__eyebrow">Client Hub</p>
+        <h2 class="hub-login__title">Welcome<br><em>back</em></h2>
+        <p class="hub-login__desc">Log in to view your consultation forms, health profile and visit history.</p>
+        <button class="hub-login__btn" id="btn-login">Log In &nbsp;/&nbsp; Create Account</button>
+        <p class="hub-login__note">New to Niobe? You can create an account in seconds — no app required.</p>
+      </div>
+    </div>
+
+    <!-- ────────────────────────────────────────────── -->
+    <!-- LOGGED IN STATE                                -->
+    <!-- ────────────────────────────────────────────── -->
+    <div id="hub-logged-in" style="display:none;">
+      <div class="hub-wrap">
+
+        <!-- Welcome bar -->
+        <div class="hub-welcome">
+          <div>
+            <p class="hub-welcome__name">Hello, <em id="hub-user-name">there</em>.</p>
+          </div>
+          <div class="hub-welcome__actions">
+            <a href="consultation-form.html" class="btn btn--sm" style="font-size:0.7rem;padding:0.7rem 1.5rem;background:var(--espresso);color:var(--parchment);letter-spacing:0.14em;text-transform:uppercase;font-weight:700;">New Consultation</a>
+            <button class="hub-logout-btn" id="btn-logout">Log out</button>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <nav class="hub-tabs" aria-label="Account sections">
+          <button class="hub-tab active" data-tab="overview">Overview</button>
+          <button class="hub-tab" data-tab="consultations">My Consultations</button>
+          <button class="hub-tab" data-tab="health">Health Profile</button>
+        </nav>
+
+        <!-- Loading -->
+        <div id="hub-loading" class="hub-loading">Loading your records&hellip;</div>
+
+        <!-- ── OVERVIEW ─────────────────────────────── -->
+        <div class="hub-panel" id="panel-overview">
+          <div class="hub-stats" id="hub-stats-grid">
+            <!-- Populated by JS -->
+          </div>
+          <div class="hub-overview-cta">
+            <p>Ready to book your next visit?</p>
+            <a href="booking.html">Book a Treatment</a>
+          </div>
+        </div>
+
+        <!-- ── CONSULTATIONS ─────────────────────────── -->
+        <div class="hub-panel" id="panel-consultations">
+          <div class="hub-consultations" id="hub-consultations-list">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- ── HEALTH PROFILE ────────────────────────── -->
+        <div class="hub-panel" id="panel-health">
+          <div class="hub-health-header">
+            <h2>Your health profile</h2>
+            <p>Based on your most recent consultation form. Shown to your therapist before each treatment.</p>
+          </div>
+          <div id="hub-health-source" class="hub-health-source" style="display:none;"></div>
+          <div id="hub-health-grid" class="hub-health-grid">
+            <!-- Populated by JS -->
+          </div>
+          <p class="hub-health-note">This information is held securely and shared only with your treating therapist. To update your details, please complete a new consultation form before your next visit.</p>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="footer__inner">
+      <div class="footer__grid">
+
+        <div>
+          <img src="images/niobe-spa-logo.png" class="footer__logo-img" alt="Niobe Spa" />
+          <p class="footer__brand-desc">Five locations. One standard. Award-winning care for skin, body and beauty.</p>
+          <div class="footer__social">
+            <a href="https://www.facebook.com/niobesalonspa" class="footer__social-link" aria-label="Facebook" target="_blank" rel="noopener noreferrer">f</a>
+            <a href="https://www.instagram.com/niobesalonspa/" class="footer__social-link" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+            </a>
+            <a href="https://www.tiktok.com/@niobesalonspa" class="footer__social-link" aria-label="TikTok" target="_blank" rel="noopener noreferrer">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V9.09a8.16 8.16 0 004.77 1.52V7.17a4.85 4.85 0 01-1-.48z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <p class="footer__col-title">Locations</p>
+          <ul class="footer__links">
+            <li><span class="footer__link">Community 18, Tema</span></li>
+            <li><span class="footer__link">Cantonments, Accra</span></li>
+            <li><span class="footer__link">East Legon, Accra</span></li>
+            <li><span class="footer__link">Alisa Hotel, Tema</span></li>
+            <li><span class="footer__link">African Regent, Accra</span></li>
+            <li><a href="locations.html" class="footer__link" style="opacity:0.7;border-bottom:1px solid rgba(47,36,29,0.15);">View all locations &rarr;</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="footer__col-title">Quick Links</p>
+          <ul class="footer__links">
+            <li><a href="treatments.html" class="footer__link">Treatments</a></li>
+            <li><a href="packages.html"   class="footer__link">Spa Packages</a></li>
+            <li><a href="gift-cards.html" class="footer__link">Gift Cards</a></li>
+            <li><a href="vacancies.html"  class="footer__link">Vacancies</a></li>
+            <li><a href="faqs.html"       class="footer__link">FAQs</a></li>
+            <li><a href="privacy-policy.html" class="footer__link">Privacy Policy</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="footer__col-title">Contact</p>
+          <ul class="footer__links">
+            <li><a href="mailto:info@niobebeauty.com" class="footer__link">info@niobebeauty.com</a></li>
+            <li><a href="tel:+233302777222" class="footer__link">+233 30 277 7222</a></li>
+            <li><a href="tel:+233244334323" class="footer__link">+233 24 433 4323</a></li>
+            <li><a href="locations.html" class="footer__link">Opening hours &rarr;</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="footer__col-title">Stay Connected</p>
+          <p class="footer__connect-desc">Be the first to know about offers and new treatments.</p>
+          <form class="footer__email-form" onsubmit="return false;">
+            <input type="email" class="footer__email-input" placeholder="Your email address" aria-label="Email address" />
+            <button type="submit" class="footer__email-btn" aria-label="Subscribe">&rarr;</button>
+          </form>
+        </div>
+
+      </div>
+
+      <div class="footer__bottom">
+        <p class="footer__copy">&copy; 2025 Niobe Spa. All rights reserved.</p>
+        <p class="footer__payment">Payment methods: Visa &middot; Mastercard &middot; Mobile Money &middot; Cash</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+  /* ============================================================
+     CLIENT HUB — JAVASCRIPT
+     ============================================================ */
+
+  const netlifyIdentity = window.netlifyIdentity;
+
+  // ── State ────────────────────────────────────────────────────
+  let currentUser  = null;
+  let consultations = [];
+
+  // ── DOM refs ─────────────────────────────────────────────────
+  const elLoggedOut  = document.getElementById('hub-logged-out');
+  const elLoggedIn   = document.getElementById('hub-logged-in');
+  const elLoading    = document.getElementById('hub-loading');
+  const elUserName   = document.getElementById('hub-user-name');
+  const elStatGrid   = document.getElementById('hub-stats-grid');
+  const elCardList   = document.getElementById('hub-consultations-list');
+  const elHealthGrid = document.getElementById('hub-health-grid');
+  const elHealthSrc  = document.getElementById('hub-health-source');
+
+  // ── Auth ─────────────────────────────────────────────────────
+  netlifyIdentity.on('init', user => {
+    if (user) {
+      handleLogin(user);
+    } else {
+      showLoggedOut();
+    }
+  });
+
+  netlifyIdentity.on('login', user => {
+    netlifyIdentity.close();
+    handleLogin(user);
+  });
+
+  netlifyIdentity.on('logout', () => {
+    currentUser = null;
+    consultations = [];
+    showLoggedOut();
+  });
+
+  document.getElementById('btn-login').addEventListener('click', () => {
+    netlifyIdentity.open('login');
+  });
+
+  document.getElementById('btn-logout').addEventListener('click', () => {
+    netlifyIdentity.logout();
+  });
+
+  function showLoggedOut() {
+    elLoggedOut.style.display = 'block';
+    elLoggedIn.style.display  = 'none';
+  }
+
+  function showLoggedIn() {
+    elLoggedOut.style.display = 'none';
+    elLoggedIn.style.display  = 'block';
+  }
+
+  async function handleLogin(user) {
+    currentUser = user;
+    showLoggedIn();
+
+    // Display name: use full_name meta if available, else first part of email
+    const meta = user.user_metadata || {};
+    const displayName = meta.full_name
+      ? meta.full_name.split(' ')[0]
+      : user.email.split('@')[0];
+    elUserName.textContent = displayName;
+
+    // Fetch data
+    elLoading.style.display = 'block';
+    hideAllPanels();
+
+    try {
+      // Get fresh token
+      await user.jwt(true); // refresh token
+      const token = user.token.access_token;
+
+      const res = await fetch('/.netlify/functions/get-client-consultations', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+
+      const data = await res.json();
+      consultations = data.records || [];
+    } catch (err) {
+      console.error('Failed to load consultations:', err);
+      consultations = [];
+    }
+
+    elLoading.style.display = 'none';
+    renderAll();
+    showTab('overview');
+  }
+
+  // ── Tabs ─────────────────────────────────────────────────────
+  document.querySelectorAll('.hub-tab').forEach(btn => {
+    btn.addEventListener('click', () => showTab(btn.dataset.tab));
+  });
+
+  function showTab(name) {
+    document.querySelectorAll('.hub-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+    document.querySelectorAll('.hub-panel').forEach(p => p.classList.toggle('active', p.id === `panel-${name}`));
+  }
+
+  function hideAllPanels() {
+    document.querySelectorAll('.hub-panel').forEach(p => p.classList.remove('active'));
+  }
+
+  // ── Render ───────────────────────────────────────────────────
+  function renderAll() {
+    renderOverview();
+    renderConsultations();
+    renderHealthProfile();
+  }
+
+  // ── Overview ─────────────────────────────────────────────────
+  function renderOverview() {
+    const total   = consultations.length;
+    const latest  = consultations[0];
+    const latestTreatment = latest ? (latest.fields['Treatment Booked'] || '—') : '—';
+    const latestDate      = latest ? formatDate(latest.fields['Appointment Date'] || latest.fields['Submission Date']) : '—';
+
+    elStatGrid.innerHTML = `
+      <div class="hub-stat">
+        <p class="hub-stat__label">Consultations</p>
+        <p class="hub-stat__value">${total}</p>
+        <p class="hub-stat__sub">on file</p>
+      </div>
+      <div class="hub-stat">
+        <p class="hub-stat__label">Last Visit</p>
+        <p class="hub-stat__value" style="font-size:1.15rem;margin-top:0.25rem;">${latestDate}</p>
+        <p class="hub-stat__sub">${latestTreatment}</p>
+      </div>
+      <div class="hub-stat">
+        <p class="hub-stat__label">Branch</p>
+        <p class="hub-stat__value" style="font-size:1rem;margin-top:0.3rem;">${latest ? (latest.fields['Branch'] || '—') : '—'}</p>
+        <p class="hub-stat__sub">most recent</p>
+      </div>
+    `;
+  }
+
+  // ── Consultations list ────────────────────────────────────────
+  function renderConsultations() {
+    if (!consultations.length) {
+      elCardList.innerHTML = '<p class="hub-empty">No consultation forms on file yet. <a href="consultation-form.html" style="border-bottom:1px solid currentColor;">Complete yours ahead of your next visit.</a></p>';
+      return;
+    }
+
+    elCardList.innerHTML = consultations.map(rec => {
+      const f         = rec.fields;
+      const treatment = f['Treatment Booked'] || 'Treatment';
+      const apptDate  = formatDate(f['Appointment Date']);
+      const branch    = f['Branch'] || '';
+      const bookType  = f['Booking Type'] || '';
+      const flags     = f['Health Flags'] || '';
+      const summaryUrl = f['Form Summary Link'] || '';
+
+      const metaParts = [branch, bookType].filter(Boolean);
+      const flagHtml  = flags
+        ? `<span class="hub-card__flags">Health flags noted</span>`
+        : '';
+      const linkHtml  = summaryUrl
+        ? `<a href="${summaryUrl}" class="hub-card__link" target="_blank" rel="noopener">View form &rarr;</a>`
+        : '';
+
+      return `
+        <div class="hub-card">
+          <div>
+            <p class="hub-card__date">${apptDate}</p>
+            <p class="hub-card__treatment">${treatment}</p>
+            ${metaParts.length ? `<p class="hub-card__meta">${metaParts.join(' &middot; ')}</p>` : ''}
+            ${flagHtml}
+          </div>
+          <div>${linkHtml}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // ── Health profile ────────────────────────────────────────────
+  function renderHealthProfile() {
+    const latest = consultations[0];
+
+    if (!latest) {
+      elHealthGrid.innerHTML = '<div class="hub-health-item" style="grid-column:1/-1;"><p class="hub-health-item__value" style="opacity:0.5;">No consultation on file. <a href="consultation-form.html" style="border-bottom:1px solid currentColor;">Complete one ahead of your visit.</a></p></div>';
+      return;
+    }
+
+    const f    = latest.fields;
+    const fd   = f['Full Form Data'] || {};  // Parsed JSON object by function
+    const sub  = formatDate(f['Submission Date'] || f['Appointment Date']);
+
+    elHealthSrc.style.display = 'flex';
+    elHealthSrc.textContent   = `From consultation submitted ${sub}`;
+
+    const items = [
+      { label: 'Date of Birth',       value: fd.dob || f['Date of Birth'] || '—' },
+      { label: 'Gender',              value: fd.gender || f['Gender'] || '—' },
+      { label: 'Skin Type',           value: fd.skin_type || '—' },
+      { label: 'Allergies / Conditions', value: fd.allergies || '—', flag: !!(fd.allergies && fd.allergies.trim()) },
+      { label: 'Medical Conditions',  value: fd.medical_conditions || '—', flag: !!(fd.medical_conditions && fd.medical_conditions.trim()) },
+      { label: 'Medication',          value: fd.medications || '—', flag: !!(fd.medications && fd.medications.trim()) },
+      { label: 'Pregnant / Breastfeeding', value: fd.health_pregnant === 'yes' ? 'Yes' : fd.health_pregnant === 'no' ? 'No' : '—', flag: fd.health_pregnant === 'yes' },
+      { label: 'Photo Consent',       value: fd.photo_consent === 'yes' ? 'Given' : fd.photo_consent === 'no' ? 'Not given' : '—' },
+    ];
+
+    elHealthGrid.innerHTML = items.map(item => {
+      const isEmpty = !item.value || item.value === '—';
+      const valClass = item.flag ? 'hub-health-item__value flagged' : 'hub-health-item__value';
+      return `
+        <div class="hub-health-item">
+          <p class="hub-health-item__label">${item.label}</p>
+          <p class="${valClass}" style="${isEmpty ? 'opacity:0.35;' : ''}">${isEmpty ? 'None recorded' : item.value}</p>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // ── Helpers ───────────────────────────────────────────────────
+  function formatDate(str) {
+    if (!str) return '—';
+    // ISO date string → readable
+    const d = new Date(str);
+    if (isNaN(d)) return str;
+    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
+  // Init Netlify Identity
+  netlifyIdentity.init();
+  </script>
+
+</body>
+</html>
