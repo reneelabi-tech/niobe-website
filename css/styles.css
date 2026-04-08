@@ -440,7 +440,7 @@ button, input, textarea, select { font-family: inherit; font-size: inherit; }
 @media (max-width: 1024px) {
   .hero-sequence {
     background-attachment: scroll;
-    background-position: 75% 50%;
+    background-position: 100% 50%;
   }
 }
 
