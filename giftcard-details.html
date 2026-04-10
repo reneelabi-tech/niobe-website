@@ -65,9 +65,14 @@
     }
     @media (max-width: 900px) {
       .gcd-layout {
-        grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column;
       }
-      .gcd-summary { order: -1; }
+      .gcd-summary {
+        order: -1;
+        position: static;
+      }
+      .gcd-form { order: 2; }
     }
 
     /* ── Summary panel ───────────────────────────────────────── */
@@ -77,8 +82,7 @@
     }
     .gcd-summary__card-preview {
       width: 100%;
-      aspect-ratio: 3 / 2;
-      object-fit: cover;
+      height: auto;
       display: block;
       margin-bottom: 1.25rem;
     }
@@ -341,7 +345,7 @@
                 </div>
                 <div class="form-field" style="margin-top: 1rem;">
                   <label class="form-label" for="gcd-send-date">Preferred send date <span style="opacity:0.45;">(optional)</span></label>
-                  <input class="form-input" type="date" id="gcd-send-date" name="send_date" style="max-width: 240px;" />
+                  <input class="form-input" type="text" id="gcd-send-date" name="send_date" placeholder="DD/MM/YYYY" pattern="\d{2}/\d{2}/\d{4}" inputmode="numeric" style="max-width: 240px;" />
                   <p class="gcd-date-note">Leave blank and we will send it as soon as payment is confirmed.</p>
                 </div>
               </div>
@@ -487,7 +491,7 @@
     if (sel.design) {
       var preview = document.getElementById('gcd-card-preview');
       var placeholder = document.getElementById('gcd-card-placeholder');
-      preview.src = 'images/gc-design-' + sel.design + '.png';
+      preview.src = 'images/gc-design-' + sel.design + '.jpg';
       preview.style.display = 'block';
       placeholder.style.display = 'none';
     }
@@ -542,7 +546,7 @@
 
       error.style.display = 'none';
 
-      // Merge details into the selection object and save
+      // Merge details into the selection object
       sel.recipientName      = recipientName;
       sel.recipientEmail     = document.getElementById('gcd-recipient-email').value.trim();
       sel.recipientWhatsapp  = document.getElementById('gcd-recipient-whatsapp').value.trim();
@@ -551,13 +555,68 @@
       sel.message            = document.getElementById('gcd-message').value.trim();
       sel.sendDate           = document.getElementById('gcd-send-date').value;
 
-      sessionStorage.setItem('gc_selection', JSON.stringify(sel));
+      // Derive amount
+      var payAmount;
+      if (sel.type === 'open') {
+        payAmount = sel.amount === 'custom' ? sel.customAmount : sel.amount;
+      } else {
+        payAmount = sel.treatmentPrice || sel.packagePrice || sel.amount;
+      }
 
-      // TODO: Navigate to Hubtel payment page
-      // window.location.href = 'giftcard-payment.html';
+      // Derive label for the voucher
+      var treatmentLabel = sel.package || sel.treatment
+        || ('Open Value GHS ' + payAmount);
 
-      // Placeholder — payment step not yet integrated
-      alert('Details saved. Payment integration (Hubtel) will be connected here.');
+      // Derive valid branches
+      var validBranches = sel.validBranches
+        || 'East Legon, Cantonments, African Regent, Community 18, Alisa Hotel Tema';
+
+      // Disable button while processing
+      var btn = document.querySelector('.gcd-cta .btn');
+      var origText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Processing\u2026';
+
+      fetch('/.netlify/functions/hubtel-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          recipientName:    sel.recipientName,
+          recipientEmail:   sel.recipientEmail || '',
+          recipientWhatsapp: sel.recipientWhatsapp || '',
+          senderName:       sel.senderName,
+          senderPhone:      sel.senderPhone,
+          message:          sel.message || '',
+          sendDate:         sel.sendDate || '',
+          treatment:        sel.treatment || '',
+          packageName:      sel.package   || '',
+          amount:           payAmount,
+          cardDesign:       sel.design,
+          designName:       sel.designName,
+          voucherType:      sel.type,
+          deliveryMethod:   sel.delivery,
+          validBranches:    validBranches,
+          treatmentLabel:   treatmentLabel
+        })
+      })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.checkoutUrl) {
+          throw new Error(data.error || 'No checkout URL returned. Please try again.');
+        }
+        sel.voucherCode      = data.voucherCode;
+        sel.clientReference  = data.clientReference;
+        sel.treatmentLabel   = treatmentLabel;
+        sel.validBranches    = validBranches;
+        sessionStorage.setItem('gc_selection', JSON.stringify(sel));
+        window.location.href = data.checkoutUrl;
+      })
+      .catch(function (err) {
+        btn.disabled    = false;
+        btn.textContent = origText;
+        error.textContent = err.message || 'Something went wrong. Please try again.';
+        error.style.display = 'block';
+      });
     });
 
   })();
