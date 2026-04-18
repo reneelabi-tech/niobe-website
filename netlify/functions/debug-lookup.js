@@ -38,12 +38,20 @@ exports.handler = async function (event) {
 
   const AUTH = { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' };
 
-  // Try the search
-  const res = await post('/api/v1/clients.php', AUTH, { search: phone, per_page: 10 });
+  const base     = phone.replace(/\s+/g, '').replace(/^\+233/, '').replace(/^233/, '');
+  const without0 = base.replace(/^0/, '');
+  const with0    = base.startsWith('0') ? base : '0' + base;
+  const variants = [...new Set([base, without0, with0])];
+
+  const results = {};
+  for (const v of variants) {
+    const res = await post('/api/v1/clients.php', AUTH, { search: v, per_page: 10 });
+    results[v] = { httpStatus: res.status, total_results: res.body?.total_results, clients: res.body?.clients };
+  }
 
   return {
     statusCode: 200,
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ phone, branch, httpStatus: res.status, response: res.body }, null, 2)
+    body: JSON.stringify({ phone, branch, results }, null, 2)
   };
 };
