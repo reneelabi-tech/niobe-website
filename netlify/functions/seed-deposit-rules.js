@@ -1,22 +1,10 @@
 /**
- * seed-deposit-rules  —  ONE-TIME USE ONLY
- *
- * Fetches all services from SimpleSpa (across all enabled branches),
- * deduplicates by name, and creates rows in Airtable deposit_rules
- * with deposit_required = true.
- *
- * HOW TO RUN:
- *   1. Deploy (it's already in netlify/functions/)
- *   2. Visit: https://[your-site].netlify.app/.netlify/functions/seed-deposit-rules
- *   3. Check the JSON response — it lists everything created
- *   4. DELETE this file and redeploy
- *
- * Safe to run multiple times — skips services that already exist.
+ * seed-deposit-rules — debug version
+ * Returns raw SimpleSpa response so we can see what's coming back.
  */
 
 const https = require('https');
 
-const SIMPLESPA_HOST = 'my.simplespa.com';
 const BRANCHES = [
   { name: 'East Legon',   key: 'EASTLEGON',   enabled: true },
   { name: 'Cantonments',  key: 'CANTONMENTS', enabled: true },
@@ -43,117 +31,39 @@ function post(hostname, path, headers, body) {
   });
 }
 
-function get(hostname, path, headers) {
-  return new Promise((resolve, reject) => {
-    const req = https.request(
-      { hostname, path, method: 'GET', headers },
-      (res) => {
-        let data = '';
-        res.on('data', c => { data += c; });
-        res.on('end', () => {
-          try { resolve({ status: res.statusCode, body: JSON.parse(data) }); }
-          catch (e) { resolve({ status: res.statusCode, body: data }); }
-        });
-      }
-    );
-    req.on('error', reject);
-    req.end();
-  });
-}
-
-exports.handler = async function (event) {
-  const BASE_ID = process.env.DEPOSITS_BASE_ID;
-  const AT_KEY  = process.env.AIRTABLE_API_KEY;
-  const AT_AUTH = { 'Authorization': `Bearer ${AT_KEY}`, 'Content-Type': 'application/json' };
-
-  // ── Step 1: Fetch all services from each branch ────────────────────────────
-  const allServiceNames = new Set();
-  const debugInfo = [];
+exports.handler = async function () {
+  const debug = [];
 
   for (const branch of BRANCHES) {
     const apiKey = process.env[`SIMPLESPA_API_KEY_${branch.key}`];
-    if (!apiKey) continue;
 
-    const AUTH = { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' };
-
-    try {
-      // Services endpoint — same pattern as appointments/clients
-      const res = await post(SIMPLESPA_HOST, '/api/v1/services.php', AUTH, { per_page: 1000 });
-
-      if (res.status !== 200) {
-        console.warn(`${branch.name} services returned ${res.status}`);
-        debugInfo.push({ branch: branch.name, status: res.status, body: res.body });
-        continue;
-      }
-
-      // Log raw response so we can see the shape
-      debugInfo.push({ branch: branch.name, status: res.status, bodyKeys: Object.keys(res.body || {}), rawSample: JSON.stringify(res.body).slice(0, 500) });
-
-      // Try common response shapes
-      const services =
-        Array.isArray(res.body?.services) ? res.body.services :
-        Array.isArray(res.body?.data)     ? res.body.data :
-        Array.isArray(res.body)           ? res.body : [];
-
-      services.forEach(s => {
-        const name = s.service_name || s.name || s.title;
-        if (name) allServiceNames.add(name.trim());
-      });
-
-      console.log(`${branch.name}: found ${services.length} services`);
-    } catch (err) {
-      console.error(`${branch.name} services fetch failed:`, err.message);
+    if (!apiKey) {
+      debug.push({ branch: branch.name, error: 'No API key found in env vars' });
+      continue;
     }
-  }
 
-  if (allServiceNames.size === 0) {
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ error: 'No services found', debug: debugInfo })
-    };
-  }
-
-  // ── Step 2: Get existing Airtable rows to avoid duplicates ─────────────────
-  const existingRes = await get(
-    'api.airtable.com',
-    `/v0/${BASE_ID}/deposit_rules?fields%5B%5D=service_name&pageSize=1000`,
-    { 'Authorization': `Bearer ${AT_KEY}` }
-  );
-
-  const existing = new Set(
-    (existingRes.body?.records || []).map(r => r.fields?.service_name).filter(Boolean)
-  );
-
-  // ── Step 3: Create Airtable records for new services ──────────────────────
-  const toCreate = [...allServiceNames].filter(name => !existing.has(name));
-  const created  = [];
-  const skipped  = [...allServiceNames].filter(name => existing.has(name));
-
-  for (const name of toCreate) {
     try {
       const res = await post(
-        'api.airtable.com',
-        `/v0/${BASE_ID}/deposit_rules`,
-        AT_AUTH,
-        { fields: { service_name: name, deposit_required: true } }
+        'my.simplespa.com',
+        '/api/v1/services.php',
+        { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+        { per_page: 100 }
       );
-      if (res.status === 200 || res.status === 201) {
-        created.push(name);
-      } else {
-        console.error(`Failed to create "${name}":`, res.body);
-      }
+
+      debug.push({
+        branch:     branch.name,
+        httpStatus: res.status,
+        bodyKeys:   typeof res.body === 'object' ? Object.keys(res.body) : 'not an object',
+        raw:        JSON.stringify(res.body).slice(0, 800)
+      });
     } catch (err) {
-      console.error(`Error creating "${name}":`, err.message);
+      debug.push({ branch: branch.name, error: err.message });
     }
   }
 
   return {
     statusCode: 200,
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      message: `Done. ${created.length} created, ${skipped.length} already existed.`,
-      created,
-      skipped
-    })
+    body: JSON.stringify({ debug }, null, 2)
   };
 };
