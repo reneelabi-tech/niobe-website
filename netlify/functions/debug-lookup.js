@@ -1,9 +1,6 @@
 /**
  * debug-lookup — TEMPORARY, DELETE AFTER USE
  * Visit: /.netlify/functions/debug-lookup?name=Emmanuel+Tamakloe&phone=0503498428&branch=EASTLEGON
- *
- * Tries multiple search terms (full name, first name only, last name only)
- * and deduplicates by client_id so you can see ALL matching profiles.
  */
 
 const https = require('https');
@@ -40,43 +37,57 @@ exports.handler = async function (event) {
   const AUTH = { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' };
 
   // Build phone variants
-  const base   = phone.replace(/\s+/g, '').replace(/^\+233/, '').replace(/^233/, '');
+  const base     = phone.replace(/\s+/g, '').replace(/^\+233/, '').replace(/^233/, '');
   const variants = [...new Set([base, base.replace(/^0/, ''), base.startsWith('0') ? base : '0' + base])];
 
-  // Build search terms: full name + individual words (to catch last-name-only match)
-  const words = name.trim().split(/\s+/).filter(Boolean);
-  const searchTerms = [...new Set([name, ...words])];
-
-  const allClientsMap = new Map(); // client_id → client
-  const searchLog = [];
+  // Search each word separately and deduplicate
+  const searchTerms = [...new Set(name.trim().split(/\s+/).filter(Boolean))];
+  const clientMap   = new Map();
+  const searchLog   = [];
 
   for (const term of searchTerms) {
     const res = await post('/api/v1/clients.php', AUTH, { search: term, per_page: 100 });
     const clients = Array.isArray(res.body?.clients) ? res.body.clients : [];
     searchLog.push({ term, httpStatus: res.status, count: clients.length });
-    clients.forEach(c => { if (c.client_id) allClientsMap.set(String(c.client_id), c); });
+    clients.forEach(c => { if (c.client_id) clientMap.set(String(c.client_id), c); });
   }
 
-  // Show each unique client + whether phone matches
-  const results = [...allClientsMap.values()].map(c => {
-    const storedMobile = (c.mobile || '').replace(/\s+/g, '');
-    const phoneMatch = variants.some(v =>
+  const allClients = [...clientMap.values()];
+
+  // For each client: show name, stored mobile (raw), and whether any variant matches
+  const results = allClients.map(c => {
+    const raw         = c.mobile || '';
+    const storedMobile = raw.replace(/\s+/g, '');
+    const phoneMatch  = variants.some(v =>
       storedMobile === v || storedMobile.endsWith(v) || v.endsWith(storedMobile)
     );
     return {
-      client_id:  c.client_id,
-      firstname:  c.firstname,
-      lastname:   c.lastname,
-      mobile:     c.mobile,
-      email:      c.email,
+      client_id:    c.client_id,
+      firstname:    c.firstname,
+      lastname:     c.lastname,
+      mobile_raw:   raw,
+      mobile_clean: storedMobile,
       phoneMatch,
-      phoneVariantsTried: variants
     };
   });
+
+  // Highlight: any client whose mobile_clean contains the digits we're looking for
+  const needle   = variants[variants.length - 1].replace(/^0/, ''); // without leading 0
+  const suspects = results.filter(r => r.mobile_clean.includes(needle));
 
   return {
     statusCode: 200,
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, phone, branch, searchLog, totalUnique: results.length, results }, null, 2)
+    body: JSON.stringify({
+      name,
+      phone,
+      branch,
+      phoneVariantsTried: variants,
+      searchLog,
+      totalUnique: results.length,
+      phoneMatches:   results.filter(r => r.phoneMatch),
+      suspectsByPhone: suspects,   // clients whose number contains the target digits
+      allResults: results           // full list
+    }, null, 2)
   };
 };
