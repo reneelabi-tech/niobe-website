@@ -47,12 +47,16 @@ function normalise(str) {
 }
 
 function nameMatches(input, record) {
-  const full = normalise(`${record.firstname || ''} ${record.lastname || ''}`);
-  const inp  = normalise(input);
+  const first    = normalise(record.firstname || '');
+  const last     = normalise(record.lastname  || '');
+  const full     = normalise(`${first} ${last}`);
+  const reversed = normalise(`${last} ${first}`);
+  const inp      = normalise(input);
   return (
-    full.includes(inp) ||
-    inp.includes(normalise(record.firstname)) ||
-    inp.includes(normalise(record.lastname))
+    full.includes(inp)     ||
+    reversed.includes(inp) ||
+    inp.includes(first)    ||
+    inp.includes(last)
   );
 }
 
@@ -91,30 +95,31 @@ async function searchBranch(branch, name, phone) {
 
   const AUTH = { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' };
 
-  // ── Step 1: Find client — try each phone variant until we get a match ──────
-  let clients = [];
-
-  for (const variant of phoneVariants(phone)) {
-    try {
-      const res = await post(`${SIMPLESPA_PATH}/clients.php`, AUTH, { search: variant, per_page: 50 });
-      if (res.status !== 200) continue;
-
-      const found = Array.isArray(res.body?.clients) ? res.body.clients :
-                    Array.isArray(res.body)           ? res.body : [];
-
-      // Deduplicate by client_id
-      found.forEach(c => {
-        if (!clients.find(x => x.client_id === c.client_id)) clients.push(c);
-      });
-
-      if (clients.length > 0) break;
-    } catch (err) {
-      console.error(`lookup-booking: ${branch.name} client fetch failed:`, err.message);
-    }
+  // ── Step 1: Search by name (reliable) then verify phone matches ────────────
+  // Phone search via 'search' param is unreliable — name search works consistently
+  let clientRes;
+  try {
+    clientRes = await post(`${SIMPLESPA_PATH}/clients.php`, AUTH, { search: name, per_page: 100 });
+  } catch (err) {
+    console.error(`lookup-booking: ${branch.name} client fetch failed:`, err.message);
+    return [];
   }
 
-  // Filter by name
-  const matched = clients.filter(c => nameMatches(name, c));
+  if (clientRes.status !== 200) return [];
+
+  const allClients = Array.isArray(clientRes.body?.clients) ? clientRes.body.clients :
+                     Array.isArray(clientRes.body)           ? clientRes.body : [];
+
+  // Build all phone variants the user might have entered
+  const variants = phoneVariants(phone);
+
+  // Keep clients whose name matches AND whose mobile matches any phone variant
+  const matched = allClients.filter(c => {
+    if (!nameMatches(name, c)) return false;
+    const storedMobile = (c.mobile || '').replace(/\s+/g, '');
+    return variants.some(v => storedMobile === v || storedMobile.endsWith(v) || v.endsWith(storedMobile));
+  });
+
   if (matched.length === 0) return [];
 
   // ── Step 2: Get appointments for matched client(s) ─────────────────────────
