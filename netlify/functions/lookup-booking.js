@@ -133,14 +133,20 @@ async function searchBranch(branch, name, phone) {
   };
 
   // ── Step 1: Find client by phone ───────────────────────────────────────────
-  // Confirmed from docs: POST /api/v1/clients.php
-  // 'search' parameter searches first name, last name, email, or mobile
+  // Normalise phone: SimpleSpa stores without leading 0 or country code
+  // e.g. user enters "0244334323" or "+233244334323" → search "244334323"
+  const normalisedPhone = phone
+    .replace(/\s+/g, '')          // remove spaces
+    .replace(/^\+233/, '')        // remove +233 prefix
+    .replace(/^233/, '')          // remove 233 prefix
+    .replace(/^0/, '');           // remove leading 0
+
   let clientRes;
   try {
     clientRes = await post(
       `${SIMPLESPA_PATH}/clients.php`,
       AUTH,
-      { search: phone, per_page: 50 }
+      { search: normalisedPhone, per_page: 50 }
     );
   } catch (err) {
     console.error(`lookup-booking: ${branch.name} client fetch failed:`, err.message);
