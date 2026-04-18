@@ -96,19 +96,26 @@ async function searchBranch(branch, name, phone) {
   const AUTH = { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' };
 
   // ── Step 1: Search by name (reliable) then verify phone matches ────────────
-  // Phone search via 'search' param is unreliable — name search works consistently
-  let clientRes;
-  try {
-    clientRes = await post(`${SIMPLESPA_PATH}/clients.php`, AUTH, { search: name, per_page: 100 });
-  } catch (err) {
-    console.error(`lookup-booking: ${branch.name} client fetch failed:`, err.message);
-    return [];
+  // SimpleSpa cannot search "First Last" as a combined query — returns 0 results.
+  // Search each word separately and deduplicate by client_id.
+  const searchTerms = [...new Set(name.trim().split(/\s+/).filter(Boolean))];
+  const clientMap = new Map();
+
+  for (const term of searchTerms) {
+    let res;
+    try {
+      res = await post(`${SIMPLESPA_PATH}/clients.php`, AUTH, { search: term, per_page: 100 });
+    } catch (err) {
+      console.error(`lookup-booking: ${branch.name} client fetch failed (term="${term}"):`, err.message);
+      continue;
+    }
+    if (res.status !== 200) continue;
+    const clients = Array.isArray(res.body?.clients) ? res.body.clients :
+                    Array.isArray(res.body)           ? res.body : [];
+    clients.forEach(c => { if (c.client_id) clientMap.set(String(c.client_id), c); });
   }
 
-  if (clientRes.status !== 200) return [];
-
-  const allClients = Array.isArray(clientRes.body?.clients) ? clientRes.body.clients :
-                     Array.isArray(clientRes.body)           ? clientRes.body : [];
+  const allClients = [...clientMap.values()];
 
   // Build all phone variants the user might have entered
   const variants = phoneVariants(phone);
