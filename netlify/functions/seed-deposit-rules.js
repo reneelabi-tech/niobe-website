@@ -68,6 +68,7 @@ exports.handler = async function (event) {
 
   // ── Step 1: Fetch all services from each branch ────────────────────────────
   const allServiceNames = new Set();
+  const debugInfo = [];
 
   for (const branch of BRANCHES) {
     const apiKey = process.env[`SIMPLESPA_API_KEY_${branch.key}`];
@@ -81,8 +82,12 @@ exports.handler = async function (event) {
 
       if (res.status !== 200) {
         console.warn(`${branch.name} services returned ${res.status}`);
+        debugInfo.push({ branch: branch.name, status: res.status, body: res.body });
         continue;
       }
+
+      // Log raw response so we can see the shape
+      debugInfo.push({ branch: branch.name, status: res.status, bodyKeys: Object.keys(res.body || {}), rawSample: JSON.stringify(res.body).slice(0, 500) });
 
       // Try common response shapes
       const services =
@@ -103,8 +108,8 @@ exports.handler = async function (event) {
 
   if (allServiceNames.size === 0) {
     return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'No services found — check SimpleSpa API keys and services endpoint' })
+      statusCode: 200,
+      body: JSON.stringify({ error: 'No services found', debug: debugInfo })
     };
   }
 
