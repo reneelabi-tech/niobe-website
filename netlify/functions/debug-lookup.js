@@ -1,7 +1,6 @@
 /**
  * debug-lookup — TEMPORARY, DELETE AFTER USE
- * Returns raw SimpleSpa client search response.
- * Visit: /.netlify/functions/debug-lookup?phone=244334323&branch=EASTLEGON
+ * Visit: /.netlify/functions/debug-lookup?name=Emmanuel&phone=0503498428&branch=EASTLEGON
  */
 
 const https = require('https');
@@ -28,30 +27,42 @@ function post(path, headers, body) {
 }
 
 exports.handler = async function (event) {
-  const phone  = event.queryStringParameters?.phone  || '244334323';
+  const name   = event.queryStringParameters?.name   || '';
+  const phone  = event.queryStringParameters?.phone  || '';
   const branch = event.queryStringParameters?.branch || 'EASTLEGON';
   const apiKey = process.env[`SIMPLESPA_API_KEY_${branch}`];
 
-  if (!apiKey) {
-    return { statusCode: 200, body: JSON.stringify({ error: `No API key for ${branch}` }) };
-  }
+  if (!apiKey) return { statusCode: 200, body: JSON.stringify({ error: `No API key for ${branch}` }) };
 
   const AUTH = { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' };
 
-  const base     = phone.replace(/\s+/g, '').replace(/^\+233/, '').replace(/^233/, '');
-  const without0 = base.replace(/^0/, '');
-  const with0    = base.startsWith('0') ? base : '0' + base;
-  const variants = [...new Set([base, without0, with0])];
+  // Build phone variants
+  const base   = phone.replace(/\s+/g, '').replace(/^\+233/, '').replace(/^233/, '');
+  const variants = [...new Set([base, base.replace(/^0/, ''), base.startsWith('0') ? base : '0' + base])];
 
-  const results = {};
-  for (const v of variants) {
-    const res = await post('/api/v1/clients.php', AUTH, { search: v, per_page: 10 });
-    results[v] = { httpStatus: res.status, total_results: res.body?.total_results, clients: res.body?.clients };
-  }
+  // Search by name
+  const res = await post('/api/v1/clients.php', AUTH, { search: name, per_page: 100 });
+  const clients = Array.isArray(res.body?.clients) ? res.body.clients : [];
+
+  // Show each client + whether phone matches
+  const results = clients.map(c => {
+    const storedMobile = (c.mobile || '').replace(/\s+/g, '');
+    const phoneMatch = variants.some(v =>
+      storedMobile === v || storedMobile.endsWith(v) || v.endsWith(storedMobile)
+    );
+    return {
+      client_id:  c.client_id,
+      firstname:  c.firstname,
+      lastname:   c.lastname,
+      mobile:     c.mobile,
+      phoneMatch,
+      phoneVariantsTried: variants
+    };
+  });
 
   return {
     statusCode: 200,
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ phone, branch, results }, null, 2)
+    body: JSON.stringify({ name, phone, branch, total: clients.length, results }, null, 2)
   };
 };
