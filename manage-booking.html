@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manage Your Booking — Niobe Spa</title>
+  <meta name="description" content="View your appointment details, check your deposit status, or cancel your booking." />
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+
+    /* ── Layout ── */
+    .mb-wrap {
+      max-width: 560px;
+      margin: 0 auto;
+      padding: clamp(3rem, 6vw, 5rem) var(--side) clamp(4rem, 8vw, 7rem);
+    }
+
+    /* ── Lookup form ── */
+    .mb-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .mb-form__intro {
+      font-size: 0.875rem;
+      line-height: 1.8;
+      color: rgba(47,36,29,0.65);
+      margin-bottom: 0.5rem;
+    }
+    .mb-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .mb-label {
+      font-family: var(--font-sans);
+      font-size: 0.5625rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--olive);
+    }
+    .mb-input {
+      font-family: var(--font-sans);
+      font-size: 0.9375rem;
+      color: var(--espresso);
+      background: #fff;
+      border: 1px solid rgba(47,36,29,0.18);
+      padding: 0.85rem 1rem;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+      border-radius: 0;
+    }
+    .mb-input:focus { border-color: var(--espresso); }
+    .mb-input::placeholder { color: rgba(47,36,29,0.3); }
+    .mb-submit {
+      font-family: var(--font-sans);
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      background: var(--espresso);
+      color: var(--parchment);
+      border: none;
+      padding: 1rem 2rem;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      align-self: flex-start;
+      margin-top: 0.5rem;
+    }
+    .mb-submit:hover { opacity: 0.82; }
+    .mb-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ── States ── */
+    .mb-state { display: none; }
+    .mb-state.active { display: block; }
+
+    /* ── Loading ── */
+    .mb-loading {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.875rem;
+      color: rgba(47,36,29,0.5);
+      padding: 2rem 0;
+    }
+    .mb-spinner {
+      width: 18px; height: 18px;
+      border: 2px solid rgba(47,36,29,0.15);
+      border-top-color: var(--espresso);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Booking card ── */
+    .mb-card {
+      border: 1px solid rgba(47,36,29,0.1);
+      background: #fff;
+    }
+    .mb-card__header {
+      padding: 1.5rem 1.75rem;
+      border-bottom: 1px solid rgba(47,36,29,0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    .mb-card__branch {
+      font-family: var(--font-sans);
+      font-size: 0.5625rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--olive);
+      margin-bottom: 0.35rem;
+    }
+    .mb-card__service {
+      font-family: var(--font-serif);
+      font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+      font-weight: 300;
+      line-height: 1.2;
+      color: var(--espresso);
+    }
+    .mb-card__status-pill {
+      font-family: var(--font-sans);
+      font-size: 0.5rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.7rem;
+      border: 1px solid currentColor;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .mb-card__status-pill--pending  { color: rgba(47,36,29,0.45); border-color: rgba(47,36,29,0.2); }
+    .mb-card__status-pill--confirmed { color: var(--olive); }
+    .mb-card__status-pill--cancelled { color: rgba(47,36,29,0.4); }
+
+    .mb-card__body {
+      padding: 1.5rem 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+    .mb-detail {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .mb-detail__label {
+      font-family: var(--font-sans);
+      font-size: 0.5625rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(47,36,29,0.4);
+      min-width: 72px;
+      padding-top: 0.15rem;
+      flex-shrink: 0;
+    }
+    .mb-detail__value {
+      font-family: var(--font-sans);
+      font-size: 0.875rem;
+      color: var(--espresso);
+      line-height: 1.5;
+    }
+
+    /* ── Divider ── */
+    .mb-divider {
+      height: 1px;
+      background: rgba(47,36,29,0.07);
+      margin: 0.25rem 0;
+    }
+
+    /* ── Deposit block ── */
+    .mb-deposit {
+      padding: 1.5rem 1.75rem;
+      border-top: 1px solid rgba(47,36,29,0.08);
+    }
+    .mb-deposit__label {
+      font-family: var(--font-sans);
+      font-size: 0.5625rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--olive);
+      margin-bottom: 1rem;
+    }
+
+    /* Deposit — unpaid */
+    .mb-deposit--unpaid .mb-deposit__amount {
+      font-family: var(--font-serif);
+      font-size: 1.75rem;
+      font-weight: 300;
+      color: var(--espresso);
+      margin-bottom: 0.4rem;
+    }
+    .mb-deposit--unpaid .mb-deposit__note {
+      font-size: 0.75rem;
+      color: rgba(47,36,29,0.5);
+      line-height: 1.7;
+      margin-bottom: 1.25rem;
+    }
+    .mb-pay-btn {
+      display: inline-block;
+      font-family: var(--font-sans);
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      background: var(--espresso);
+      color: var(--parchment);
+      border: none;
+      padding: 0.9rem 1.75rem;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      width: 100%;
+      text-align: center;
+    }
+    .mb-pay-btn:hover { opacity: 0.82; }
+    .mb-pay-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .mb-deposit__policy {
+      font-size: 0.6875rem;
+      color: rgba(47,36,29,0.4);
+      line-height: 1.7;
+      margin-top: 1rem;
+    }
+
+    /* Deposit — paid */
+    .mb-deposit--paid .mb-deposit__confirmed {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+    .mb-deposit--paid .mb-deposit__tick {
+      width: 20px; height: 20px;
+      background: var(--espresso);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+    .mb-deposit--paid .mb-deposit__tick svg {
+      width: 10px; height: 10px; stroke: #fff; stroke-width: 2.5;
+      fill: none;
+    }
+    .mb-deposit--paid .mb-deposit__paid-text {
+      font-size: 0.875rem;
+      color: var(--espresso);
+      line-height: 1.6;
+    }
+    .mb-deposit--paid .mb-deposit__paid-text strong {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 0.2rem;
+    }
+    .mb-deposit--paid .mb-deposit__sms-note {
+      font-size: 0.75rem;
+      color: rgba(47,36,29,0.5);
+      line-height: 1.7;
+      margin-top: 0.85rem;
+      padding-top: 0.85rem;
+      border-top: 1px solid rgba(47,36,29,0.07);
+    }
+
+    /* Deposit — pending (payment submitted, awaiting webhook) */
+    .mb-deposit--pending .mb-deposit__pending-text {
+      font-size: 0.875rem;
+      color: rgba(47,36,29,0.6);
+      line-height: 1.7;
+    }
+
+    /* ── Cancel block ── */
+    .mb-cancel {
+      padding: 1.25rem 1.75rem;
+      border-top: 1px solid rgba(47,36,29,0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .mb-cancel__text {
+      font-size: 0.75rem;
+      color: rgba(47,36,29,0.45);
+      line-height: 1.6;
+    }
+    .mb-cancel__link {
+      font-family: var(--font-sans);
+      font-size: 0.5625rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(47,36,29,0.45);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(47,36,29,0.2);
+      padding-bottom: 0.1rem;
+      white-space: nowrap;
+      transition: color 0.2s;
+    }
+    .mb-cancel__link:hover { color: var(--espresso); }
+
+    /* ── Not found / error ── */
+    .mb-not-found {
+      padding: 2.5rem 0;
+      text-align: center;
+    }
+    .mb-not-found__title {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      font-weight: 300;
+      color: var(--espresso);
+      margin-bottom: 0.75rem;
+    }
+    .mb-not-found__body {
+      font-size: 0.875rem;
+      color: rgba(47,36,29,0.6);
+      line-height: 1.8;
+      margin-bottom: 1.75rem;
+    }
+    .mb-try-again {
+      font-family: var(--font-sans);
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      background: none;
+      border: 1px solid var(--espresso);
+      color: var(--espresso);
+      padding: 0.85rem 1.75rem;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .mb-try-again:hover { background: var(--espresso); color: var(--parchment); }
+
+    /* ── Multiple bookings ── */
+    .mb-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+    .mb-list__intro {
+      font-size: 0.875rem;
+      color: rgba(47,36,29,0.6);
+      margin-bottom: 0.75rem;
+    }
+    .mb-list-item {
+      border: 1px solid rgba(47,36,29,0.1);
+      background: #fff;
+      padding: 1.25rem 1.5rem;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+    .mb-list-item:hover { border-color: var(--espresso); }
+    .mb-list-item__service {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      font-weight: 300;
+      color: var(--espresso);
+      margin-bottom: 0.2rem;
+    }
+    .mb-list-item__meta {
+      font-size: 0.75rem;
+      color: rgba(47,36,29,0.5);
+    }
+    .mb-list-item__arrow {
+      color: rgba(47,36,29,0.3);
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    /* ── Payment success / failed ── */
+    .mb-payment-result {
+      text-align: center;
+      padding: 2.5rem 0;
+    }
+    .mb-payment-result__icon {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.5rem;
+    }
+    .mb-payment-result__icon--success { background: var(--espresso); }
+    .mb-payment-result__icon--failed  { background: rgba(47,36,29,0.12); }
+    .mb-payment-result__icon svg {
+      width: 22px; height: 22px; stroke: #fff; stroke-width: 2;
+      fill: none;
+    }
+    .mb-payment-result__icon--failed svg { stroke: var(--espresso); }
+    .mb-payment-result__title {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 300;
+      color: var(--espresso);
+      margin-bottom: 0.75rem;
+    }
+    .mb-payment-result__body {
+      font-size: 0.875rem;
+      color: rgba(47,36,29,0.6);
+      line-height: 1.8;
+      margin-bottom: 1.75rem;
+    }
+
+    /* ── Cancelled booking ── */
+    .mb-cancelled {
+      padding: 2rem 0;
+      text-align: center;
+    }
+    .mb-cancelled__title {
+      font-family: var(--font-serif);
+      font-size: 1.3rem;
+      font-weight: 300;
+      color: var(--espresso);
+      margin-bottom: 0.75rem;
+    }
+    .mb-cancelled__body {
+      font-size: 0.875rem;
+      color: rgba(47,36,29,0.55);
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── Contact help ── */
+    .mb-help {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(47,36,29,0.07);
+      font-size: 0.8125rem;
+      color: rgba(47,36,29,0.45);
+      text-align: center;
+    }
+    .mb-help a {
+      color: var(--espresso);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(47,36,29,0.25);
+    }
+
+    /* ── Error banner ── */
+    .mb-error-banner {
+      display: none;
+      background: rgba(47,36,29,0.05);
+      border: 1px solid rgba(47,36,29,0.15);
+      padding: 0.85rem 1rem;
+      font-size: 0.8125rem;
+      color: var(--espresso);
+      line-height: 1.6;
+      margin-top: 0.5rem;
+    }
+    .mb-error-banner.visible { display: block; }
+
+  </style>
+</head>
+<body>
+
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav__inner">
+      <a href="index.html" class="nav__logo"><img src="images/niobe-logo-dark.png" class="nav__logo-img" alt="Niobe Spa"></a>
+      <div class="nav__sep" aria-hidden="true"></div>
+      <ul class="nav__links" role="list">
+        <li><a href="index.html"      class="nav__link">Home</a></li>
+        <li><a href="treatments.html" class="nav__link">Treatments</a></li>
+        <li><a href="packages.html"   class="nav__link">Spa Packages</a></li>
+        <li><a href="easter.html"     class="nav__link">Easter</a></li>
+        <li><a href="about.html"      class="nav__link">About</a></li>
+        <li><a href="locations.html"  class="nav__link">Locations</a></li>
+        <li><a href="gift-cards.html" class="nav__link">Gift Cards</a></li>
+        <li><a href="faqs.html"       class="nav__link">FAQs</a></li>
+        <li><a href="vacancies.html"  class="nav__link">Vacancies</a></li>
+        <li><a href="contact.html"    class="nav__link">Contact</a></li>
+      </ul>
+      <a href="booking.html" class="nav__book">Book Now</a>
+      <button class="nav__toggle" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="nav__mobile" role="dialog" aria-label="Mobile navigation">
+    <a href="index.html"      class="nav__mobile-link">Home</a>
+    <a href="treatments.html" class="nav__mobile-link">Treatments</a>
+    <a href="packages.html"   class="nav__mobile-link">Spa Packages</a>
+    <a href="easter.html"     class="nav__mobile-link">Easter</a>
+    <a href="about.html"      class="nav__mobile-link">About</a>
+    <a href="locations.html"  class="nav__mobile-link">Locations</a>
+    <a href="gift-cards.html" class="nav__mobile-link">Gift Cards</a>
+    <a href="faqs.html"       class="nav__mobile-link">FAQs</a>
+    <a href="vacancies.html"  class="nav__mobile-link">Vacancies</a>
+    <a href="contact.html"    class="nav__mobile-link">Contact</a>
+    <a href="booking.html"    class="nav__mobile-cta">Book Now</a>
+  </div>
+
+  <main>
+
+    <div class="page-hero">
+      <div class="page-hero__inner">
+        <span class="eyebrow">Your Booking</span>
+        <h1 class="t-display t-lg page-hero__title">Manage<br>your booking</h1>
+        <p class="page-hero__desc">View your appointment, pay an outstanding deposit, or cancel.</p>
+      </div>
+    </div>
+
+    <div class="mb-wrap">
+
+      <!-- ── STATE: Lookup form ── -->
+      <div class="mb-state active" id="state-lookup">
+        <form class="mb-form" id="lookup-form" novalidate>
+          <p class="mb-form__intro">
+            Enter the name and phone number you used when booking.
+          </p>
+          <div class="mb-field">
+            <label class="mb-label" for="input-name">Full name</label>
+            <input class="mb-input" type="text" id="input-name" name="name"
+                   placeholder="As it appears on your booking" autocomplete="name" required />
+          </div>
+          <div class="mb-field">
+            <label class="mb-label" for="input-phone">Phone number</label>
+            <input class="mb-input" type="tel" id="input-phone" name="phone"
+                   placeholder="e.g. 0244334323" autocomplete="tel" required />
+          </div>
+          <div class="mb-error-banner" id="lookup-error"></div>
+          <button type="submit" class="mb-submit" id="lookup-btn">Find my booking &rarr;</button>
+        </form>
+        <div class="mb-help">
+          Can't find your booking? <a href="contact.html">Contact us</a>
+        </div>
+      </div>
+
+      <!-- ── STATE: Loading ── -->
+      <div class="mb-state" id="state-loading">
+        <div class="mb-loading">
+          <div class="mb-spinner"></div>
+          Looking up your booking&hellip;
+        </div>
+      </div>
+
+      <!-- ── STATE: Multiple bookings — pick one ── -->
+      <div class="mb-state" id="state-multiple">
+        <p class="mb-list__intro">We found more than one upcoming booking. Select the one you'd like to manage.</p>
+        <div class="mb-list" id="booking-list"></div>
+        <div class="mb-help" style="margin-top:1.5rem;">
+          Wrong details? <a href="#" id="retry-from-multiple">Search again</a>
+        </div>
+      </div>
+
+      <!-- ── STATE: Booking detail ── -->
+      <div class="mb-state" id="state-detail">
+        <div class="mb-card">
+
+          <!-- Header -->
+          <div class="mb-card__header">
+            <div>
+              <div class="mb-card__branch" id="detail-branch"></div>
+              <div class="mb-card__service" id="detail-service"></div>
+            </div>
+            <span class="mb-card__status-pill mb-card__status-pill--pending" id="detail-status-pill">Pending</span>
+          </div>
+
+          <!-- Details -->
+          <div class="mb-card__body">
+            <div class="mb-detail">
+              <span class="mb-detail__label">Date</span>
+              <span class="mb-detail__value" id="detail-date"></span>
+            </div>
+            <div class="mb-detail">
+              <span class="mb-detail__label">Time</span>
+              <span class="mb-detail__value" id="detail-time"></span>
+            </div>
+            <div class="mb-detail" id="detail-staff-row">
+              <span class="mb-detail__label">With</span>
+              <span class="mb-detail__value" id="detail-staff"></span>
+            </div>
+            <div class="mb-detail">
+              <span class="mb-detail__label">Duration</span>
+              <span class="mb-detail__value" id="detail-duration"></span>
+            </div>
+          </div>
+
+          <!-- Deposit block — injected based on state -->
+          <div class="mb-deposit" id="deposit-block"></div>
+
+          <!-- Cancel -->
+          <div class="mb-cancel">
+            <p class="mb-cancel__text">Need to reschedule or cancel?<br>We require 24 hours notice.</p>
+            <a href="#" class="mb-cancel__link" id="cancel-link" target="_blank" rel="noopener noreferrer">
+              Cancel or reschedule &rarr;
+            </a>
+          </div>
+
+        </div>
+        <div class="mb-help">
+          <a href="#" id="retry-from-detail">Look up a different booking</a> &nbsp;·&nbsp;
+          <a href="contact.html">Contact us</a>
+        </div>
+      </div>
+
+      <!-- ── STATE: Not found ── -->
+      <div class="mb-state" id="state-not-found">
+        <div class="mb-not-found">
+          <p class="mb-not-found__title">We couldn't find that booking</p>
+          <p class="mb-not-found__body">
+            Please check that the name and phone number match<br>
+            exactly what you used when booking.
+          </p>
+          <button class="mb-try-again" id="retry-not-found">Try again</button>
+        </div>
+        <div class="mb-help">
+          Still can't find it? <a href="contact.html">Contact us</a>
+        </div>
+      </div>
+
+      <!-- ── STATE: Cancelled booking ── -->
+      <div class="mb-state" id="state-cancelled">
+        <div class="mb-cancelled">
+          <p class="mb-cancelled__title">This booking has been cancelled</p>
+          <p class="mb-cancelled__body">
+            If you'd like to rebook, visit our booking page<br>
+            or contact your nearest branch.
+          </p>
+          <a href="booking.html" class="mb-submit" style="text-decoration:none;display:inline-block;">Book again &rarr;</a>
+        </div>
+        <div class="mb-help">
+          <a href="#" id="retry-cancelled">Look up a different booking</a>
+        </div>
+      </div>
+
+      <!-- ── STATE: Payment success ── -->
+      <div class="mb-state" id="state-payment-success">
+        <div class="mb-payment-result">
+          <div class="mb-payment-result__icon mb-payment-result__icon--success">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <p class="mb-payment-result__title">Deposit received</p>
+          <p class="mb-payment-result__body" id="success-body">
+            Your deposit has been received and your appointment is secured.<br>
+            You will receive an SMS confirmation once your booking has been confirmed by our team.
+          </p>
+          <button class="mb-submit" id="view-booking-btn">View my booking &rarr;</button>
+        </div>
+      </div>
+
+      <!-- ── STATE: Payment failed ── -->
+      <div class="mb-state" id="state-payment-failed">
+        <div class="mb-payment-result">
+          <div class="mb-payment-result__icon mb-payment-result__icon--failed">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </div>
+          <p class="mb-payment-result__title">Payment was not completed</p>
+          <p class="mb-payment-result__body">
+            Your deposit has not been taken. Please try again or contact us if the problem continues.
+          </p>
+          <button class="mb-submit" id="retry-payment-btn">Try again &rarr;</button>
+        </div>
+        <div class="mb-help">
+          <a href="contact.html">Contact us</a>
+        </div>
+      </div>
+
+    </div><!-- /mb-wrap -->
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <p class="footer__tagline">where ageing is optional…</p>
+      </div>
+      <nav class="footer__nav" aria-label="Footer navigation">
+        <a href="treatments.html"  class="footer__link">Treatments</a>
+        <a href="packages.html"    class="footer__link">Packages</a>
+        <a href="gift-cards.html"  class="footer__link">Gift Cards</a>
+        <a href="locations.html"   class="footer__link">Locations</a>
+        <a href="about.html"       class="footer__link">About</a>
+        <a href="contact.html"     class="footer__link">Contact</a>
+        <a href="faqs.html"        class="footer__link">FAQs</a>
+        <a href="booking.html"     class="footer__link">Book Now</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script>
+  (function () {
+
+    /* ─── Config ─────────────────────────────────────────────────────────── */
+    const LOOKUP_FN      = '/.netlify/functions/lookup-booking';
+    const DEPOSIT_FN     = '/.netlify/functions/check-deposit';
+    const INIT_PAY_FN    = '/.netlify/functions/initiate-payment';
+
+    // SimpleSpa cancel URLs per branch — update with real URLs
+    const CANCEL_URLS = {
+      'East Legon':           'https://eastlegon.simplespa.com/profile.php',
+      'Cantonments':          'https://cantonments.simplespa.com/profile.php',
+      'Community 18':         'https://hfcestatec18.simplespa.com/profile.php',
+      'African Regent Hotel': 'https://africanregenthotel.simplespa.com/profile.php',
+      'Alisa Hotel':          'https://alisahoteltema.simplespa.com/profile.php',
+    };
+    const DEFAULT_CANCEL_URL = 'https://eastlegon.simplespa.com/profile.php';
+
+    /* ─── State ──────────────────────────────────────────────────────────── */
+    let currentBooking = null;
+    let lookupPayload  = null; // { name, phone } — kept for retry
+
+    /* ─── Helpers ────────────────────────────────────────────────────────── */
+    function showState(id) {
+      document.querySelectorAll('.mb-state').forEach(el => el.classList.remove('active'));
+      const el = document.getElementById(id);
+      if (el) el.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '—';
+      const d = new Date(dateStr);
+      return d.toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'long', year:'numeric' });
+    }
+
+    function formatTime(dateStr) {
+      if (!dateStr) return '—';
+      const d = new Date(dateStr);
+      return d.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit', hour12: false });
+    }
+
+    function formatDuration(startStr, endStr) {
+      if (!startStr || !endStr) return '—';
+      const mins = Math.round((new Date(endStr) - new Date(startStr)) / 60000);
+      if (mins < 60) return `${mins} min`;
+      const h = Math.floor(mins / 60), m = mins % 60;
+      return m ? `${h} hr ${m} min` : `${h} hr`;
+    }
+
+    /* ─── Render deposit block ───────────────────────────────────────────── */
+    function renderDeposit(booking, depositInfo) {
+      const block = document.getElementById('deposit-block');
+
+      // No deposit required
+      if (!depositInfo || !depositInfo.required) {
+        block.innerHTML = '';
+        block.style.display = 'none';
+        return;
+      }
+
+      block.style.display = 'block';
+
+      const amount = booking.price ? Number(booking.price).toLocaleString() : '—';
+
+      if (depositInfo.status === 'paid') {
+        block.innerHTML = `
+          <div class="mb-deposit__label">Deposit</div>
+          <div class="mb-deposit--paid">
+            <div class="mb-deposit__confirmed">
+              <div class="mb-deposit__tick">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="mb-deposit__paid-text">
+                <strong>Deposit received</strong>
+                GHS ${amount} received.
+              </div>
+            </div>
+            <p class="mb-deposit__sms-note">
+              Your booking is pending confirmation by our team.
+              You will receive an SMS once it has been confirmed.
+            </p>
+          </div>`;
+        return;
+      }
+
+      if (depositInfo.status === 'pending') {
+        block.innerHTML = `
+          <div class="mb-deposit__label">Deposit</div>
+          <div class="mb-deposit--pending">
+            <p class="mb-deposit__pending-text">
+              Your payment is being confirmed — this usually takes a moment.
+              Please refresh the page shortly.
+            </p>
+          </div>`;
+        return;
+      }
+
+      // Unpaid
+      block.innerHTML = `
+        <div class="mb-deposit__label">Outstanding deposit</div>
+        <div class="mb-deposit--unpaid">
+          <div class="mb-deposit__amount">GHS ${amount}</div>
+          <p class="mb-deposit__note">
+            Full payment is required to secure this appointment.
+          </p>
+          <button class="mb-pay-btn" id="pay-deposit-btn">Pay deposit &rarr;</button>
+          <p class="mb-deposit__policy">
+            Deposits are non-refundable. Cancellations within 24 hours
+            will forfeit the deposit in full.
+          </p>
+        </div>`;
+
+      document.getElementById('pay-deposit-btn').addEventListener('click', () => {
+        handlePayDeposit(booking, depositInfo);
+      });
+    }
+
+    /* ─── Render booking detail ──────────────────────────────────────────── */
+    function renderDetail(booking, depositInfo) {
+      document.getElementById('detail-branch').textContent   = booking.branch || '—';
+      document.getElementById('detail-service').textContent  = booking.service_name || '—';
+      document.getElementById('detail-date').textContent     = formatDate(booking.start_at);
+      document.getElementById('detail-time').textContent     = formatTime(booking.start_at);
+      document.getElementById('detail-duration').textContent = formatDuration(booking.start_at, booking.end_at);
+
+      const staffRow = document.getElementById('detail-staff-row');
+      if (booking.staff_name) {
+        document.getElementById('detail-staff').textContent = booking.staff_name;
+        staffRow.style.display = '';
+      } else {
+        staffRow.style.display = 'none';
+      }
+
+      // Status pill
+      const pill = document.getElementById('detail-status-pill');
+      const status = (booking.status || '').toLowerCase();
+      pill.className = 'mb-card__status-pill';
+      const label = booking.status_label || status;
+      if (status === 'confirmed' || status === 'completed') {
+        pill.classList.add('mb-card__status-pill--confirmed');
+        pill.textContent = label;
+      } else if (status === 'cancelled') {
+        pill.classList.add('mb-card__status-pill--cancelled');
+        pill.textContent = label;
+      } else {
+        pill.classList.add('mb-card__status-pill--pending');
+        pill.textContent = label; // e.g. "Payment Due", "Online", "Request"
+      }
+
+      // Cancel link
+      const cancelLink = document.getElementById('cancel-link');
+      cancelLink.href = CANCEL_URLS[booking.branch] || DEFAULT_CANCEL_URL;
+
+      renderDeposit(booking, depositInfo);
+      showState('state-detail');
+    }
+
+    /* ─── Render multiple bookings ───────────────────────────────────────── */
+    function renderMultiple(bookings) {
+      const list = document.getElementById('booking-list');
+      list.innerHTML = '';
+      bookings.forEach((b, i) => {
+        const item = document.createElement('div');
+        item.className = 'mb-list-item';
+        item.innerHTML = `
+          <div>
+            <div class="mb-list-item__service">${b.service_name || 'Appointment'}</div>
+            <div class="mb-list-item__meta">${b.branch || ''} &nbsp;·&nbsp; ${formatDate(b.start_at)} at ${formatTime(b.start_at)}</div>
+          </div>
+          <span class="mb-list-item__arrow">&rarr;</span>`;
+        item.addEventListener('click', () => selectBooking(bookings[i]));
+        list.appendChild(item);
+      });
+      showState('state-multiple');
+    }
+
+    /* ─── Select a booking from list ─────────────────────────────────────── */
+    async function selectBooking(booking) {
+      currentBooking = booking;
+      showState('state-loading');
+      try {
+        const depositInfo = await fetchDepositStatus(booking);
+        if ((booking.status || '').toLowerCase() === 'cancelled') {
+          showState('state-cancelled');
+          return;
+        }
+        renderDetail(booking, depositInfo);
+      } catch (e) {
+        renderDetail(booking, null);
+      }
+    }
+
+    /* ─── Fetch deposit status from Airtable (via Netlify fn) ────────────── */
+    async function fetchDepositStatus(booking) {
+      const res = await fetch(DEPOSIT_FN, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ appointment_id: booking.id })
+      });
+      if (!res.ok) return null;
+      return await res.json();
+    }
+
+    /* ─── Lookup submit ──────────────────────────────────────────────────── */
+    document.getElementById('lookup-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const name  = document.getElementById('input-name').value.trim();
+      const phone = document.getElementById('input-phone').value.trim();
+      const errEl = document.getElementById('lookup-error');
+
+      if (!name || !phone) {
+        errEl.textContent = 'Please enter both your name and phone number.';
+        errEl.classList.add('visible');
+        return;
+      }
+      errEl.classList.remove('visible');
+
+      lookupPayload = { name, phone };
+      document.getElementById('lookup-btn').disabled = true;
+      showState('state-loading');
+
+      try {
+        const res = await fetch(LOOKUP_FN, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, phone })
+        });
+        const data = await res.json();
+
+        if (!res.ok || !data.bookings || data.bookings.length === 0) {
+          showState('state-not-found');
+          return;
+        }
+
+        if (data.bookings.length === 1) {
+          await selectBooking(data.bookings[0]);
+        } else {
+          renderMultiple(data.bookings);
+        }
+      } catch (err) {
+        showState('state-not-found');
+      } finally {
+        document.getElementById('lookup-btn').disabled = false;
+      }
+    });
+
+    /* ─── Pay deposit ────────────────────────────────────────────────────── */
+    async function handlePayDeposit(booking, depositInfo) {
+      const btn = document.getElementById('pay-deposit-btn');
+      if (btn) { btn.disabled = true; btn.textContent = 'Redirecting…'; }
+
+      try {
+        const res = await fetch(INIT_PAY_FN, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            appointment_id:   booking.id,
+            client_name:      booking.client_name,
+            client_phone:     lookupPayload.phone,
+            service_name:     booking.service_name,
+            branch:           booking.branch,
+            appointment_date: booking.start_at,
+            amount:           booking.price
+          })
+        });
+        const data = await res.json();
+        if (data.checkout_url) {
+          window.location.href = data.checkout_url;
+        } else {
+          throw new Error('No checkout URL returned');
+        }
+      } catch (err) {
+        if (btn) { btn.disabled = false; btn.textContent = 'Pay deposit →'; }
+        const note = document.createElement('p');
+        note.style.cssText = 'font-size:0.8125rem;color:rgba(47,36,29,0.6);margin-top:0.75rem;';
+        note.textContent = 'Something went wrong. Please try again or contact us.';
+        btn && btn.parentNode.appendChild(note);
+      }
+    }
+
+    /* ─── Handle return from ExpressPay ─────────────────────────────────── */
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('paid') === 'true') {
+      // Re-lookup and show success, then load booking
+      const stored = sessionStorage.getItem('mb_lookup');
+      if (stored) {
+        lookupPayload = JSON.parse(stored);
+        showState('state-payment-success');
+        document.getElementById('view-booking-btn').addEventListener('click', async () => {
+          showState('state-loading');
+          try {
+            const res = await fetch(LOOKUP_FN, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(lookupPayload)
+            });
+            const data = await res.json();
+            if (data.bookings && data.bookings.length > 0) {
+              await selectBooking(data.bookings[0]);
+            } else {
+              showState('state-not-found');
+            }
+          } catch { showState('state-not-found'); }
+        });
+      } else {
+        showState('state-payment-success');
+        document.getElementById('view-booking-btn').addEventListener('click', () => showState('state-lookup'));
+      }
+    } else if (params.get('paid') === 'false') {
+      showState('state-payment-failed');
+      document.getElementById('retry-payment-btn').addEventListener('click', () => {
+        const stored = sessionStorage.getItem('mb_lookup');
+        if (stored && currentBooking) {
+          showState('state-lookup');
+        } else {
+          showState('state-lookup');
+        }
+      });
+    }
+
+    /* Save lookup payload to session before redirect */
+    document.addEventListener('click', function(e) {
+      if (e.target && e.target.id === 'pay-deposit-btn') {
+        if (lookupPayload) sessionStorage.setItem('mb_lookup', JSON.stringify(lookupPayload));
+      }
+    });
+
+    /* ─── Retry / reset helpers ──────────────────────────────────────────── */
+    function resetToLookup() {
+      currentBooking = null;
+      showState('state-lookup');
+    }
+    document.getElementById('retry-not-found').addEventListener('click',      resetToLookup);
+    document.getElementById('retry-from-multiple').addEventListener('click',  e => { e.preventDefault(); resetToLookup(); });
+    document.getElementById('retry-from-detail').addEventListener('click',    e => { e.preventDefault(); resetToLookup(); });
+    document.getElementById('retry-cancelled').addEventListener('click',      e => { e.preventDefault(); resetToLookup(); });
+
+  })();
+  </script>
+
+  <script src="js/main.js" defer></script>
+
+</body>
+</html>
