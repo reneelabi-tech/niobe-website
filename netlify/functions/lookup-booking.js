@@ -144,12 +144,13 @@ async function searchBranch(branch, name, phone) {
     }))
   ]);
 
-  // Build price map from services
+  // Build price map from services — normalise keys to handle inconsistent spacing
+  const normaliseKey = str => (str || '').replace(/\s+/g, ' ').trim();
   const priceMap = new Map();
   if (svcRes.status === 'fulfilled' && svcRes.value.status === 200) {
     const services = Array.isArray(svcRes.value.body?.services) ? svcRes.value.body.services : [];
     services.forEach(s => {
-      if (s.name) priceMap.set(s.name, s.price ?? null);
+      if (s.name) priceMap.set(normaliseKey(s.name), s.price ?? null);
     });
   }
 
@@ -173,7 +174,7 @@ async function searchBranch(branch, name, phone) {
         end_at:       a.end,
         status:       mapStatus(a.status),
         status_label: a.status_label || null,
-        price:        svcName ? (priceMap.get(svcName) ?? null) : null
+        price:        svcName ? (priceMap.get(normaliseKey(svcName)) ?? null) : null
       });
     });
   });
