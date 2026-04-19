@@ -1,6 +1,6 @@
 /**
  * debug-lookup — TEMPORARY, DELETE AFTER USE
- * Visit: /.netlify/functions/debug-lookup?mode=services&branch=EASTLEGON
+ * Visit: /.netlify/functions/debug-lookup?mode=services&branch=EASTLEGON&q=freestyle
  * Visit: /.netlify/functions/debug-lookup?name=First+Last&phone=0501234567&branch=EASTLEGON
  */
 
@@ -27,6 +27,8 @@ function post(path, headers, body) {
   });
 }
 
+const dateStr = d => d.toISOString().split('T')[0];
+
 exports.handler = async function (event) {
   const branch = event.queryStringParameters?.branch || 'EASTLEGON';
   const mode   = event.queryStringParameters?.mode   || 'lookup';
@@ -36,35 +38,25 @@ exports.handler = async function (event) {
 
   const AUTH = { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' };
 
-  // ── mode=services: fetch all services and build price map ─────────────────
+  // ── mode=services ──────────────────────────────────────────────────────────
   if (mode === 'services') {
     const res      = await post('/api/v1/services.php', AUTH, { per_page: 1000 });
     const services = Array.isArray(res.body?.services) ? res.body.services : [];
     const search   = (event.queryStringParameters?.q || '').toLowerCase();
-
-    const priceMap = {};
-    services.forEach(s => {
-      const n = s.name || s.service_name;
-      if (n) priceMap[n] = s.price ?? s.cost ?? s.sale_price ?? null;
-    });
-
     const filtered = search
       ? services.filter(s => (s.name || '').toLowerCase().includes(search))
       : services.slice(0, 5);
-
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        httpStatus: res.status,
         totalServices: services.length,
-        note: 'Add &q=elemis to filter by name',
-        sample: filtered.map(s => ({ name: s.name, price: s.price ?? s.cost ?? null }))
+        sample: filtered.map(s => ({ name: s.name, price: s.price ?? null }))
       }, null, 2)
     };
   }
 
-  // ── mode=lookup (default) ─────────────────────────────────────────────────
+  // ── mode=lookup ────────────────────────────────────────────────────────────
   const name  = event.queryStringParameters?.name  || '';
   const phone = event.queryStringParameters?.phone || '';
 
@@ -84,24 +76,50 @@ exports.handler = async function (event) {
 
   const allClients = [...clientMap.values()];
   const needle     = variants[variants.length - 1].replace(/^0/, '');
+  const matched    = allClients.filter(c => {
+    const m = (c.mobile || '').replace(/\s+/g, '');
+    return variants.some(v => m === v || m.endsWith(v) || v.endsWith(m));
+  });
 
-  const results = allClients.map(c => {
-    const storedMobile = (c.mobile || '').replace(/\s+/g, '');
-    const phoneMatch   = variants.some(v =>
-      storedMobile === v || storedMobile.endsWith(v) || v.endsWith(storedMobile)
-    );
-    return { client_id: c.client_id, firstname: c.firstname, lastname: c.lastname,
-             mobile_raw: c.mobile, mobile_clean: storedMobile, phoneMatch };
+  // Fetch appointments + build price map in parallel for matched clients
+  const now       = new Date();
+  const weekAgo   = new Date(now - 7 * 24 * 60 * 60 * 1000);
+  const sixMonths = new Date(now.getTime() + 180 * 24 * 60 * 60 * 1000);
+
+  const [svcRes, ...apptResults] = await Promise.all([
+    post('/api/v1/services.php', AUTH, { per_page: 1000 }),
+    ...matched.map(c => post('/api/v1/appointments.php', AUTH, {
+      client_id: String(c.client_id),
+      start: dateStr(weekAgo), end: dateStr(sixMonths), per_page: 10
+    }))
+  ]);
+
+  const services = Array.isArray(svcRes.body?.services) ? svcRes.body.services : [];
+  const priceMap = new Map();
+  services.forEach(s => { if (s.name) priceMap.set(s.name, s.price ?? null); });
+
+  const apptDebug = [];
+  apptResults.forEach(res => {
+    const appts = Array.isArray(res.body?.appointments) ? res.body.appointments : [];
+    appts.forEach(a => {
+      const svcName = a.service?.service_name || null;
+      apptDebug.push({
+        appointment_id: a.appointment_id,
+        service_name_from_appt: svcName,
+        price_map_hit: svcName !== null ? (priceMap.get(svcName) ?? 'NOT FOUND') : 'no service name',
+        start: a.start
+      });
+    });
   });
 
   return {
     statusCode: 200,
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      name, phone, branch, phoneVariantsTried: variants, searchLog,
-      totalUnique: results.length,
-      phoneMatches:    results.filter(r => r.phoneMatch),
-      suspectsByPhone: results.filter(r => r.mobile_clean.includes(needle)),
+      name, phone, branch, searchLog,
+      totalUnique: allClients.length,
+      phoneMatches: matched.map(c => ({ client_id: c.client_id, firstname: c.firstname, lastname: c.lastname, mobile: c.mobile })),
+      appointmentPriceDebug: apptDebug,
     }, null, 2)
   };
 };

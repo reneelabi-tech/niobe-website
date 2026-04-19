@@ -129,60 +129,54 @@ async function searchBranch(branch, name, phone) {
 
   if (matched.length === 0) return [];
 
-  // ── Step 2: Fetch service prices for this branch ───────────────────────────
-  const priceMap = new Map(); // service name → price (GHS)
-  try {
-    const svcRes = await post(`${SIMPLESPA_PATH}/services.php`, AUTH, { per_page: 1000 });
-    const services = Array.isArray(svcRes.body?.services) ? svcRes.body.services : [];
-    services.forEach(s => {
-      const sName = s.name || s.service_name;
-      const price = s.price ?? s.cost ?? s.sale_price ?? s.selling_price ?? null;
-      if (sName && price !== null) priceMap.set(sName, price);
-    });
-  } catch (err) {
-    console.warn(`lookup-booking: ${branch.name} services fetch failed:`, err.message);
-  }
-
-  // ── Step 3: Get appointments for matched client(s) ─────────────────────────
+  // ── Steps 2+3: Fetch services + appointments in parallel ───────────────────
   const now       = new Date();
   const weekAgo   = new Date(now - 7 * 24 * 60 * 60 * 1000);
   const sixMonths = new Date(now.getTime() + 180 * 24 * 60 * 60 * 1000);
-  const bookings  = [];
 
-  for (const client of matched) {
-    try {
-      const res = await post(`${SIMPLESPA_PATH}/appointments.php`, AUTH, {
-        client_id: String(client.client_id),
-        start:     dateStr(weekAgo),
-        end:       dateStr(sixMonths),
-        per_page:  100
-      });
+  const [svcRes, ...apptResponses] = await Promise.allSettled([
+    post(`${SIMPLESPA_PATH}/services.php`, AUTH, { per_page: 1000 }),
+    ...matched.map(c => post(`${SIMPLESPA_PATH}/appointments.php`, AUTH, {
+      client_id: String(c.client_id),
+      start:     dateStr(weekAgo),
+      end:       dateStr(sixMonths),
+      per_page:  100
+    }))
+  ]);
 
-      if (res.status !== 200) continue;
-
-      const appts = Array.isArray(res.body?.appointments) ? res.body.appointments : [];
-
-      appts.forEach(a => {
-        const svcName = a.service?.service_name || null;
-        bookings.push({
-          id:           a.appointment_id,
-          client_name:  a.client
-                          ? `${a.client.first_name} ${a.client.last_name}`
-                          : `${client.firstname} ${client.lastname}`,
-          service_name: svcName,
-          staff_name:   a.staff?.staff_name || null,
-          branch:       branch.name,
-          start_at:     a.start,
-          end_at:       a.end,
-          status:       mapStatus(a.status),
-          status_label: a.status_label || null,
-          price:        svcName ? (priceMap.get(svcName) ?? null) : null
-        });
-      });
-    } catch (err) {
-      console.error(`lookup-booking: ${branch.name} appointments fetch failed:`, err.message);
-    }
+  // Build price map from services
+  const priceMap = new Map();
+  if (svcRes.status === 'fulfilled' && svcRes.value.status === 200) {
+    const services = Array.isArray(svcRes.value.body?.services) ? svcRes.value.body.services : [];
+    services.forEach(s => {
+      if (s.name) priceMap.set(s.name, s.price ?? null);
+    });
   }
+
+  // Collect bookings from appointment responses
+  const bookings = [];
+  apptResponses.forEach((result, i) => {
+    if (result.status !== 'fulfilled' || result.value.status !== 200) return;
+    const client = matched[i];
+    const appts  = Array.isArray(result.value.body?.appointments) ? result.value.body.appointments : [];
+    appts.forEach(a => {
+      const svcName = a.service?.service_name || null;
+      bookings.push({
+        id:           a.appointment_id,
+        client_name:  a.client
+                        ? `${a.client.first_name} ${a.client.last_name}`
+                        : `${client.firstname} ${client.lastname}`,
+        service_name: svcName,
+        staff_name:   a.staff?.staff_name || null,
+        branch:       branch.name,
+        start_at:     a.start,
+        end_at:       a.end,
+        status:       mapStatus(a.status),
+        status_label: a.status_label || null,
+        price:        svcName ? (priceMap.get(svcName) ?? null) : null
+      });
+    });
+  });
 
   return bookings;
 }
