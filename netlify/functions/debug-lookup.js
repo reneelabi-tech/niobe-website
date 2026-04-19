@@ -94,9 +94,10 @@ exports.handler = async function (event) {
     }))
   ]);
 
+  const normaliseKey = str => (str || '').replace(/\s+/g, ' ').trim();
   const services = Array.isArray(svcRes.body?.services) ? svcRes.body.services : [];
   const priceMap = new Map();
-  services.forEach(s => { if (s.name) priceMap.set(s.name, s.price ?? null); });
+  services.forEach(s => { if (s.name) priceMap.set(normaliseKey(s.name), s.price ?? null); });
 
   const apptDebug = [];
   apptResults.forEach(res => {
@@ -105,8 +106,8 @@ exports.handler = async function (event) {
       const svcName = a.service?.service_name || null;
       apptDebug.push({
         appointment_id: a.appointment_id,
-        service_name_from_appt: svcName,
-        price_map_hit: svcName !== null ? (priceMap.get(svcName) ?? 'NOT FOUND') : 'no service name',
+        service_raw: a.service,
+        price_map_hit: svcName !== null ? (priceMap.get(normaliseKey(svcName)) ?? 'NOT FOUND') : 'no service name',
         start: a.start
       });
     });
