@@ -1,6 +1,7 @@
 /**
  * debug-lookup — TEMPORARY, DELETE AFTER USE
- * Visit: /.netlify/functions/debug-lookup?name=Emmanuel+Tamakloe&phone=0503498428&branch=EASTLEGON
+ * Visit: /.netlify/functions/debug-lookup?mode=services&branch=EASTLEGON
+ * Visit: /.netlify/functions/debug-lookup?name=First+Last&phone=0501234567&branch=EASTLEGON
  */
 
 const https = require('https');
@@ -27,20 +28,32 @@ function post(path, headers, body) {
 }
 
 exports.handler = async function (event) {
-  const name   = event.queryStringParameters?.name   || '';
-  const phone  = event.queryStringParameters?.phone  || '';
   const branch = event.queryStringParameters?.branch || 'EASTLEGON';
+  const mode   = event.queryStringParameters?.mode   || 'lookup';
   const apiKey = process.env[`SIMPLESPA_API_KEY_${branch}`];
 
   if (!apiKey) return { statusCode: 200, body: JSON.stringify({ error: `No API key for ${branch}` }) };
 
   const AUTH = { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' };
 
-  // Build phone variants
+  // ── mode=services: show raw fields of first service object ────────────────
+  if (mode === 'services') {
+    const res = await post('/api/v1/services.php', AUTH, { per_page: 3 });
+    const services = Array.isArray(res.body?.services) ? res.body.services : [];
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ httpStatus: res.status, sample: services }, null, 2)
+    };
+  }
+
+  // ── mode=lookup (default) ─────────────────────────────────────────────────
+  const name  = event.queryStringParameters?.name  || '';
+  const phone = event.queryStringParameters?.phone || '';
+
   const base     = phone.replace(/\s+/g, '').replace(/^\+233/, '').replace(/^233/, '');
   const variants = [...new Set([base, base.replace(/^0/, ''), base.startsWith('0') ? base : '0' + base])];
 
-  // Search each word separately and deduplicate
   const searchTerms = [...new Set(name.trim().split(/\s+/).filter(Boolean))];
   const clientMap   = new Map();
   const searchLog   = [];
@@ -53,41 +66,25 @@ exports.handler = async function (event) {
   }
 
   const allClients = [...clientMap.values()];
+  const needle     = variants[variants.length - 1].replace(/^0/, '');
 
-  // For each client: show name, stored mobile (raw), and whether any variant matches
   const results = allClients.map(c => {
-    const raw         = c.mobile || '';
-    const storedMobile = raw.replace(/\s+/g, '');
-    const phoneMatch  = variants.some(v =>
+    const storedMobile = (c.mobile || '').replace(/\s+/g, '');
+    const phoneMatch   = variants.some(v =>
       storedMobile === v || storedMobile.endsWith(v) || v.endsWith(storedMobile)
     );
-    return {
-      client_id:    c.client_id,
-      firstname:    c.firstname,
-      lastname:     c.lastname,
-      mobile_raw:   raw,
-      mobile_clean: storedMobile,
-      phoneMatch,
-    };
+    return { client_id: c.client_id, firstname: c.firstname, lastname: c.lastname,
+             mobile_raw: c.mobile, mobile_clean: storedMobile, phoneMatch };
   });
-
-  // Highlight: any client whose mobile_clean contains the digits we're looking for
-  const needle   = variants[variants.length - 1].replace(/^0/, ''); // without leading 0
-  const suspects = results.filter(r => r.mobile_clean.includes(needle));
 
   return {
     statusCode: 200,
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      name,
-      phone,
-      branch,
-      phoneVariantsTried: variants,
-      searchLog,
+      name, phone, branch, phoneVariantsTried: variants, searchLog,
       totalUnique: results.length,
-      phoneMatches:   results.filter(r => r.phoneMatch),
-      suspectsByPhone: suspects,   // clients whose number contains the target digits
-      allResults: results           // full list
+      phoneMatches:    results.filter(r => r.phoneMatch),
+      suspectsByPhone: results.filter(r => r.mobile_clean.includes(needle)),
     }, null, 2)
   };
 };
