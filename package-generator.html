@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Seasonal Package Generator — Niobe Spa</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --espresso: #2F241D;
+  --cream: #FFFEF6;
+  --sand: #F5F3EE;
+  --olive: #7A795D;
+  --olive-light: #9E9D7A;
+  --border: rgba(47,36,29,0.12);
+  --muted: rgba(47,36,29,0.45);
+  --danger: #9B3A3A;
+  --success: #3A6B4A;
+}
+
+body { background: var(--sand); font-family: 'DM Sans', Arial, sans-serif; color: var(--espresso); min-height: 100vh; }
+
+/* ─── Header ─── */
+.pg-header { background: var(--espresso); color: var(--cream); padding: 18px 32px; display: flex; align-items: center; justify-content: space-between; }
+.pg-header h1 { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 22px; font-weight: 300; letter-spacing: 0.02em; }
+.pg-header .tag { font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.45; }
+
+/* ─── Layout ─── */
+.pg-layout { display: grid; grid-template-columns: 340px 1fr 300px; gap: 0; min-height: calc(100vh - 60px); }
+
+/* ─── Panel base ─── */
+.panel { padding: 24px; overflow-y: auto; max-height: calc(100vh - 60px); }
+.panel-left { background: var(--cream); border-right: 1px solid var(--border); }
+.panel-center { background: var(--sand); }
+.panel-right { background: var(--cream); border-left: 1px solid var(--border); }
+
+.panel-title {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
+}
+
+/* ─── Campaign Setup ─── */
+.form-row { margin-bottom: 16px; }
+.form-label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.form-control {
+  width: 100%; padding: 9px 12px; border: 1px solid var(--border); background: var(--sand);
+  font-family: 'DM Sans', Arial, sans-serif; font-size: 13px; color: var(--espresso);
+  appearance: none; outline: none;
+}
+.form-control:focus { border-color: var(--olive); background: var(--cream); }
+select.form-control { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237A795D' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+
+.season-card {
+  border: 1px solid var(--border); padding: 12px 14px; margin-bottom: 8px; cursor: pointer;
+  transition: border-color 0.15s, background 0.15s; position: relative;
+}
+.season-card:hover { border-color: var(--olive-light); }
+.season-card.active { border-color: var(--olive); background: rgba(122,121,93,0.06); }
+.season-card .s-name { font-weight: 700; font-size: 13px; margin-bottom: 2px; }
+.season-card .s-months { font-size: 11px; color: var(--muted); }
+.season-card .s-dot { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 8px; height: 8px; border-radius: 50%; background: var(--olive); opacity: 0; transition: opacity 0.15s; }
+.season-card.active .s-dot { opacity: 1; }
+
+.tier-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 16px; }
+.tier-btn {
+  border: 1px solid var(--border); background: var(--sand); padding: 10px 8px; text-align: center;
+  cursor: pointer; transition: all 0.15s; font-family: 'DM Sans', Arial, sans-serif;
+}
+.tier-btn:hover { border-color: var(--olive-light); }
+.tier-btn.active { border-color: var(--olive); background: rgba(122,121,93,0.08); }
+.tier-btn .t-name { font-size: 12px; font-weight: 700; display: block; }
+.tier-btn .t-range { font-size: 10px; color: var(--muted); display: block; margin-top: 2px; }
+
+.constraint-bar { background: var(--sand); border: 1px solid var(--border); padding: 10px 12px; margin-top: 8px; font-size: 12px; }
+.constraint-bar .c-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.constraint-pips { display: flex; gap: 6px; margin-top: 4px; }
+.pip { width: 16px; height: 16px; border: 1px solid var(--border); background: var(--sand); border-radius: 2px; transition: background 0.2s; }
+.pip.used { background: var(--olive); border-color: var(--olive); }
+.pip.over { background: var(--danger); border-color: var(--danger); }
+
+/* ─── Package Builder (centre) ─── */
+.packages-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.packages-header h2 { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 20px; font-weight: 400; }
+.btn { padding: 9px 18px; font-family: 'DM Sans', Arial, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; border: none; cursor: pointer; transition: background 0.15s, color 0.15s; }
+.btn-primary { background: var(--espresso); color: var(--cream); }
+.btn-primary:hover { background: #4A3830; }
+.btn-olive { background: var(--olive); color: var(--cream); }
+.btn-olive:hover { background: #6A6950; }
+.btn-ghost { background: transparent; color: var(--espresso); border: 1px solid var(--border); }
+.btn-ghost:hover { border-color: var(--olive); }
+.btn-sm { padding: 6px 12px; font-size: 10px; }
+.btn-danger { background: transparent; color: var(--danger); border: 1px solid rgba(155,58,58,0.3); }
+.btn-danger:hover { background: rgba(155,58,58,0.06); }
+
+.package-card {
+  background: var(--cream); border: 1px solid var(--border); margin-bottom: 16px;
+  position: relative; transition: border-color 0.15s;
+}
+.package-card.active-edit { border-color: var(--olive); }
+.pkg-card-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px; border-bottom: 1px solid var(--border); gap: 12px;
+}
+.pkg-name-input {
+  flex: 1; border: none; background: transparent; font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 18px; font-weight: 400; color: var(--espresso); outline: none; min-width: 0;
+}
+.pkg-name-input::placeholder { color: var(--muted); }
+.pkg-badge { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 4px 8px; white-space: nowrap; }
+.badge-low { background: rgba(90,122,58,0.1); color: #3A6010; }
+.badge-mid { background: rgba(122,121,93,0.12); color: var(--olive); }
+.badge-high { background: rgba(47,36,29,0.08); color: var(--espresso); }
+
+.pkg-body { padding: 14px 16px; }
+.pkg-services { list-style: none; margin-bottom: 12px; }
+.pkg-services li {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 6px 0; border-bottom: 1px solid rgba(47,36,29,0.05); font-size: 13px; gap: 8px;
+}
+.pkg-services li:last-child { border-bottom: none; }
+.svc-name { flex: 1; }
+.svc-dur { color: var(--muted); font-size: 11px; min-width: 40px; text-align: right; }
+.svc-price { font-weight: 700; font-size: 12px; min-width: 64px; text-align: right; }
+.svc-remove { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 14px; padding: 0 4px; line-height: 1; transition: color 0.15s; flex-shrink: 0; }
+.svc-remove:hover { color: var(--danger); }
+
+.pkg-totals {
+  display: flex; gap: 20px; padding: 10px 14px; background: var(--sand); border: 1px solid var(--border);
+  font-size: 12px; margin-bottom: 12px;
+}
+.pkg-totals .tot { text-align: center; }
+.pkg-totals .tot-val { font-weight: 700; font-size: 15px; display: block; }
+.pkg-totals .tot-lbl { color: var(--muted); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
+
+.pkg-price-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.pkg-price-row label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); min-width: 100px; }
+.price-input { width: 110px; padding: 7px 10px; border: 1px solid var(--border); background: var(--sand); font-family: 'DM Sans', Arial, sans-serif; font-size: 13px; font-weight: 700; color: var(--espresso); outline: none; }
+.price-input:focus { border-color: var(--olive); background: var(--cream); }
+.discount-badge { font-size: 11px; padding: 4px 8px; font-weight: 700; }
+.discount-neg { background: rgba(155,58,58,0.1); color: var(--danger); }
+.discount-pos { background: rgba(58,107,74,0.1); color: var(--success); }
+
+.add-service-area { margin-top: 12px; }
+.cat-tabs { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+.cat-tab { padding: 5px 10px; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid var(--border); background: var(--sand); cursor: pointer; transition: all 0.15s; }
+.cat-tab:hover { border-color: var(--olive-light); }
+.cat-tab.active { background: var(--olive); color: var(--cream); border-color: var(--olive); }
+.service-list { max-height: 200px; overflow-y: auto; border: 1px solid var(--border); }
+.service-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 10px; font-size: 12px; cursor: pointer; border-bottom: 1px solid rgba(47,36,29,0.05);
+  transition: background 0.12s; gap: 8px;
+}
+.service-item:last-child { border-bottom: none; }
+.service-item:hover { background: rgba(122,121,93,0.08); }
+.service-item.limited-warn { background: rgba(155,58,58,0.04); }
+.si-name { flex: 1; }
+.si-meta { color: var(--muted); font-size: 10px; text-align: right; white-space: nowrap; }
+.si-add { background: var(--olive); color: var(--cream); border: none; padding: 3px 8px; font-size: 10px; font-weight: 700; cursor: pointer; flex-shrink: 0; }
+.si-add:hover { background: #6A6950; }
+.si-add:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.empty-pkg { text-align: center; padding: 24px; color: var(--muted); font-size: 13px; font-style: italic; }
+
+.add-package-btn {
+  width: 100%; padding: 14px; border: 1px dashed var(--border); background: transparent;
+  font-family: 'DM Sans', Arial, sans-serif; font-size: 11px; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); cursor: pointer;
+  transition: border-color 0.15s, color 0.15s; margin-top: 8px;
+}
+.add-package-btn:hover { border-color: var(--olive); color: var(--olive); }
+
+/* ─── Right panel — Reference ─── */
+.campaign-summary { background: var(--sand); border: 1px solid var(--border); padding: 14px; margin-bottom: 20px; font-size: 13px; }
+.campaign-summary .cs-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 12px; border-bottom: 1px solid rgba(47,36,29,0.06); }
+.campaign-summary .cs-row:last-child { border-bottom: none; }
+.campaign-summary .cs-lbl { color: var(--muted); }
+.campaign-summary .cs-val { font-weight: 700; }
+
+.ref-pkg { padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+.ref-pkg:last-child { border-bottom: none; }
+.ref-pkg .rp-name { font-weight: 700; margin-bottom: 2px; }
+.ref-pkg .rp-meta { color: var(--muted); font-size: 11px; }
+.ref-pkg .rp-services { color: var(--muted); font-size: 10px; margin-top: 2px; line-height: 1.5; }
+.ref-pkg .rp-sales { color: var(--success); font-size: 10px; font-weight: 700; margin-top: 2px; }
+
+.export-area { background: var(--sand); border: 1px solid var(--border); padding: 14px; margin-top: 20px; }
+.export-textarea {
+  width: 100%; min-height: 120px; padding: 10px; border: 1px solid var(--border);
+  background: var(--cream); font-family: 'DM Sans', monospace; font-size: 11px;
+  color: var(--espresso); resize: vertical; outline: none;
+  margin-top: 10px;
+}
+
+/* ─── Toast ─── */
+.toast {
+  position: fixed; bottom: 24px; right: 24px; background: var(--espresso); color: var(--cream);
+  padding: 12px 20px; font-size: 12px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; opacity: 0; transform: translateY(10px);
+  transition: opacity 0.25s, transform 0.25s; pointer-events: none; z-index: 999;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(47,36,29,0.15); border-radius: 2px; }
+
+@media (max-width: 1100px) {
+  .pg-layout { grid-template-columns: 300px 1fr 260px; }
+}
+@media (max-width: 860px) {
+  .pg-layout { grid-template-columns: 1fr; }
+  .panel { max-height: none; }
+  .panel-left, .panel-right { border: none; border-bottom: 1px solid var(--border); }
+}
+</style>
+</head>
+<body>
+
+<div class="pg-header">
+  <h1>Seasonal Package Generator</h1>
+  <span class="tag">Staff Tool — Not Public</span>
+</div>
+
+<div class="pg-layout">
+
+  <!-- ─── LEFT: Campaign Setup ─── -->
+  <div class="panel panel-left">
+    <div class="panel-title">Campaign Setup</div>
+
+    <div class="form-row">
+      <label class="form-label">Season</label>
+      <div id="season-cards"></div>
+    </div>
+
+    <div class="form-row">
+      <label class="form-label">Campaign Year</label>
+      <input type="number" class="form-control" id="camp-year" value="" placeholder="e.g. 2025" min="2024" max="2030" />
+    </div>
+
+    <div class="form-row">
+      <label class="form-label">Campaign Name (optional override)</label>
+      <input type="text" class="form-control" id="camp-name" placeholder="Leave blank to auto-generate" />
+    </div>
+
+    <div class="form-row">
+      <label class="form-label">Number of Packages</label>
+      <select class="form-control" id="camp-count">
+        <option value="2">2</option>
+        <option value="3" selected>3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <label class="form-label">Default Tiers to Include</label>
+      <div class="tier-row" id="tier-toggles"></div>
+    </div>
+
+    <div class="form-row">
+      <label class="form-label">Global Discount %</label>
+      <input type="number" class="form-control" id="camp-discount" value="0" min="0" max="40" step="5" />
+    </div>
+
+    <button class="btn btn-primary" style="width:100%;margin-top:4px;" onclick="initPackages()">Build Campaign →</button>
+
+    <div class="constraint-bar" style="margin-top:20px;">
+      <div class="c-label">Steam / Sauna / Jacuzzi Used</div>
+      <div style="font-size:12px;margin:2px 0;" id="limited-count-text">0 of 2 slots used</div>
+      <div class="constraint-pips" id="limited-pips">
+        <div class="pip" id="pip-0"></div>
+        <div class="pip" id="pip-1"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── CENTRE: Package Builder ─── -->
+  <div class="panel panel-center">
+    <div class="packages-header">
+      <h2 id="builder-title">Package Builder</h2>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost btn-sm" onclick="exportCampaign()">Export</button>
+        <button class="btn btn-olive btn-sm" onclick="addPackage()">+ Package</button>
+      </div>
+    </div>
+    <div id="packages-container">
+      <div class="empty-pkg">Configure a campaign on the left and click <strong>Build Campaign</strong> to start.</div>
+    </div>
+  </div>
+
+  <!-- ─── RIGHT: Reference Panel ─── -->
+  <div class="panel panel-right">
+    <div class="panel-title">Campaign Summary</div>
+    <div class="campaign-summary" id="campaign-summary">
+      <div class="cs-row"><span class="cs-lbl">Season</span><span class="cs-val" id="sum-season">—</span></div>
+      <div class="cs-row"><span class="cs-lbl">Year</span><span class="cs-val" id="sum-year">—</span></div>
+      <div class="cs-row"><span class="cs-lbl">Packages</span><span class="cs-val" id="sum-pkgs">0</span></div>
+      <div class="cs-row"><span class="cs-lbl">Total Services</span><span class="cs-val" id="sum-svcs">0</span></div>
+      <div class="cs-row"><span class="cs-lbl">Price Range</span><span class="cs-val" id="sum-price">—</span></div>
+    </div>
+
+    <div class="panel-title" style="margin-top:16px;" id="past-ref-title">Past Seasonal Packages</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px;" id="past-ref-sub">Select a season to see what's been done before</div>
+    <div id="ref-list"></div>
+
+    <div class="panel-title" style="margin-top:16px;">Standard Catalogue Packages</div>
+    <div id="standard-ref-list"></div>
+
+    <div class="export-area">
+      <div class="panel-title" style="margin:0 0 4px;">Export</div>
+      <p style="font-size:11px;color:var(--muted);margin-bottom:8px;">Copy below for Airtable / Mailchimp briefing</p>
+      <button class="btn btn-ghost btn-sm" onclick="exportCampaign()" style="width:100%;">Generate Export Text</button>
+      <textarea class="export-textarea" id="export-output" placeholder="Click 'Generate Export Text' above…" readonly></textarea>
+      <button class="btn btn-olive btn-sm" style="width:100%;margin-top:6px;" onclick="copyExport()">Copy to Clipboard</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/pg-data.js"></script>
+<script>
+// ─── State ───────────────────────────────────────────────
+let state = {
+  season: null,
+  year: new Date().getFullYear(),
+  tiers: ['low','mid','high'],
+  discount: 0,
+  packages: [],           // array of package objects
+  activePkg: null,        // index of package being edited
+  activeCategory: 'Facials',
+  limitedUsed: 0
+};
+
+// ─── Init UI ─────────────────────────────────────────────
+function initUI() {
+  // Season cards
+  const sc = document.getElementById('season-cards');
+  PG_SEASONS.forEach(s => {
+    const div = document.createElement('div');
+    div.className = 'season-card';
+    div.dataset.id = s.id;
+    div.innerHTML = `<div class="s-name">${s.name}</div><div class="s-months">${s.months} &mdash; ${s.tone}</div><div class="s-dot"></div>`;
+    div.addEventListener('click', () => selectSeason(s.id));
+    sc.appendChild(div);
+  });
+
+  // Tier toggles
+  const tt = document.getElementById('tier-toggles');
+  PG_TIERS.forEach(t => {
+    const btn = document.createElement('button');
+    btn.className = 'tier-btn active';
+    btn.dataset.id = t.id;
+    btn.innerHTML = `<span class="t-name">${t.name}</span><span class="t-range">GHS ${t.minPrice}–${t.maxPrice}</span>`;
+    btn.addEventListener('click', () => toggleTier(t.id));
+    tt.appendChild(btn);
+  });
+
+  // Year default
+  document.getElementById('camp-year').value = state.year;
+
+  // Reference list
+  renderRefList();
+}
+
+function selectSeason(id) {
+  state.season = id;
+  document.querySelectorAll('.season-card').forEach(c => c.classList.toggle('active', c.dataset.id === id));
+  renderRefList();
+}
+
+function toggleTier(id) {
+  if (state.tiers.includes(id)) {
+    if (state.tiers.length === 1) { showToast('Keep at least one tier selected'); return; }
+    state.tiers = state.tiers.filter(t => t !== id);
+  } else {
+    state.tiers.push(id);
+  }
+  document.querySelectorAll('.tier-btn').forEach(b => b.classList.toggle('active', state.tiers.includes(b.dataset.id)));
+}
+
+// ─── Build Campaign ───────────────────────────────────────
+function initPackages() {
+  if (!state.season) { showToast('Select a season first'); return; }
+  state.year = parseInt(document.getElementById('camp-year').value) || new Date().getFullYear();
+  state.discount = parseFloat(document.getElementById('camp-discount').value) || 0;
+  state.packages = [];
+  state.limitedUsed = 0;
+
+  const count = parseInt(document.getElementById('camp-count').value);
+  const tiers = PG_TIERS.filter(t => state.tiers.includes(t.id));
+  const season = PG_SEASONS.find(s => s.id === state.season);
+
+  for (let i = 0; i < count; i++) {
+    const tier = tiers[i % tiers.length];
+    state.packages.push(newPackage(tier, season, i));
+  }
+
+  state.activePkg = 0;
+  renderBuilder();
+  updateSummary();
+  updateLimitedBar();
+}
+
+function newPackage(tier, season, index) {
+  const tierNames = { low: 'Accessible', mid: 'Signature', high: 'Luxe' };
+  const sName = season ? season.name : 'Seasonal';
+  return {
+    id: Date.now() + index,
+    name: `${sName} ${tierNames[tier.id] || tier.name} Package`,
+    tier: tier.id,
+    services: [],
+    finalPrice: 0,
+    notes: ''
+  };
+}
+
+function addPackage() {
+  if (!state.season) { showToast('Set up a campaign first'); return; }
+  const tier = PG_TIERS[state.packages.length % PG_TIERS.length];
+  const season = PG_SEASONS.find(s => s.id === state.season);
+  state.packages.push(newPackage(tier, season, state.packages.length));
+  state.activePkg = state.packages.length - 1;
+  renderBuilder();
+  updateSummary();
+}
+
+// ─── Render Builder ───────────────────────────────────────
+function renderBuilder() {
+  const container = document.getElementById('packages-container');
+  if (!state.packages.length) {
+    container.innerHTML = '<div class="empty-pkg">No packages yet — click <strong>+ Package</strong> to add one.</div>';
+    return;
+  }
+
+  const season = state.season ? PG_SEASONS.find(s => s.id === state.season) : null;
+  const titleEl = document.getElementById('builder-title');
+  if (season) {
+    const campName = document.getElementById('camp-name').value.trim();
+    titleEl.textContent = campName || `${season.name} ${state.year} Campaign`;
+  }
+
+  container.innerHTML = '';
+  state.packages.forEach((pkg, idx) => {
+    container.appendChild(buildPackageCard(pkg, idx));
+  });
+}
+
+function buildPackageCard(pkg, idx) {
+  const card = document.createElement('div');
+  card.className = 'package-card' + (state.activePkg === idx ? ' active-edit' : '');
+  card.dataset.idx = idx;
+
+  const sumDur = pkg.services.reduce((a, s) => a + s.duration, 0);
+  const sumCost = pkg.services.reduce((a, s) => a + s.price, 0);
+  const discounted = pkg.finalPrice > 0
+    ? Math.round(pkg.finalPrice * (1 - state.discount / 100))
+    : Math.round(sumCost * (1 - state.discount / 100));
+  const savings = sumCost - (pkg.finalPrice || sumCost);
+  const tier = PG_TIERS.find(t => t.id === pkg.tier) || PG_TIERS[1];
+  const badgeClass = { low: 'badge-low', mid: 'badge-mid', high: 'badge-high' }[pkg.tier] || 'badge-mid';
+
+  const servicesHTML = pkg.services.length
+    ? pkg.services.map((s, si) => `
+        <li>
+          <span class="svc-name">${s.name}</span>
+          <span class="svc-dur">${s.duration}min</span>
+          <span class="svc-price">GHS ${s.price.toLocaleString()}</span>
+          <button class="svc-remove" onclick="removeService(${idx},${si})" title="Remove">×</button>
+        </li>`).join('')
+    : '<li style="color:var(--muted);font-style:italic;font-size:12px;padding:6px 0;">No services added yet</li>';
+
+  const discountNote = state.discount > 0
+    ? `<span class="discount-badge discount-neg">After ${state.discount}% disc: GHS ${discounted.toLocaleString()}</span>`
+    : '';
+
+  const savingsNote = pkg.finalPrice && pkg.finalPrice !== sumCost
+    ? `<span class="discount-badge ${savings > 0 ? 'discount-neg' : 'discount-pos'}">${savings > 0 ? `Save GHS ${savings.toLocaleString()}` : `+GHS ${Math.abs(savings).toLocaleString()} vs sum`}</span>`
+    : '';
+
+  // Category tabs for adding services (only shown for active package)
+  const addArea = state.activePkg === idx ? buildAddServiceArea(idx) : `<button class="btn btn-ghost btn-sm" style="margin-top:10px;width:100%;" onclick="setActivePkg(${idx})">+ Add Services</button>`;
+
+  card.innerHTML = `
+    <div class="pkg-card-head">
+      <input class="pkg-name-input" type="text" value="${escHtml(pkg.name)}" placeholder="Package name…"
+        onchange="updatePkgName(${idx}, this.value)" onclick="setActivePkg(${idx})" />
+      <span class="pkg-badge ${badgeClass}">${tier.name}</span>
+      <select class="form-control" style="width:90px;padding:5px 8px;font-size:11px;" onchange="updatePkgTier(${idx},this.value)">
+        ${PG_TIERS.map(t => `<option value="${t.id}"${t.id===pkg.tier?' selected':''}>${t.name}</option>`).join('')}
+      </select>
+      <button class="btn btn-danger btn-sm" onclick="removePackage(${idx})">✕</button>
+    </div>
+    <div class="pkg-body">
+      <ul class="pkg-services">${servicesHTML}</ul>
+      <div class="pkg-totals">
+        <div class="tot"><span class="tot-val">${sumDur}min</span><span class="tot-lbl">Duration</span></div>
+        <div class="tot"><span class="tot-val">GHS ${sumCost.toLocaleString()}</span><span class="tot-lbl">Services Sum</span></div>
+        <div class="tot"><span class="tot-val">${pkg.services.length}</span><span class="tot-lbl">Services</span></div>
+      </div>
+      <div class="pkg-price-row">
+        <label>Package Price</label>
+        <input class="price-input" type="number" value="${pkg.finalPrice || ''}" placeholder="${sumCost || 0}"
+          onchange="updateFinalPrice(${idx}, this.value)" onclick="setActivePkg(${idx})" />
+        ${savingsNote}
+        ${discountNote}
+      </div>
+      ${addArea}
+    </div>`;
+  return card;
+}
+
+function buildAddServiceArea(idx) {
+  const cats = Object.keys(PG_SERVICES);
+  const tabsHTML = cats.map(cat =>
+    `<button class="cat-tab${cat === state.activeCategory ? ' active' : ''}" onclick="setCategory('${cat}',${idx})">${cat}</button>`
+  ).join('');
+
+  const services = PG_SERVICES[state.activeCategory] || [];
+  const pkg = state.packages[idx];
+  const addedIds = new Set(pkg.services.map(s => s.id));
+
+  const listHTML = services.map(s => {
+    const isLimited = s.limited;
+    const atLimit = isLimited && state.limitedUsed >= 2;
+    const alreadyAdded = addedIds.has(s.id);
+    const disabled = atLimit || alreadyAdded;
+    const warnClass = isLimited ? ' limited-warn' : '';
+    const limitNote = isLimited ? ` <span style="color:var(--danger);font-size:9px;">LIMITED</span>` : '';
+    const pop = s.popularity || 0;
+    const popDots = pop >= 1 ? `<span title="Popularity: ${pop}/5" style="color:var(--olive);font-size:9px;letter-spacing:1px;margin-right:4px;">${'◆'.repeat(pop)}${'◇'.repeat(5-pop)}</span>` : '';
+    const noteTitle = s.note ? ` title="${s.note}"` : '';
+    return `<div class="service-item${warnClass}"${noteTitle}>
+      <span class="si-name">${popDots}${s.name}${limitNote}</span>
+      <span class="si-meta">${s.duration}min · GHS ${s.price.toLocaleString()}</span>
+      <button class="si-add" onclick="addService(${idx},'${s.id}')" ${disabled ? 'disabled' : ''}>
+        ${alreadyAdded ? '✓' : '+'}
+      </button>
+    </div>`;
+  }).join('');
+
+  return `<div class="add-service-area">
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Add Services</div>
+    <div class="cat-tabs">${tabsHTML}</div>
+    <div class="service-list">${listHTML}</div>
+  </div>`;
+}
+
+// ─── Package Mutations ─────────────────────────────────────
+function setActivePkg(idx) {
+  state.activePkg = idx;
+  renderBuilder();
+}
+
+function setCategory(cat, idx) {
+  state.activeCategory = cat;
+  state.activePkg = idx;
+  renderBuilder();
+}
+
+function updatePkgName(idx, val) {
+  state.packages[idx].name = val;
+  updateSummary();
+}
+
+function updatePkgTier(idx, val) {
+  state.packages[idx].tier = val;
+  renderBuilder();
+}
+
+function updateFinalPrice(idx, val) {
+  state.packages[idx].finalPrice = parseFloat(val) || 0;
+  renderBuilder();
+  updateSummary();
+}
+
+function removePackage(idx) {
+  // Recalculate limited used after removing
+  const removedLimited = state.packages[idx].services.filter(s => s.limited).length;
+  state.limitedUsed = Math.max(0, state.limitedUsed - removedLimited);
+  state.packages.splice(idx, 1);
+  if (state.activePkg >= state.packages.length) state.activePkg = state.packages.length - 1;
+  renderBuilder();
+  updateSummary();
+  updateLimitedBar();
+}
+
+function addService(pkgIdx, serviceId) {
+  const pkg = state.packages[pkgIdx];
+  const allServices = Object.values(PG_SERVICES).flat();
+  const svc = allServices.find(s => s.id === serviceId);
+  if (!svc) return;
+
+  if (svc.limited && state.limitedUsed >= 2) {
+    showToast('Campaign limit: max 2 steam/sauna/jacuzzi slots used');
+    return;
+  }
+  if (pkg.services.find(s => s.id === serviceId)) {
+    showToast('Service already in this package');
+    return;
+  }
+
+  pkg.services.push({ ...svc });
+  if (svc.limited) state.limitedUsed++;
+
+  // Auto-suggest final price: sum of services with 5% package discount
+  if (!pkg.finalPrice) {
+    const sum = pkg.services.reduce((a, s) => a + s.price, 0);
+    pkg.finalPrice = Math.round(sum * 0.95 / 10) * 10;
+  }
+
+  renderBuilder();
+  updateSummary();
+  updateLimitedBar();
+}
+
+function removeService(pkgIdx, svcIdx) {
+  const pkg = state.packages[pkgIdx];
+  const svc = pkg.services[svcIdx];
+  if (svc.limited) state.limitedUsed = Math.max(0, state.limitedUsed - 1);
+  pkg.services.splice(svcIdx, 1);
+  // Recalc suggested price
+  if (pkg.services.length) {
+    const sum = pkg.services.reduce((a, s) => a + s.price, 0);
+    pkg.finalPrice = Math.round(sum * 0.95 / 10) * 10;
+  } else {
+    pkg.finalPrice = 0;
+  }
+  renderBuilder();
+  updateSummary();
+  updateLimitedBar();
+}
+
+// ─── Summary ───────────────────────────────────────────────
+function updateSummary() {
+  const season = state.season ? PG_SEASONS.find(s => s.id === state.season) : null;
+  document.getElementById('sum-season').textContent = season ? season.name : '—';
+  document.getElementById('sum-year').textContent = state.year || '—';
+  document.getElementById('sum-pkgs').textContent = state.packages.length;
+
+  const totalSvcs = state.packages.reduce((a, p) => a + p.services.length, 0);
+  document.getElementById('sum-svcs').textContent = totalSvcs;
+
+  const prices = state.packages.map(p => p.finalPrice).filter(Boolean);
+  if (prices.length) {
+    document.getElementById('sum-price').textContent = `GHS ${Math.min(...prices).toLocaleString()} – ${Math.max(...prices).toLocaleString()}`;
+  } else {
+    document.getElementById('sum-price').textContent = '—';
+  }
+}
+
+function updateLimitedBar() {
+  const used = state.limitedUsed;
+  document.getElementById('limited-count-text').textContent = `${used} of 2 slots used`;
+  [0, 1].forEach(i => {
+    const pip = document.getElementById(`pip-${i}`);
+    pip.className = 'pip' + (i < used ? (used > 2 ? ' over' : ' used') : '');
+  });
+}
+
+// ─── Reference List ────────────────────────────────────────
+function renderRefList() {
+  // Past seasonal packages — filtered by selected season
+  const pastList = document.getElementById('ref-list');
+  const seasonId = state.season;
+  const past = seasonId
+    ? PG_PAST_PACKAGES.filter(p => p.season === seasonId)
+    : PG_PAST_PACKAGES;
+
+  if (past.length) {
+    const bySeason = {};
+    past.forEach(p => {
+      if (!bySeason[p.campaign]) bySeason[p.campaign] = [];
+      bySeason[p.campaign].push(p);
+    });
+    pastList.innerHTML = Object.entries(bySeason).map(([campaign, pkgs]) => `
+      <div style="margin-bottom:12px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--olive);margin-bottom:4px;">${campaign}</div>
+        ${pkgs.map(p => `<div class="ref-pkg">
+          <div class="rp-name">${p.name}</div>
+          <div class="rp-meta">GHS ${p.price.toLocaleString()} · ${p.duration}min</div>
+          <div class="rp-services">${p.services.join(' · ')}</div>
+          ${p.salesNote ? `<div class="rp-sales">${p.salesNote}</div>` : ''}
+        </div>`).join('')}
+      </div>`).join('');
+  } else {
+    pastList.innerHTML = '<div style="font-size:12px;color:var(--muted);font-style:italic;padding:8px 0;">No past packages on record for this season.</div>';
+  }
+
+  // Season insight banner
+  if (seasonId) {
+    const season = PG_SEASONS.find(s => s.id === seasonId);
+    if (season && season.salesInsight) {
+      document.getElementById('past-ref-sub').innerHTML =
+        `<span style="color:var(--espresso);font-style:italic;">${season.salesInsight}</span>`;
+    }
+  }
+
+  // Standard catalogue
+  const stdList = document.getElementById('standard-ref-list');
+  stdList.innerHTML = PG_STANDARD_PACKAGES
+    .sort((a, b) => a.price - b.price)
+    .map(p => `<div class="ref-pkg">
+      <div class="rp-name">${p.name}</div>
+      <div class="rp-meta">GHS ${p.price.toLocaleString()} · ${p.duration}min</div>
+    </div>`).join('');
+}
+
+// ─── Export ────────────────────────────────────────────────
+function exportCampaign() {
+  if (!state.packages.length) { showToast('No packages to export'); return; }
+  const season = state.season ? PG_SEASONS.find(s => s.id === state.season) : null;
+  const campName = document.getElementById('camp-name').value.trim()
+    || (season ? `${season.name} ${state.year}` : `Campaign ${state.year}`);
+
+  let out = `NIOBE SPA — SEASONAL PACKAGE CAMPAIGN\n`;
+  out += `${'─'.repeat(50)}\n`;
+  out += `Campaign: ${campName}\n`;
+  if (season) out += `Theme: ${season.theme}\n`;
+  out += `Discount: ${state.discount > 0 ? state.discount + '%' : 'None'}\n`;
+  out += `Generated: ${new Date().toLocaleDateString('en-GB')}\n\n`;
+
+  state.packages.forEach((pkg, i) => {
+    const sumCost = pkg.services.reduce((a, s) => a + s.price, 0);
+    const sumDur = pkg.services.reduce((a, s) => a + s.duration, 0);
+    const tier = PG_TIERS.find(t => t.id === pkg.tier) || PG_TIERS[1];
+    out += `${i + 1}. ${pkg.name}\n`;
+    out += `   Tier: ${tier.name} | Duration: ${sumDur}min | Services Sum: GHS ${sumCost.toLocaleString()}\n`;
+    out += `   Package Price: GHS ${(pkg.finalPrice || sumCost).toLocaleString()}\n`;
+    if (state.discount > 0) {
+      const disc = Math.round((pkg.finalPrice || sumCost) * (1 - state.discount / 100));
+      out += `   After ${state.discount}% Discount: GHS ${disc.toLocaleString()}\n`;
+    }
+    out += `   Services:\n`;
+    pkg.services.forEach(s => {
+      out += `     · ${s.name} (${s.duration}min, GHS ${s.price.toLocaleString()})\n`;
+    });
+    out += '\n';
+  });
+
+  document.getElementById('export-output').value = out;
+  showToast('Export ready');
+}
+
+function copyExport() {
+  const ta = document.getElementById('export-output');
+  if (!ta.value.trim()) { exportCampaign(); }
+  navigator.clipboard.writeText(ta.value).then(() => showToast('Copied to clipboard'));
+}
+
+// ─── Helpers ───────────────────────────────────────────────
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ─── Boot ─────────────────────────────────────────────────
+initUI();
+renderRefList();
+</script>
+</body>
+</html>
