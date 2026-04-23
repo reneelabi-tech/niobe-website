@@ -197,9 +197,7 @@ select.form-control { background-image: url("data:image/svg+xml,%3Csvg xmlns='ht
 /* ─── Confirmed Packages ─── */
 .confirmed-section {
   border-top: 2px solid var(--espresso); background: var(--cream); padding: 32px 40px 48px;
-  display: none;
 }
-.confirmed-section.visible { display: block; }
 .confirmed-section-title {
   font-family: 'Cormorant Garamond', Georgia, serif; font-size: 22px; font-weight: 300;
   color: var(--espresso); margin-bottom: 6px;
@@ -387,10 +385,51 @@ select.form-control { background-image: url("data:image/svg+xml,%3Csvg xmlns='ht
 </div>
 
 <!-- ─── Confirmed Packages ─── -->
-<div class="confirmed-section" id="confirmed-section">
-  <div class="confirmed-section-title">Confirmed Packages</div>
+<div class="confirmed-section visible" id="confirmed-section">
+  <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px;">
+    <div class="confirmed-section-title">Confirmed Packages</div>
+    <button class="btn btn-ghost btn-sm" onclick="toggleAddForm()">+ Add Manually</button>
+  </div>
   <div class="confirmed-section-sub">Edit names and descriptions below, then copy for Airtable, Mailchimp, or the website.</div>
-  <div class="confirmed-grid" id="confirmed-grid"></div>
+
+  <!-- Manual add form -->
+  <div id="manual-add-form" style="display:none;border:1px solid var(--border);background:var(--sand);padding:20px;margin-bottom:28px;">
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;">Add Package Manually</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 120px 100px;gap:12px;margin-bottom:12px;">
+      <div>
+        <label class="form-label">Package Name</label>
+        <input type="text" class="form-control" id="manual-name" placeholder="e.g. Gentle Return" />
+      </div>
+      <div>
+        <label class="form-label">Services (comma separated)</label>
+        <input type="text" class="form-control" id="manual-services" placeholder="e.g. Hot Stone Massage, Skin Booster" />
+      </div>
+      <div>
+        <label class="form-label">Price (GHS)</label>
+        <input type="number" class="form-control" id="manual-price" placeholder="0" />
+      </div>
+      <div>
+        <label class="form-label">Tier</label>
+        <select class="form-control" id="manual-tier">
+          <option value="low">Accessible</option>
+          <option value="mid" selected>Signature</option>
+          <option value="high">Luxe</option>
+        </select>
+      </div>
+    </div>
+    <div style="margin-bottom:12px;">
+      <label class="form-label">Description</label>
+      <textarea class="form-control" id="manual-desc" rows="3" placeholder="Paste your edited description here…" style="resize:vertical;line-height:1.7;font-size:13px;"></textarea>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-primary btn-sm" onclick="addManualConfirmed()">Add to Confirmed</button>
+      <button class="btn btn-ghost btn-sm" onclick="toggleAddForm()">Cancel</button>
+    </div>
+  </div>
+
+  <div class="confirmed-grid" id="confirmed-grid">
+    <div style="font-size:13px;color:var(--muted);font-style:italic;padding:8px 0;">No confirmed packages yet. Confirm a package from the builder above, or click <strong>+ Add Manually</strong>.</div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -920,10 +959,11 @@ function confirmPackage(idx) {
 }
 
 function renderConfirmed() {
-  const section = document.getElementById('confirmed-section');
-  const grid    = document.getElementById('confirmed-grid');
-  if (!state.confirmedPackages.length) { section.classList.remove('visible'); return; }
-  section.classList.add('visible');
+  const grid = document.getElementById('confirmed-grid');
+  if (!state.confirmedPackages.length) {
+    grid.innerHTML = '<div style="font-size:13px;color:var(--muted);font-style:italic;padding:8px 0;">No confirmed packages yet. Confirm a package from the builder above, or click <strong>+ Add Manually</strong>.</div>';
+    return;
+  }
 
   grid.innerHTML = '';
   state.confirmedPackages.forEach((cp, ci) => {
@@ -984,6 +1024,44 @@ function regenDesc(ci) {
   const fakePkg = { tier: cp.tier, services: svcObjs, finalPrice: cp.price };
   cp.description = generateDescription(fakePkg, season);
   renderConfirmed();
+}
+
+function toggleAddForm() {
+  const f = document.getElementById('manual-add-form');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+}
+
+function addManualConfirmed() {
+  const name     = document.getElementById('manual-name').value.trim();
+  const services = document.getElementById('manual-services').value.split(',').map(s => s.trim()).filter(Boolean);
+  const price    = parseFloat(document.getElementById('manual-price').value) || 0;
+  const tier     = document.getElementById('manual-tier').value;
+  const desc     = document.getElementById('manual-desc').value.trim();
+
+  if (!name) { showToast('Enter a package name'); return; }
+
+  const season = state.season ? PG_SEASONS.find(s => s.id === state.season) : null;
+  const fakePkg = { tier, services: services.map(n => ({ name: n, duration: 0, price: 0 })), finalPrice: price };
+
+  state.confirmedPackages.push({
+    id:             Date.now(),
+    name,
+    tier,
+    services,
+    price,
+    duration:       0,
+    suggestedNames: generateNames(fakePkg, season),
+    selectedName:   null,
+    description:    desc || generateDescription(fakePkg, season)
+  });
+
+  // Clear form
+  ['manual-name','manual-services','manual-price','manual-desc'].forEach(id => { document.getElementById(id).value = ''; });
+  document.getElementById('manual-tier').value = 'mid';
+  document.getElementById('manual-add-form').style.display = 'none';
+
+  renderConfirmed();
+  showToast('Package added ✓');
 }
 
 function copyConfirmedCard(ci) {
