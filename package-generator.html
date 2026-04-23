@@ -395,18 +395,24 @@ select.form-control { background-image: url("data:image/svg+xml,%3Csvg xmlns='ht
   <!-- Manual add form -->
   <div id="manual-add-form" style="display:none;border:1px solid var(--border);background:var(--sand);padding:20px;margin-bottom:28px;">
     <div style="font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;">Add Package Manually</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 120px 100px;gap:12px;margin-bottom:12px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
       <div>
         <label class="form-label">Package Name</label>
         <input type="text" class="form-control" id="manual-name" placeholder="e.g. Gentle Return" />
       </div>
       <div>
         <label class="form-label">Services (comma separated)</label>
-        <input type="text" class="form-control" id="manual-services" placeholder="e.g. Hot Stone Massage, Skin Booster" />
+        <input type="text" class="form-control" id="manual-services" placeholder="e.g. Hot Stone Massage, Foot Massage" />
       </div>
+    </div>
+    <div style="display:grid;grid-template-columns:120px 120px 100px;gap:12px;margin-bottom:12px;">
       <div>
         <label class="form-label">Price (GHS)</label>
         <input type="number" class="form-control" id="manual-price" placeholder="0" />
+      </div>
+      <div>
+        <label class="form-label">Duration (min)</label>
+        <input type="number" class="form-control" id="manual-duration" placeholder="e.g. 95" />
       </div>
       <div>
         <label class="form-label">Tier</label>
@@ -893,11 +899,11 @@ const NAME_BANKS = {
 
 const DESC_TEMPLATES = {
   low: (svcs, theme, dur, price) =>
-    `An accessible introduction to the Niobe experience, designed around ${theme}. This ${dur}-minute ritual combines ${svcs} into a single, unhurried session. Priced at GHS ${price.toLocaleString()}, it offers genuine value without compromise.`,
+    `An accessible introduction to the Niobe experience, designed around ${theme}. This ${dur ? dur + '-minute ' : ''}ritual combines ${svcs} into a single, unhurried session. Priced at GHS ${Number(price).toLocaleString()}, it offers genuine value without compromise.`,
   mid: (svcs, theme, dur, price) =>
-    `A curated ${dur}-minute ritual built on the theme of ${theme}. Drawing on ${svcs}, this package is designed for guests who want a complete experience — not just a treatment. Available at GHS ${price.toLocaleString()}.`,
+    `A curated ${dur ? dur + '-minute ' : ''}ritual built on the theme of ${theme}. Drawing on ${svcs}, this package is designed for guests who want a complete experience — not just a treatment. Available at GHS ${Number(price).toLocaleString()}.`,
   high: (svcs, theme, dur, price) =>
-    `An indulgent ${dur}-minute immersion into ${theme}. This signature combination of ${svcs} is designed for guests who want nothing held back. Priced at GHS ${price.toLocaleString()}.`
+    `An indulgent ${dur ? dur + '-minute ' : ''}immersion into ${theme}. This signature combination of ${svcs} is designed for guests who want nothing held back. Priced at GHS ${Number(price).toLocaleString()}.`
 };
 
 function describeServices(services) {
@@ -918,6 +924,18 @@ function generateNames(pkg, season) {
     pool[Math.floor(pool.length / 2)],
     pool[pool.length - 1]
   ];
+}
+
+function generateDescriptionManual(services, tier, duration, price, season) {
+  const theme  = season?.theme?.split('.')[0].toLowerCase().replace(/^[a-z]/, c => c) || 'rest and restoration';
+  const svcs   = services.length
+    ? (services.length === 1 ? services[0]
+      : services.length === 2 ? `${services[0]} and ${services[1]}`
+      : `${services.slice(0, -1).join(', ')}, and ${services[services.length - 1]}`)
+    : 'carefully selected treatments';
+  const durStr = duration ? `${duration}-minute ` : '';
+  const fn     = DESC_TEMPLATES[tier] || DESC_TEMPLATES.mid;
+  return fn(svcs, theme, durStr.trim() || 'tailored', price);
 }
 
 function generateDescription(pkg, season) {
@@ -1035,13 +1053,15 @@ function addManualConfirmed() {
   const name     = document.getElementById('manual-name').value.trim();
   const services = document.getElementById('manual-services').value.split(',').map(s => s.trim()).filter(Boolean);
   const price    = parseFloat(document.getElementById('manual-price').value) || 0;
+  const duration = parseInt(document.getElementById('manual-duration').value) || 0;
   const tier     = document.getElementById('manual-tier').value;
   const desc     = document.getElementById('manual-desc').value.trim();
 
   if (!name) { showToast('Enter a package name'); return; }
 
-  const season = state.season ? PG_SEASONS.find(s => s.id === state.season) : null;
+  const season  = state.season ? PG_SEASONS.find(s => s.id === state.season) : null;
   const fakePkg = { tier, services: services.map(n => ({ name: n, duration: 0, price: 0 })), finalPrice: price };
+  const autoDesc = generateDescriptionManual(services, tier, duration, price, season);
 
   state.confirmedPackages.push({
     id:             Date.now(),
@@ -1049,14 +1069,13 @@ function addManualConfirmed() {
     tier,
     services,
     price,
-    duration:       0,
+    duration,
     suggestedNames: generateNames(fakePkg, season),
     selectedName:   null,
-    description:    desc || generateDescription(fakePkg, season)
+    description:    desc || autoDesc
   });
 
-  // Clear form
-  ['manual-name','manual-services','manual-price','manual-desc'].forEach(id => { document.getElementById(id).value = ''; });
+  ['manual-name','manual-services','manual-price','manual-duration','manual-desc'].forEach(id => { document.getElementById(id).value = ''; });
   document.getElementById('manual-tier').value = 'mid';
   document.getElementById('manual-add-form').style.display = 'none';
 
